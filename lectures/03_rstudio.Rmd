@@ -1,0 +1,62 @@
+---
+title: Practical Skills for<br>Biology Research II
+subtitle: RStudio
+author: Niklas Mähler
+date: 2021-01-01
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, echo = FALSE, cache = FALSE}
+source(here::here("scripts/setup.R"))
+setup_presentation("lecture2")
+```
+
+# What is RStudio? { data-transition="slide-in fade-out" }
+
+- Integrated Development Environment (IDE)
+- Basically an advanced text editor that knows
+  - The languague you are writing in
+  - Can run the code that you write, interactively
+  - Can display any plots that you generate
+  - Can display help for any functions in the language
+  - And much, much more
+
+# What is RStudio? { data-transition="fade" }
+
+```{r}
+tags$figure(
+  tags$img(src = base64_img(here("img/rstudio_screenshot.png"))),
+  tags$figcaption("Screenshot of my RStudio window when writing this slide")
+)
+```
+
+
+# What is RStudio? { data-transition="fade-in slide-out" }
+
+- Open source
+- Free as in free speech, not as in free beer
+  - Free version more than enough for our needs though
+- RStudio doesn't bundle R itself, this has to be installed separately
+
+# Install R
+
+- Main website: <https://r-project.org>
+
+- Windows:<br><https://ftp.acc.umu.se/mirror/CRAN/bin/windows/base/R-4.0.5-win.exe>
+- Mac (High Sierra or later):<br><https://ftp.acc.umu.se/mirror/CRAN/bin/macosx/R-4.0.5.pkg>
+- Linux (you know what you're doing):<br><https://ftp.acc.umu.se/mirror/CRAN/bin/linux/>
+
+If you can't find a version for your system, go to the main site and navigate from there.
+
+# Install RStudio
+
+- Main website: <https://www.rstudio.com/>
+
+Go to <https://www.rstudio.com/products/rstudio/download/#download> and download the installer for your platform, run it and follow the instructions.
+
+# Customising RStudio
+
+RStudio is very customisable, both when it comes to appearances and function.
+Take some time to set it up to your liking.
+This will make the whole experience more enjoyable.

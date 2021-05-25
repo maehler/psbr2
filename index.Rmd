@@ -1,0 +1,12 @@
+---
+title: Practical skills for biology research II 2021
+---
+
+This is the course website associated with the course Practical Skills for Biology Research II.
+Here you can find the schedule, lecture slides, exercise material, and suggested reading.
+
+## Schedule
+
+```{r, child = "schedule.Rmd"}
+```
+

@@ -1,0 +1,14 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.DS_Store
+lectures/cache/
+lectures/**/*.html
+**/*cache/
+docs/LICENSE
+docs/img/
+docs/scripts/
+docs/**/_*
+docs/**/*.Rmd
+docs/**/*.md

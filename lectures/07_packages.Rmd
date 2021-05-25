@@ -1,0 +1,143 @@
+---
+title: Practical Skills for<br>Biology Research II
+subtitle: Installing RStudio
+author: Niklas Mähler
+date: 2021-01-01
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, echo = FALSE, cache = FALSE}
+source(here::here("scripts/setup.R"))
+setup_presentation("lecture3")
+```
+
+# Learning goals
+
+- Know where to find documentation for functions
+- Can describe what an R package is
+
+# Getting help
+
+```{r, echo = TRUE, attr.source=".numberLines"}
+?mean
+```
+
+```{r}
+tags$img(src = base64_img(here("img/help_example_screenshot.png")),
+         class = "stretch")
+```
+
+# Anatomy of a help page { data-transition="slide-in none" }
+
+```{r}
+tags$img(src = base64_img(here("img/help_example_screenshot.png")),
+         class = "stretch")
+```
+
+# Anatomy of a help page { data-transition="none" }
+
+```{r}
+tags$img(src = base64_img(here("img/help_example_screenshot.png")),
+         class = "stretch")
+```
+
+# Anatomy of a help page
+
+<div class="smaller left-justify stretch" style="background-color: #333; padding: 1em; margin: 0 auto; overflow: scroll;">
+
+<p style="margin-top: 0;">mean {base}</p>
+
+## Arithmetic Mean
+
+### Description
+
+Generic function for the (trimmed) arithmetic mean.
+
+### Usage
+
+<pre style="width: 100%; margin-top: 0; font-size: 1em;"><code>mean(x, ...)
+
+## Default S3 method:
+mean(x, trim = 0, na.rm = FALSE, ...)</code></pre>
+
+### Arguments
+
+```{r}
+tags$div(
+  tags$div(
+    class = "row",
+    style = "display: flex; margin-top: 0.5em;",
+    tags$div(
+      tags$code("x"),
+      style = "min-width: 30%;"
+    ),
+    tags$div(
+      tags$p(
+        "An", tags$code("R"), "Object. Currently there are methods for numeric/logical vectors and date, date-time and time interval objects. Complex vectors are allowed for ", tags$code("trim = 0"), ", only.",
+        style = "margin: 0;")
+    )
+  ),
+  tags$div(
+    class = "row",
+    style = "display: flex; margin-top: 0.5em;",
+    tags$div(
+      tags$code("trim"),
+      style = "min-width: 30%;"
+    ),
+    tags$div(
+      tags$p(
+        "the fraction (0 to 0.5) of observations to be trimmed from each end of ", tags$code("x"), " before the mean is computed. Values of trim outside that range are taken as the nearest endpoint.",
+        style = "margin: 0;")
+    )
+  ),
+  tags$div(
+    class = "row",
+    style = "display: flex; margin-top: 0.5em;",
+    tags$div(
+      tags$code("na.rm"),
+      style = "min-width: 30%;"
+    ),
+    tags$div(
+      tags$p(
+        "a logical value indicating whether ", tags$code("NA"), " values should be stripped before the computation proceeds.",
+        style = "margin: 0;")
+    )
+  ),
+  tags$div(
+    class = "row",
+    style = "display: flex; margin-top: 0.5em;",
+    tags$div(
+      tags$code("..."),
+      style = "min-width: 30%;"
+    ),
+    tags$div(
+      tags$p(
+        "further arguments passed to or from other methods",
+        style = "margin: 0;")
+    )
+  )
+)
+```
+
+### Value
+
+If `trim` is zero (the default), the arithmetic mean of the values in `x` is computed, as a numeric or complex vector of length one. If `x` is not logical (coerced to a numeric), numeric (including integer) or complex, `NA_real_` is returned, with a warning.
+
+If `trim` is non-zero, a symmetrical trimmed mean is computed with a fraction of `trim` observations deleted from each end before the mean is computed.
+
+### References
+
+Becker, R. A., Chambers, J. M. and Wilks, A. R. (1988) *The New S Language*. Wadsworth & Brooks/Cole.
+
+### See Also
+
+`weighted.mean`, `mean.POSIXct`, `colMeans` for row and column means.
+
+### Examples
+
+<pre style="width: 100%; margin-top: 0; font-size: 1em;">x <- c(0:10, 50)
+xm <- mean(x)
+c(xm, mean(x, trim = 0.10))</code></pre>
+
+</div>

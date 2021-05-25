@@ -1,0 +1,285 @@
+start_date: 2021-09-30
+schedule:
+  - day:
+    - start_time:
+      end_time:
+      topic: Course introduction
+      url: lectures/01_course_introduction.html
+      details: |
+        - Welcome and overview of learning outcomes
+        - What the course is not
+    - start_time:
+      end_time:
+      topic: Introduction to R
+      details: |
+        - What is R
+        - Short history of R
+    - start_time:
+      end_time:
+      topic: Installing R and RStudio
+      url: lectures/03_rstudio.html
+      details: |
+        - Introduction to RStudio
+        - Walkthrough of download and installation
+        - Install some prerequisite packages, but don't go into details
+  - day:
+    - start_time:
+      end_time:
+      topic: Data visualisation with ggplot2
+      details: |
+        - Basic graphics
+        - The structure of a ggplot
+        - Don't talk about tidy data just yet, just use tidy data like `mpg`, `diamonds` and `nycflights13`.
+        - Factors and ordered factors
+  - day:
+    - start_time:
+      end_time:
+      topic: Basics of R programming
+      details: |
+        - Operators
+          - Basic operators (`+`, `-`, `/`, `%%`, etc)
+          - Comparators
+        - Data types
+          - Atomic types
+            - integer
+            - double
+            - logical
+            - character
+            - (complex)
+            - factor
+          - Vectors
+          - Lists
+          - Data frames
+        - Live demonstrations and practice using learnr (?)
+    - start_time:
+      end_time:
+      topic: How to get help
+      details: |
+        - Specific functions: `?`, `??`, `help`, F1, help pane
+        - General problems: Google, Stackoverflow
+        - RStudio cheat sheets
+  - day:
+    - start_time:
+      end_time:
+      topic: R packages
+      url: lectures/07_packages.html
+      details: |
+        - What is an R package?
+          - What is the base package?
+        - R packages that I use (almost) daily
+          - here
+          - conflicted
+          - dplyr
+          - ggplot2
+          - purrr
+        - Many of these packages are part of the tidyverse
+    - start_time:
+      end_time:
+      topic: Functions
+      details: |
+        - What are they?
+        - How are they structured?
+  - day:
+    - start_time:
+      end_time:
+      topic: Data wrangling using dplyr
+      details: |
+        - Examples using the built-in datasets
+          - `mpg`, `diamonds`, `nycflights13`
+        - Filtering
+        - Summarising
+          - dplyr grouping
+        - Joining datasets
+          - dplyr join methods
+        - RStudio cheat sheets
+    - start_time:
+      end_time:
+      topic: Tidy data
+      details: |
+        - What are some best practices when it comes to data representation?
+          - Each column is a variable
+          - Each row is an observation
+        - tidyverse
+        - Examples of how untidy data can make life difficult
+        - Are there times when these practices are not applicable?
+  - day:
+    - start_time:
+      end_time:
+      topic: Reproducibility in data science
+      details: |
+        - Why is reproducibility important?
+          - Reproducibility crisis
+          - Difference between reproducibility and repeatability
+        - Project structure
+        - RStudio projects
+        - Coding standards
+        - How to ask for help
+          - reprex package
+          - Rubber ducking
+    - start_time:
+      end_time:
+      topic: Loading data into R
+      details: |
+        - readr package
+        - readxl package (?)
+        - Load the data from the first course
+  - day:
+    - start_time:
+      end_time:
+      topic: "Advanced plotting: The grammar of graphics"
+      details: |
+        - The grammar helps us make *correct* plots
+        - How does it help us make *good* plots?
+    - start_time:
+      end_time:
+      topic: "Advanced plotting: Dos and don'ts"
+      details: |
+        - Use of colour
+          - What colour scales to use when
+          - Discrete vs continuous
+          - Colour blindness
+        - Things to avoid
+          - Dynamite plots
+          - Pie charts
+          - 3D charts
+        - [Anscombe's quartet](https://en.wikipedia.org/wiki/Anscombe%27s_quartet)
+        - [Same stats, different graphs](https://www.autodesk.com/research/publications/same-stats-different-graphs)
+  - day:
+    - start_time:
+      end_time:
+      topic: Data quality control
+      details: |
+        - Always look at your data
+  - day:
+    - start_time:
+      end_time:
+      topic: More on reproducibility
+      details: |
+        - Transparency
+        - Preprints
+    - start_time:
+      end_time:
+      topic: "Code sharing: RMarkdown"
+      details: |
+        - What is (R)markdown?
+        - Example of how to create a self-documenting analysis
+    - start_time:
+      end_time:
+      topic: "Data sharing"
+      details: |
+        - Becoming more and more of a requirement by journals
+        - Zenodo
+        - Figshare
+        - Repositories for larger datasets (e.g. SRA, ENA)
+  - day:
+    - start_time:
+      end_time:
+      topic: Large-scale data
+      details: |
+        - How large is large?
+        - Examples of large-scale data
+          - Omics data
+        - Generally, we don't want to work with large-scale data directly in R
+          - Identify what is needed
+          - Extract what is needed
+        - Example: RNA-Seq
+          - Loading into R
+  - day:
+    - start_time:
+      end_time:
+      topic: Quality control for large-scale data
+      details: |
+        - PCA
+        - UPSC pipeline for Biological QA
+  - day:
+    - start_time:
+      end_time:
+      topic: Visualising large-scale data
+      details: |
+        - Plotting whole datasets
+          - PCA, MDS
+          - Heatmaps
+          - Venn diagrams
+        - Plotting subsets of large datasets
+          - How do we choose a subset
+          - Faceting in ggplot2
+  - day:
+    - start_time:
+      end_time:
+      topic: Data transformations
+      details: |
+        - `mutate`, `scale`, `log`
+        - Testing for normality
+          - Q-Q plots
+        - Heteroskedasticity
+          - What is it?
+          - Why do we see it?
+  - day:
+    - start_time:
+      end_time:
+      topic: Statistical testing
+      details: |
+        - t-test
+        - ANOVA
+        - Linear regression
+        - More in-depth explanation of factors
+  - day:
+    - start_time:
+      end_time:
+      topic: Statistical testing of course data
+      details: |
+        - qPCR?
+        - Pairwise review of the outcome
+        - Are conclusions supported by the tests?
+  - day:
+    - start_time:
+      end_time:
+      topic: "Advanced R: Functions"
+      details: |
+        - Writing your own functions
+          - Get specification on inputs and outputs
+  - day:
+    - start_time:
+      end_time:
+      topic: "Flow control"
+      details: |
+        - Choices
+          - `if`, `switch`
+        - Loops
+          - `for`, `while`
+    - start_time:
+      end_time:
+      topic: Vectorisation
+      details: |
+        - Why are `for` loops often slow?
+        - Difference between `&`/`&&`, and `|`/`||`
+  - day:
+    - start_time:
+      end_time:
+      topic: Writing your own functions
+      details: |
+        - Worked examples from the two previous days
+  - day:
+    - start_time:
+      end_time:
+      topic: "Dataset 1: Overview and discussion"
+      details:
+  - day:
+    - start_time:
+      end_time:
+      topic: "Dataset 1: Generating analyses and justifying decisions"
+      details:
+  - day:
+    - start_time:
+      end_time:
+      topic: "Dataset 2: Overview and discussion"
+      details:
+  - day:
+    - start_time:
+      end_time:
+      topic: "Dataset 2: Generating analyses and justifying decisions"
+      details:
+  - day:
+    - start_time:
+      end_time:
+      topic: Examination

@@ -1,0 +1,30 @@
+name: psbrII
+output_dir: docs
+navbar:
+  name: Practical skills for biology research II
+  left:
+    - text: Home
+      href: index.html
+    - text: Schedule
+      href: schedule.html
+    - text: Overview
+      href: overview.html
+    - text: Lectures
+      menu:
+        - text: Week 1
+          menu:
+          - text: Course introduction
+            href: lectures/01_course_introduction.html
+          - text: RStudio
+            href: lectures/03_rstudio.html
+        - text: Week 2
+        - text: Week 3
+        - text: Week 4
+        - text: Week 5
+    - text: Suggested reading
+      href: suggested_reading.html
+
+  right:
+    - text: Github
+      icon: fab fa-github
+      href: "https://github.com/maehler/psbr2"

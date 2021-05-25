@@ -1,0 +1,12 @@
+revealjs::revealjs_presentation:
+  css: ../css/style.css
+  theme: night
+  highlight: zenburn
+  transition: slide
+  fig_retina: true
+  smart: true
+  hash: true
+  slide_level: 1
+  reveal_options:
+    slideNumber: false
+    navigationMode: default

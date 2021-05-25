@@ -1,0 +1,74 @@
+---
+title: PSBR II 2021 -- Course overview
+---
+
+## Philosophy behind the course structure
+
+I took some inspiration from [R for Data Science][r4ds] when it comes to what order to introduce different concepts.
+Their idea is to start with plotting, without any introduction to the R programming language whatsoever, including no explanation of the data types that are used when plotting.
+This is meant to start with introducing the visual stuff that you can play around with and get immediate (and sometimes pretty) feedback.
+After having seen what you can do in terms of visualising your data, only then do they start to talk about how to import data and tidying it up in order to be able to visualise it, using the visualisation as a motivation for the more boring task of cleaning you data.
+
+[r4ds]: https://r4ds.had.co.nz
+
+## Topics
+
+These are the topics covered in the course, and each heading represents a lecture.
+A rough outline of the content is listed for each topic.
+The content is listed in the order it appears in the course.
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+library(conflicted)
+library(here)
+library(yaml)
+library(lubridate)
+library(htmltools)
+library(purrr)
+
+schedule_data <- read_yaml(here("_schedule.yml"))
+current_day <- as_date(schedule_data$start_date) - days(1)
+
+new_week <- TRUE
+next_day <- function() {
+  if (lubridate::wday(current_day) == 6) {
+    current_day <<- current_day +days(3)
+    new_week <<- TRUE
+  } else {
+    current_day <<- current_day + lubridate::days(1)
+    new_week <<- FALSE
+  }
+  current_day
+}
+
+format_current_day <- function() {
+  weekday <- lubridate::wday(current_day, label = TRUE, abbr = FALSE)
+  month <- lubridate::month(current_day)
+  monthday <- lubridate::mday(current_day)
+  week_number <- lubridate::week(current_day)
+  if (new_week) {
+    paste0("## Week ", week_number, "\n\n",
+           "### ", weekday, " ", monthday, "/", month)
+  } else {
+    paste0("### ", weekday, " ", monthday, "/", month)
+  }
+}
+
+new_day <- function() {
+  next_day()
+  format_current_day()
+}
+
+tags$div(map(schedule_data$schedule, ~ {
+  tags$div(map(.$day, function(item) {
+    tags$div(
+      tags$h3(item$topic),
+      if (!is.null(item$details))
+        tags$div(
+          HTML(markdown::markdownToHTML(text = item$details,
+                                        fragment.only = TRUE))
+        )
+    )
+  }))
+}))
+```
+

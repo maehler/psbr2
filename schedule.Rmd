@@ -1,0 +1,68 @@
+---
+title: PSBR II 2021 -- Schedule
+---
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+library(conflicted)
+library(here)
+library(yaml)
+library(lubridate)
+library(htmltools)
+library(purrr)
+
+schedule_data <- read_yaml(here("_schedule.yml"))
+current_day <- as_date(schedule_data$start_date) - days(1)
+
+next_day <- function() {
+  if (wday(current_day) == 6) {
+    current_day <<- current_day + days(3)
+    new_week <<- TRUE
+  } else {
+    current_day <<- current_day + lubridate::days(1)
+    new_week <<- FALSE
+  }
+  current_day
+}
+
+format_current_day <- function() {
+  weekday <- wday(current_day, label = TRUE, abbr = FALSE)
+  month <- month(current_day)
+  monthday <- mday(current_day)
+  week_number <- week(current_day)
+  paste0(weekday, " ", monthday, "/", month)
+}
+
+new_day <- function() {
+  next_day()
+  format_current_day()
+}
+
+table_head <- tags$thead(
+    tags$tr(
+      class = "header",
+      tags$th(align = "left", "Date"),
+      tags$th(align = "left", "Time"),
+      tags$th(align = "left", "Topic")
+    )
+)
+
+table_rows <- map(schedule_data$schedule, ~ {
+  n_items <- length(.$day)
+  current_row <- 1
+  rows <- map2(.$day, seq_len(n_items), function(item, i) {
+     tags$tr(
+       class = if (i %% 2 == 0) "even" else "odd",
+       if (i == 1) tags$td(rowspan = n_items, style = "vertical-align: middle;", new_day()),
+       tags$td(if (!is.null(item$start_time)) paste0(item$start_time, "-", item$end_time), ""),
+       tags$td(if (!is.null(item$url)) tags$a(href = item$url, item$topic) else item$topic)
+     )
+  })
+})
+
+table_body <- tags$tbody(table_rows)
+
+tags$table(
+  table_head,
+  table_body
+)
+```
