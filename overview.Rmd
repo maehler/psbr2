@@ -26,37 +26,6 @@ library(htmltools)
 library(purrr)
 
 schedule_data <- read_yaml(here("_schedule.yml"))
-current_day <- as_date(schedule_data$start_date) - days(1)
-
-new_week <- TRUE
-next_day <- function() {
-  if (lubridate::wday(current_day) == 6) {
-    current_day <<- current_day +days(3)
-    new_week <<- TRUE
-  } else {
-    current_day <<- current_day + lubridate::days(1)
-    new_week <<- FALSE
-  }
-  current_day
-}
-
-format_current_day <- function() {
-  weekday <- lubridate::wday(current_day, label = TRUE, abbr = FALSE)
-  month <- lubridate::month(current_day)
-  monthday <- lubridate::mday(current_day)
-  week_number <- lubridate::week(current_day)
-  if (new_week) {
-    paste0("## Week ", week_number, "\n\n",
-           "### ", weekday, " ", monthday, "/", month)
-  } else {
-    paste0("### ", weekday, " ", monthday, "/", month)
-  }
-}
-
-new_day <- function() {
-  next_day()
-  format_current_day()
-}
 
 tags$div(map(schedule_data$schedule, ~ {
   tags$div(map(.$day, function(item) {
