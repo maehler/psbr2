@@ -19,7 +19,7 @@ RStudio project root directory.
 
 OPTIONS:
 
-  -t --template FILE  template to use [default: lectures/template.Rmd]
+  -t --template FILE  template to use [default: lectures/_template.Rmd]
   -o --outdir DIR     output directory [default: lectures]
   -f --force          create a skeleton even if a file exists
   -h                  show this help text and exit" -> doc
