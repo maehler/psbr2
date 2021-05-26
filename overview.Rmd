@@ -25,6 +25,8 @@ library(lubridate)
 library(htmltools)
 library(purrr)
 
+conflict_prefer("map", "purrr")
+
 schedule_data <- read_yaml(here("_schedule.yml"))
 
 tags$div(map(schedule_data$schedule, ~ {
