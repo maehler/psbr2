@@ -1,6 +1,6 @@
 ---
 title: Practical Skills for<br>Biology Research II
-subtitle: {{topic}}
+subtitle: "{{topic}}"
 author: Niklas Mähler
 date: {{date}}
 editor_options:
