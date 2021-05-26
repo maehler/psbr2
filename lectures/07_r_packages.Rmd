@@ -1,15 +1,15 @@
 ---
 title: Practical Skills for<br>Biology Research II
-subtitle: Installing RStudio
+subtitle: R packages
 author: Niklas Mähler
-date: 2021-01-01
-editor_options: 
+date: 2021-10-05
+editor_options:
   chunk_output_type: console
 ---
 
-```{r setup, echo = FALSE, cache = FALSE}
+```{r setup, include = FALSE}
 source(here::here("scripts/setup.R"))
-setup_presentation("lecture3")
+setup_presentation("r_packages")
 ```
 
 # Learning goals

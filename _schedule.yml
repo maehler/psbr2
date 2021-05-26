@@ -16,7 +16,7 @@ schedule:
         - Short history of R
     - start_time:
       end_time:
-      topic: Installing R and RStudio
+      topic: RStudio
       url: lectures/03_rstudio.html
       details: |
         - Introduction to RStudio
@@ -62,7 +62,7 @@ schedule:
     - start_time:
       end_time:
       topic: R packages
-      url: lectures/07_packages.html
+      url: lectures/07_r_packages.html
       details: |
         - What is an R package?
           - What is the base package?
