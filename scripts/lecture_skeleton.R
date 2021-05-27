@@ -11,18 +11,21 @@ suppressPackageStartupMessages({
 
 source(here("scripts/date_functions.R"))
 
-"usage: lecture_skeleton.R [-h]
+"Create lecture skeletons
 
 Create skeletons for all lectures based on -schedule.yml.
 All relative paths will be resolved in relation to the
 RStudio project root directory.
 
-OPTIONS:
+Usage:
+  lecture_skeleton.R [-f] [-t FILE] [-o DIR] [N ...]
+  lecture_skeleton.R (-h | --help)
 
+Options:
   -t --template FILE  template to use [default: lectures/_template.Rmd]
   -o --outdir DIR     output directory [default: lectures]
   -f --force          create a skeleton even if a file exists
-  -h                  show this help text and exit" -> doc
+  -h --help           show this help text and exit" -> doc
 
 args <- docopt::docopt(doc)
 

@@ -11,14 +11,14 @@ suppressPackageStartupMessages({
 "Render site
 
 Usage:
-  render.R lecture N [N ...]
+  render.R lecture [--dir DIR] [--outdir DIR] N [N ...]
   render.R site
   render.R (-h | --help)
 
 Options:
   -d --dir DIR     directory containing Rmd files to render [default: lectures]
   -o --outdir DIR  output directory for rendered files [default: lectures]
-  -h               show this help text and exit" -> doc
+  -h --help        show this help text and exit" -> doc
 
 args <- docopt::docopt(doc)
 
