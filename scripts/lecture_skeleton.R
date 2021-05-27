@@ -52,9 +52,16 @@ topic_df <- tibble(
     here()
 )
 
+if (length(args$N) > 0) {
+  topic_df <- topic_df %>% slice(all_of(as.integer(args$N)))
+}
+
+any_exists <- FALSE
+
 pwalk(topic_df, ~ {
-  if (file_exists(..5)) {
-    return
+  if (!args$force && file_exists(..5)) {
+    any_exists <<- TRUE
+    return()
   }
   template_lines <- read_lines(here(args$template))
   script_lines <- template_lines %>%
@@ -62,4 +69,10 @@ pwalk(topic_df, ~ {
     str_replace("\\{\\{date\\}\\}", format(..3, format = "%Y-%m-%d")) %>%
     str_replace("\\{\\{topic_slug\\}\\}", ..4)
   write_lines(script_lines, file = ..5)
+  message(str_c("Created skeleton for \"", ..1, "\" -> ",
+                fs::path(args$outdir, basename(..5))))
 })
+
+if (any_exists) {
+  warning("Some of the files already exist, rerun with --force to overwrite")
+}
