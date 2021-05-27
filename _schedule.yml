@@ -31,6 +31,13 @@ schedule:
         - The structure of a ggplot
         - Don't talk about tidy data just yet, just use tidy data like `mpg`, `diamonds` and `nycflights13`.
         - Factors and ordered factors
+    - start_time:
+      end_time:
+      topic: How to get help
+      details: |
+        - Specific functions: `?`, `??`, `help`, F1, help pane
+        - General problems: Google, Stackoverflow
+        - RStudio cheat sheets
   - day:
     - start_time:
       end_time:
@@ -51,13 +58,6 @@ schedule:
           - Lists
           - Data frames
         - Live demonstrations and practice using learnr (?)
-    - start_time:
-      end_time:
-      topic: How to get help
-      details: |
-        - Specific functions: `?`, `??`, `help`, F1, help pane
-        - General problems: Google, Stackoverflow
-        - RStudio cheat sheets
   - day:
     - start_time:
       end_time:
