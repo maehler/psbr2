@@ -8,6 +8,7 @@ schedule:
       details: |
         - Welcome and overview of learning outcomes
         - What the course is not
+        - Learning objectives and practical assignments
     - start_time:
       end_time:
       topic: Introduction to R
@@ -72,6 +73,8 @@ schedule:
           - dplyr
           - ggplot2
           - purrr
+          - stringr
+          - readr
         - Many of these packages are part of the tidyverse
     - start_time:
       end_time:
@@ -144,6 +147,13 @@ schedule:
           - 3D charts
         - [Anscombe's quartet](https://en.wikipedia.org/wiki/Anscombe%27s_quartet)
         - [Same stats, different graphs](https://www.autodesk.com/research/publications/same-stats-different-graphs)
+  - day:
+    - start_time:
+      end_time:
+      topic: "Practical assignment 1"
+      details: |
+        - Make available in the morning, deadline at midnight
+        - Plotting of built-in datasets
   - day:
     - start_time:
       end_time:
@@ -262,24 +272,26 @@ schedule:
   - day:
     - start_time:
       end_time:
-      topic: "Dataset 1: Overview and discussion"
+      topic: "Practical assignment 2"
+      details: |
+        - Make available in morning
+        - Large scale data: ITS data from Andreas
+        - Plotting large scale data
+  - day:
+    - start_time:
+      end_time:
+      topic: "Practical assignment 2"
       details:
   - day:
     - start_time:
       end_time:
-      topic: "Dataset 1: Generating analyses and justifying decisions"
-      details:
+      topic: "Practical assignment 2"
+      details: |
+        - Deadline at midnight
   - day:
     - start_time:
       end_time:
-      topic: "Dataset 2: Overview and discussion"
-      details:
-  - day:
+      topic: Short-answer knowledge test
     - start_time:
       end_time:
-      topic: "Dataset 2: Generating analyses and justifying decisions"
-      details:
-  - day:
-    - start_time:
-      end_time:
-      topic: Examination
+      topic: Course evaluation
