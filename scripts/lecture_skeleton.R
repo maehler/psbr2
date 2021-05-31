@@ -11,6 +11,7 @@ suppressPackageStartupMessages({
   library(yaml)
 })
 
+conflict_prefer("filter", "dplyr", quiet = TRUE)
 source(here("scripts/date_functions.R"))
 
 "Create lecture skeletons
@@ -51,8 +52,13 @@ topic_df <- tibble(
     args$outdir,
     str_c(sprintf("%02d", seq_along(topic)),
           "_", topic_slug, ".Rmd")) %>%
-    here()
+    here(),
+  lecture = flatten_lgl(map(schedule_data$schedule,
+                            ~ map_lgl(.$day, ~ is.null(.$lecture) || .$lecture))),
 )
+
+# Only include topics that should have lectures associated with them
+topic_df <- topic_df %>% filter(lecture)
 
 if (length(args$N) > 0) {
   topic_df <- topic_df %>% slice(all_of(as.integer(args$N)))

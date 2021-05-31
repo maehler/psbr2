@@ -154,6 +154,7 @@ schedule:
       details: |
         - Make available in the morning, deadline at midnight
         - Plotting of built-in datasets
+      lecture: false
   - day:
     - start_time:
       end_time:
@@ -277,21 +278,26 @@ schedule:
         - Make available in morning
         - Large scale data: ITS data from Andreas
         - Plotting large scale data
+      lecture: false
   - day:
     - start_time:
       end_time:
       topic: "Practical assignment 2"
       details:
+      lecture: false
   - day:
     - start_time:
       end_time:
       topic: "Practical assignment 2"
       details: |
         - Deadline at midnight
+      lecture: false
   - day:
     - start_time:
       end_time:
       topic: Short-answer knowledge test
+      lecture: false
     - start_time:
       end_time:
       topic: Course evaluation
+      lecture: false
