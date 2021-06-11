@@ -1,0 +1,19 @@
+/* Font size control */
+.small, .small .remark-code { font-size: 0.8em; }
+.smaller, .smaller .remark-code { font-size: 0.6em; }
+
+/* Image tiling */
+.tile {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.overlay-container {
+  position: relative;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+}

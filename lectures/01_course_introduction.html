@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Practical skills for biology research II</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Niklas Mähler" />
+    <meta name="date" content="2021-09-30" />
+    <script src="libs/header-attrs-2.8/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/niklas.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: left, top, title-slide
+
+# Practical skills for biology research II
+## Course Introduction
+### Niklas Mähler
+### Umeå University
+### 2021-09-30
+
+---
+
+
+
+
+# Who am I?
+
+.pull-left[
+- Niklas Mähler
+- Born in Graninge, Sweden in 1986
+- Master in Plant Biotechnology at Umeå University 2012
+- PhD in Bioinformatics at the Norwegian University of Life Sciences 2016
+- Postdoc/research engineer at UPSC since 2016
+- Free time activities
+    - Cycling
+    - Video games
+    - Programming
+]
+
+.pull-right[
+![](01_course_introduction_files/figure-html/me_map-1.png)&lt;!-- --&gt;
+]
+
+---
+
+# Expected learning outcomes
+
+--
+
+&gt; 1. Understand how to appropriately enter and store primary and meta data from a range of experiment types including field, greenhouse and molecular biology assay scale datasets.
+
+--
+
+&gt; 2. Produce new and utilise existing R scripts and use help resources to apply R functions.
+
+--
+
+&gt; 3. Demonstrate understanding of how to perform an visualise quality control checks of a range of data types including data structure, technical reproducibility and biological variance.
+
+--
+
+&gt; 4. Produce appropriate figures that demonstrate understanding of the difficulties, and solutions for, visualisation of large-scale data.
+
+--
+
+&gt; 5. Be able to apply statistical tests to test hypotheses.
+
+--
+
+&gt; 6. Justify the selection of analysis and visualisation methods.
+
+---
+
+# What are we going to look at?
+
+---
+
+# Data!
+
+- What is data?
+- How to format data
+- How to deal with big datasets
+
+---
+
+# Code!
+
+.small[
+
+```r
+library(tidyverse)
+library(maps)
+
+nordic_map &lt;- map_data("world",
+                       region = c("sweden", "norway", "finland",
+                                  "denmark", "germany", "poland",
+                                  "estonia", "latvia", "lithuania",
+                                  "russia", "belarus"))
+
+locations &lt;- tibble(
+  name = c("Graninge", "Umeå", "Ås"),
+  lat = c(63.07, 63.80, 59.67),
+  long = c(16.94, 20.21, 10.77)
+)
+
+ggplot(nordic_map, aes(x = long, y = lat)) +
+  geom_polygon(aes(group = group),
+               fill = "steelblue",
+               colour = "#CCCCCC") +
+  geom_point(data = locations,
+             fill = "red", colour = "white",
+             size = 5, pch = 21) +
+  geom_text(data = locations, aes(label = name),
+            colour = "white",
+            hjust = 1.3, vjust = 0.3,
+            size = 12) +
+  coord_map(xlim = c(0, 40), ylim = c(55, 71)) + 
+  labs(x = "Longitude", y = "Latitude") +
+  theme_reveal_night()
+```
+]
+
+---
+
+# Figures!
+
+- Best practices
+- What to use and when
+- Accessibility
+
+---
+
+# Sharing stuff!
+
+- How to share code
+- How to ask for help
+- Reproducibility
+- Transparent research
+
+---
+
+# What this course is not
+
+--
+
+- A programming course
+--
+
+- A statistics course
+--
+
+- A Unix/Linux course
+
+---
+
+# Recommended literature
+
+.pull-left[
+- R for Data Science
+  .smaller[&lt;br&gt;&lt;https://r4ds.had.co.nz&gt;]
+- Hands-On Programming with R
+  .smaller[&lt;br&gt;&lt;https://rstudio-education.github.io/hopr/&gt;]
+- ggplot2
+  .smaller[&lt;br&gt;&lt;https://ggplot2-book.org/&gt;]
+- R Graphics Cookbook
+  .smaller[&lt;br&gt;&lt;https://r-graphics.org/&gt;]
+- R Markdown: The Definitive Guide
+  .smaller[&lt;br&gt;&lt;https://bookdown.org/yihui/rmarkdown/&gt;]
+- Advanced R
+  .smaller[&lt;br&gt;&lt;https://adv-r.hadley.nz/&gt;]
+]
+
+.pull-right.tile[
+![:scale 39%](https://d33wubrfki0l68.cloudfront.net/b88ef926a004b0fce72b2526b0b5c4413666a4cb/24a30/cover.png)
+![:scale 45%](https://r-graphics.org/cover.jpg)
+![:scale 42%](https://d33wubrfki0l68.cloudfront.net/565916198b0be51bf88b36f94b80c7ea67cafe7c/7f70b/cover.png)
+![:scale 45%](https://ggplot2-book.org/cover.jpg)
+]
+
+---
+
+# Tools that will be used
+
+- [R](02_introduction_to_r.html)
+- [RStudio](03_rstudio.html)
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="js/macros.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

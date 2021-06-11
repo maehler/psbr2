@@ -1,18 +1,12 @@
 ---
-title: Practical Skills for<br>Biology Research II
-subtitle: RStudio
-author: Niklas Mähler
-date: 2021-01-01
-editor_options: 
-  chunk_output_type: console
+title: "Practical skills for biology research II"
+subtitle: "RStudio"
+author: "Niklas Mähler"
+institute: "Umeå University"
+date: "2021-09-30"
 ---
 
-```{r setup, echo = FALSE, cache = FALSE}
-source(here::here("scripts/setup.R"))
-setup_presentation("lecture2")
-```
-
-# What is RStudio? { data-transition="slide-in fade-out" }
+# What is RStudio?
 
 - Integrated Development Environment (IDE)
 - Basically an advanced text editor that knows
@@ -22,32 +16,26 @@ setup_presentation("lecture2")
   - Can display help for any functions in the language
   - And much, much more
 
-# What is RStudio? { data-transition="fade" }
+---
 
-```{r}
-tags$figure(
-  tags$img(src = base64_img(here("img/rstudio_screenshot.png"))),
-  tags$figcaption("Screenshot of my RStudio window when writing this slide")
-)
-```
+# What is RStudio?
 
+.figure.center[
+![:scale 75%](../img/rstudio_screenshot.png)
+.caption[
+Screenshot of my Rstudio window when writing this slide
+]]
 
-# What is RStudio? { data-transition="fade-in slide-out" }
+---
+
+# What is RStudio?
 
 - Open source
-- Free as in free speech, not as in free beer
-  - Free version more than enough for our needs though
-- RStudio doesn't bundle R itself, this has to be installed separately
+- Freely available
+  - Also commercial options available
+- RStudio doesn't come with R; it has to be installed separately
 
-# Install R
-
-- Main website: <https://r-project.org>
-
-- Windows:<br><https://ftp.acc.umu.se/mirror/CRAN/bin/windows/base/R-4.0.5-win.exe>
-- Mac (High Sierra or later):<br><https://ftp.acc.umu.se/mirror/CRAN/bin/macosx/R-4.0.5.pkg>
-- Linux (you know what you're doing):<br><https://ftp.acc.umu.se/mirror/CRAN/bin/linux/>
-
-If you can't find a version for your system, go to the main site and navigate from there.
+---
 
 # Install RStudio
 
@@ -55,8 +43,76 @@ If you can't find a version for your system, go to the main site and navigate fr
 
 Go to <https://www.rstudio.com/products/rstudio/download/#download> and download the installer for your platform, run it and follow the instructions.
 
+---
+
+# Interface
+
+.center[![:scale 75%](../img/rstudio_default.png)]
+
+---
+
+# Interface
+
+.overlay-container.center[
+![:scale 75%](../img/rstudio_default.png)
+
+<!-- <svg class="overlay" viewBox="-1 -1 162 92"> -->
+<!-- <rect y="6" width="85" height="83" fill="transparent" stroke="red"> -->
+<!-- </svg> -->
+]
+
+.center[Console]
+.small.center[Where you can type commands interactively]
+
+---
+
+# Interface
+
+.overlay-container.center[
+![:scale 75%](../img/rstudio_default.png)
+
+<!-- <svg class="overlay" viewBox="-1 -1 162 92"> -->
+<!-- <rect x="87" y="6" width="73" height="27" fill="transparent" stroke="red"> -->
+<!-- </svg> -->
+]
+
+.center[Environment]
+.small.center[Variables that have been defined in your session]
+
+---
+
+# Interface
+
+.overlay-container.center[
+![:scale 75%](../img/rstudio_default.png)
+
+<!-- <svg class="overlay" viewBox="-1 -1 162 92"> -->
+<!-- <rect x="87" y="34" width="73" height="55" fill="transparent" stroke="red"> -->
+<!-- </svg> -->
+]
+
+.center[Files]
+.small.center[File system navigator]
+
+---
+
 # Customising RStudio
 
+.pull-left[
 RStudio is very customisable, both when it comes to appearances and function.
 Take some time to set it up to your liking.
-This will make the whole experience more enjoyable.
+
+- Default panes
+- Pane locations
+- Editor behaviour
+- Interface colours
+- Syntax highlighting
+]
+
+.pull-right[
+![:scale 75%](../img/rstudio_settings.png)
+]
+
+???
+
+You might not know now what you like, but that's hopefully something that you will get a better idea of throughout the course.

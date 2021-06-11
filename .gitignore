@@ -3,8 +3,6 @@
 .RData
 .Ruserdata
 .DS_Store
-lectures/cache/
-lectures/**/*.html
 **/*cache/
 docs/LICENSE
 docs/img/

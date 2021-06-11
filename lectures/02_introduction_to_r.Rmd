@@ -1,0 +1,61 @@
+---
+title: "Practical Skills for Biology Research II"
+subtitle: "Introduction to R"
+author: "Niklas Mähler"
+institute: "Umeå University"
+date: "2021-09-30"
+---
+
+# What is R?
+
+> R is a language for statistical computing and graphics
+
+- R Foundation for Statistical Computing
+
+---
+
+# A brief history of R
+
+- S: developed at Bell Labs in the 70s
+- R is an implementation of S
+  - First version in 1993
+- Freely available
+
+---
+
+# Why use R?
+
+.pull-left[
+## Pros
+- Free
+- Easy to get started
+- Excellent plotting tools
+- Many ways of accomplishing the same task
+]
+
+.pull-right[
+## Cons
+- Peculiar style
+- Slow
+- Many ways of accomplishing the same task
+]
+
+---
+
+# CRAN
+
+- The Comprehensive R Archive Network
+  - <https://cran.r-project.org/>
+- Network of servers with R source code
+  - One in Umeå: <https://ftp.acc.umu.se/mirror/CRAN/>
+    - Use this for your R-related downloads
+    
+---
+
+# Installing R
+
+- Windows:<br>.small[<https://ftp.acc.umu.se/mirror/CRAN/bin/windows/base/R-4.1.0-win.exe>]
+- Mac (High Sierra or later):<br>.small[<https://ftp.acc.umu.se/mirror/CRAN/bin/macosx/R-4.1.0.pkg>]
+- Linux (you know what you're doing):<br>.small[<https://ftp.acc.umu.se/mirror/CRAN/bin/linux/>]
+
+If you can't find a version for your system, go to the [main site](https://ftp.acc.umu.se/mirror/CRAN/) and navigate from there.

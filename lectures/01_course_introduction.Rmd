@@ -1,39 +1,36 @@
 ---
-title: Practical Skills for<br>Biology Research II
-subtitle: Introduction
-author: Niklas Mähler
-date: 2021-01-01
-editor_options: 
-  chunk_output_type: console
+title: "Practical skills for biology research II"
+subtitle: "Course Introduction"
+author: "Niklas Mähler"
+institute: "Umeå University"
+date: "2021-09-30"
 ---
 
-```{r setup, include = FALSE}
-source(here::here("scripts/setup.R"))
-setup_presentation("lecture1")
-```
-
-```{r packages, include = FALSE, cache = FALSE}
+```{r packages, include = FALSE}
+library(here)
+library(tidyverse)
 library(maps)
+library(mapproj)
+
+source(here("scripts/ggplot_themes.R"))
 ```
 
 # Who am I?
 
-<div class="multicol">
-<div class="small" style="width: 40%">
-
+.pull-left[
 - Niklas Mähler
 - Born in Graninge, Sweden in 1986
 - Master in Plant Biotechnology at Umeå University 2012
 - PhD in Bioinformatics at the Norwegian University of Life Sciences 2016
-- Research engineer at UPSC since 2016
+- Postdoc/research engineer at UPSC since 2016
 - Free time activities
     - Cycling
     - Video games
     - Programming
-</div>
+]
 
-<div>
-```{r map, fig.width = 6, dev.args=list(bg="transparent")}
+.pull-right[
+```{r me_map, echo = FALSE, fig.width = 6, dev.args=list(bg="transparent")}
 nordic_map <- map_data("world", region = c("sweden", "norway", "finland",
                                            "denmark", "germany", "poland",
                                            "estonia", "latvia", "lithuania",
@@ -54,20 +51,54 @@ ggplot(nordic_map, aes(x = long, y = lat)) +
   labs(x = "Longitude", y = "Latitude") +
   theme_reveal_night()
 ```
-</div>
-</div>
+]
+
+---
+
+# Expected learning outcomes
+
+--
+
+> 1. Understand how to appropriately enter and store primary and meta data from a range of experiment types including field, greenhouse and molecular biology assay scale datasets.
+
+--
+
+> 2. Produce new and utilise existing R scripts and use help resources to apply R functions.
+
+--
+
+> 3. Demonstrate understanding of how to perform an visualise quality control checks of a range of data types including data structure, technical reproducibility and biological variance.
+
+--
+
+> 4. Produce appropriate figures that demonstrate understanding of the difficulties, and solutions for, visualisation of large-scale data.
+
+--
+
+> 5. Be able to apply statistical tests to test hypotheses.
+
+--
+
+> 6. Justify the selection of analysis and visualisation methods.
+
+---
 
 # What are we going to look at?
+
+---
 
 # Data!
 
 - What is data?
-- How can we format data?
-- How to deal with big datasets?
+- How to format data
+- How to deal with big datasets
 
-# Source code!
+---
 
-```{r source_code_example, echo = TRUE, eval = FALSE}
+# Code!
+
+.small[
+```{r code_example, echo = TRUE, eval = FALSE}
 library(tidyverse)
 library(maps)
 
@@ -98,59 +129,68 @@ ggplot(nordic_map, aes(x = long, y = lat)) +
   labs(x = "Longitude", y = "Latitude") +
   theme_reveal_night()
 ```
+]
+
+---
 
 # Figures!
 
 - Best practices
+- What to use and when
 - Accessibility
+
+---
 
 # Sharing stuff!
 
 - How to share code
 - How to ask for help
+- Reproducibility
 - Transparent research
 
-# What do I expect you to know by the end of this course?
+---
 
-- Being able to use basic R commands to
-    - parse data that you have generated
-    - transform data to fit whatever downstream analysis you want to perform
-    - perform various statistical test (this is not a statistics course though)
-- Be able to describe what tidy data is and why this is something we would want to achieve
-- Know what version control systems are used for and be able to describe pros and cons with using these
+# What this course is not
+
+--
+
+- A programming course
+--
+
+- A statistics course
+--
+
+- A Unix/Linux course
+
+---
 
 # Recommended literature
 
-<div class="multicol stretch" style="justify-content: space-after;">
-<div style="min-width: 60%;">
-- R for Data Science<br><https://r4ds.had.co.nz/>
-- R graphics cookbook<br><https://r-graphics.org/>
-- Advanced R<br><https://adv-r.hadley.nz/>
-- ggplot2<br><https://ggplot2-book.org/>
-</div>
-```{r}
-tags$div(
-  style = "display: flex; align-items: center; justify-content: space-evenly; flex-wrap: wrap; height: 100%; width: 100%;",
-  tags$img(
-    src = "https://d33wubrfki0l68.cloudfront.net/b88ef926a004b0fce72b2526b0b5c4413666a4cb/24a30/cover.png",
-    style = "max-height: 40%"),
-  tags$img(
-    src = "https://r-graphics.org/cover.jpg",
-    style = "max-height: 40%"),
-  tags$img(
-    src = "https://d33wubrfki0l68.cloudfront.net/565916198b0be51bf88b36f94b80c7ea67cafe7c/7f70b/cover.png",
-    style = "max-height: 40%"),
-  tags$img(
-    src = "https://ggplot2-book.org/cover.jpg",
-    style = "max-height: 40%"),
-)
-```
-</div>
+.pull-left[
+- R for Data Science
+  .smaller[<br><https://r4ds.had.co.nz>]
+- Hands-On Programming with R
+  .smaller[<br><https://rstudio-education.github.io/hopr/>]
+- ggplot2
+  .smaller[<br><https://ggplot2-book.org/>]
+- R Graphics Cookbook
+  .smaller[<br><https://r-graphics.org/>]
+- R Markdown: The Definitive Guide
+  .smaller[<br><https://bookdown.org/yihui/rmarkdown/>]
+- Advanced R
+  .smaller[<br><https://adv-r.hadley.nz/>]
+]
 
-# A brief history of R
+.pull-right.tile[
+![:scale 39%](https://d33wubrfki0l68.cloudfront.net/b88ef926a004b0fce72b2526b0b5c4413666a4cb/24a30/cover.png)
+![:scale 45%](https://r-graphics.org/cover.jpg)
+![:scale 42%](https://d33wubrfki0l68.cloudfront.net/565916198b0be51bf88b36f94b80c7ea67cafe7c/7f70b/cover.png)
+![:scale 45%](https://ggplot2-book.org/cover.jpg)
+]
 
-# Why R?
+---
 
-R and Rstudio is extremely versatile
+# Tools that will be used
 
-All of the presentations that you will see during this course are made in Rstudio.
+- [R](02_introduction_to_r.html)
+- [RStudio](03_rstudio.html)

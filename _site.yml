@@ -1,5 +1,5 @@
 name: psbrII
-output_dir: docs
+output_dir: "."
 navbar:
   name: Practical skills for biology research II
   left:
