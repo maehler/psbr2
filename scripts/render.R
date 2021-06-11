@@ -28,15 +28,15 @@ if (args$site) {
   render_site()
 } else if (args$lecture) {
   if (length(args$N) == 1 && args$N == "all") {
-    fs::dir_ls(here(args$dir), type = "file", glob = "*.Rmd") %>% 
+    fs::dir_ls(fs::path_rel(here(args$dir), here()), type = "file", glob = "*.Rmd") %>% 
       Filter(x = ., f = function(x) !str_detect(basename(x), "^_")) %>% 
       walk(~ {
-        render(., output_dir = args$outdir)
+        render(., knit_root_dir = here(args$dir))
       })
   } else {
     walk(args$N, ~ {
       rmd_filename <- fs::dir_ls(
-        here(args$dir), type = "file",
+        fs::path_rel(here(args$dir), here()), type = "file",
         glob = str_c(sprintf("*/%02d", as.integer(.)), "*.Rmd"))
       cat(rmd_filename, '\n')
       if (length(rmd_filename) == 0) {
@@ -44,7 +44,8 @@ if (args$site) {
       } else if (length(rmd_filename) > 1) {
         stop(str_c("more than one file found for lecture ", .))
       }
-      render(names(rmd_filename), output_dir = args$outdir)
+      render(names(rmd_filename),
+             knit_root_dir = here(args$dir))
     })
   }
 }
