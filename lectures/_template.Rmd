@@ -1,8 +1,9 @@
 ---
-title: Practical Skills for<br>Biology Research II
+title: "Practical Skills for Biology Research II"
 subtitle: "{{topic}}"
-author: Niklas Mähler
-date: {{date}}
+author: "Niklas Mähler"
+institute: "Umeå University"
+date: "{{date}}"
 editor_options:
   chunk_output_type: console
 ---

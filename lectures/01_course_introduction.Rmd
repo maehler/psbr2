@@ -6,13 +6,14 @@ institute: "Umeå University"
 date: "2021-09-30"
 ---
 
+```{r setup, include = FALSE}
+source(here::here("scripts/setup.R"))
+setup_presentation("course_introduction")
+```
+
 ```{r packages, include = FALSE}
-library(here)
-library(tidyverse)
 library(maps)
 library(mapproj)
-
-source(here("scripts/ggplot_themes.R"))
 ```
 
 # Who am I?

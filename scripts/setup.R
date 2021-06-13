@@ -1,8 +1,7 @@
 setup_presentation <- function(cache_prefix) {
-  knitr::opts_chunk$set(echo = FALSE, cache = TRUE, autodep = TRUE,
-                        fig.align = "center",
-                        cache.path = paste0("./cache/", cache_prefix, "/"),
-                        fig.path = paste0("./cache/", cache_prefix, "/"))
+  knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.retina = 2,
+                        cache.path = paste0("./figures/", cache_prefix, "_"),
+                        fig.path = paste0("./figures/", cache_prefix, "_"))
   suppressPackageStartupMessages({
     library(conflicted)
     library(tidyverse)
