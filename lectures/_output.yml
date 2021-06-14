@@ -1,10 +1,10 @@
 xaringan::moon_reader:
-    lib_dir: libs
-    css: [default, default-fonts, css/niklas.css]
-    nature:
-      ratio: "16:9"
-      beforeInit: js/macros.js
-      highlightStyle: github
-      highlightLines: true
-      countIncrementalSlides: false
-      titleSlideClass: [left, top]
+  lib_dir: libs
+  css: [default, css/niklas.css, css/niklas-fonts.css]
+  nature:
+    ratio: "16:9"
+    beforeInit: js/macros.js
+    highlightStyle: github
+    highlightLines: true
+    countIncrementalSlides: false
+    titleSlideClass: [left, middle, inverse]

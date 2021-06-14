@@ -31,7 +31,7 @@ library(mapproj)
 ]
 
 .pull-right[
-```{r me_map, echo = FALSE, fig.width = 6, dev.args=list(bg="transparent")}
+```{r me_map, echo = FALSE, fig.height = 6, ev.args=list(bg="transparent")}
 nordic_map <- map_data("world", region = c("sweden", "norway", "finland",
                                            "denmark", "germany", "poland",
                                            "estonia", "latvia", "lithuania",
@@ -49,8 +49,7 @@ ggplot(nordic_map, aes(x = long, y = lat)) +
   geom_text(data = locations, aes(label = name), colour = "white",
             hjust = 1, nudge_x = -1, nudge_y = 0.1, size = 6) +
   coord_map(xlim = c(0, 40), ylim = c(55, 71)) +
-  labs(x = "Longitude", y = "Latitude") +
-  theme_reveal_night()
+  labs(x = "Longitude", y = "Latitude")
 ```
 ]
 
@@ -180,13 +179,17 @@ ggplot(nordic_map, aes(x = long, y = lat)) +
   .smaller[<br><https://bookdown.org/yihui/rmarkdown/>]
 - Advanced R
   .smaller[<br><https://adv-r.hadley.nz/>]
+  
+All of these books are freely available online
 ]
 
 .pull-right.tile[
-![:scale 39%](https://d33wubrfki0l68.cloudfront.net/b88ef926a004b0fce72b2526b0b5c4413666a4cb/24a30/cover.png)
-![:scale 45%](https://r-graphics.org/cover.jpg)
-![:scale 42%](https://d33wubrfki0l68.cloudfront.net/565916198b0be51bf88b36f94b80c7ea67cafe7c/7f70b/cover.png)
-![:scale 45%](https://ggplot2-book.org/cover.jpg)
+![:scale 25%](https://d33wubrfki0l68.cloudfront.net/b88ef926a004b0fce72b2526b0b5c4413666a4cb/24a30/cover.png)
+![:scale 25%](https://r-graphics.org/cover.jpg)
+![:scale 25%](https://d33wubrfki0l68.cloudfront.net/565916198b0be51bf88b36f94b80c7ea67cafe7c/7f70b/cover.png)
+![:scale 25%](https://ggplot2-book.org/cover.jpg)
+![:scale 25%](https://bookdown.org/yihui/rmarkdown/images/cover.png)
+![:scale 25%](https://rstudio-education.github.io/hopr/cover.png)
 ]
 
 ---
