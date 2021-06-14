@@ -15,11 +15,13 @@ suppressPackageStartupMessages({
 Usage:
   render.R lecture [--dir DIR] [--outdir DIR] N [N ...]
   render.R site
+  render.R clean [-n]
   render.R (-h | --help)
 
 Options:
   -d --dir DIR     directory containing Rmd files to render [default: lectures]
   -o --outdir DIR  output directory for rendered files [default: lectures]
+  -n --dryrun      only list files that would be affected by clean
   -h --help        show this help text and exit" -> doc
 
 args <- docopt::docopt(doc)
@@ -48,4 +50,6 @@ if (args$site) {
              knit_root_dir = here(args$dir))
     })
   }
+} else if (args$clean) {
+  clean_site(preview = args$dryrun)
 }
