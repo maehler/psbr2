@@ -15,6 +15,8 @@ navbar:
           menu:
           - text: Course introduction
             href: lectures/01_course_introduction.html
+          - text: Introduction to R
+            href: lectures/02_introduction_to_r.html
           - text: RStudio
             href: lectures/03_rstudio.html
         - text: Week 2
