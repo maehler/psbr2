@@ -28,11 +28,16 @@
 }
 
 /* Font size control */
-.remark-slide-content { font-size: 20px; } /* Base font size */
-.smaller, .smaller .remark-code { font-size: 0.75em; }
-.small, .small .remark-code { font-size: 0.85em; }
-.big, .big .remark-code {font-size: 1.15em; }
-.huge, .huge .remark-code {font-size: 1.25em; }
+.body { font-size: 20px; } /* Base font size */
+.remark-code { font-size: 0.8em; }
+.smaller { font-size: 0.75em; }
+.smaller .remark-code { font-size: 0.6em; }
+.small { font-size: 0.85em; }
+.small .remark-code {font-size: 0.7em; }
+.big {font-size: 1.15em; }
+.big .remark-code { font-size: 1em; }
+.huge {font-size: 1.25em; }
+.huge .remark-code {font-size: 1.15em; }
 
 .remark-slide-content h1 {font-size: 2em;}
 .remark-slide-content h2 {font-size: 1.35em;}
