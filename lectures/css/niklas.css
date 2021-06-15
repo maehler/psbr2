@@ -27,6 +27,15 @@
   background-color: #FFFFFF;
 }
 
+/* Column styles */
+.left-column h2, .left-column h3 {
+  color: #CCCCCC;
+}
+
+.left-column h2:last-of-type, .left-column h3:last-child {
+  color: black;
+}
+
 /* Font size control */
 .body { font-size: 20px; } /* Base font size */
 .remark-code { font-size: 0.8em; }
