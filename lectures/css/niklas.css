@@ -74,13 +74,12 @@
 
 .note svg {
   float: left;
-  margin: 0 1em 0.2em 0;
+  margin: 0 0.75em 0.2em 0;
 }
 
 .note p {
   display: inline-block;
 }
 
-.note.yellow {
-  background-color: #FFF4CC;
-}
+.note.yellow { background-color: #FFF4CC; }
+.note.red { background-color: #FEDEDF; }
