@@ -10,3 +10,7 @@ docs/scripts/
 docs/**/_*
 docs/**/*.Rmd
 docs/**/*.md
+*___packages
+*.RData
+*.rdb
+*.rdx

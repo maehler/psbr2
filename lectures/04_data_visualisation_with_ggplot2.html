@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Practical Skills for Biology Research II</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Niklas Mähler" />
+    <meta name="date" content="2021-10-01" />
+    <script src="libs/header-attrs-2.8/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/niklas.css" type="text/css" />
+    <link rel="stylesheet" href="css/niklas-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: left, middle, inverse, title-slide
+
+# Practical Skills for Biology Research II
+## Data visualisation with ggplot2
+### Niklas Mähler
+### Umeå University
+### 2021-10-01
+
+---
+
+
+
+
+# ggplot2
+
+.pull-left[
+An R package for creating graphics in a declarative fashion.
+
+Based on the Grammar of Graphics, which we will talk more about next week.
+
+Useful both for quickly visualising a dataset for exploratory purposes, but also produces publication-quality figures.
+
+It is possible to create graphics using the base functionality of R, but this has a very steep learning curve, and requires a lot of fiddling.
+This is something that we will not go over.
+]
+
+.pull-right.left[
+![:scale 60%](https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/ggplot2.png)
+]
+
+---
+
+# Prerequisites
+
+We need to install the ggplot2 package before we can start using it.
+
+
+```r
+install.packages("ggplot2")
+```
+
+An R package is an extension of the base R language, and something that we will talk more about next week.
+
+---
+
+# A basic example
+
+.left-column[
+## The data
+]
+
+.right-column[
+`mpg` is an example dataset included in the ggplot2 package that contains fuel efficiency data for a number of cars.
+
+.small[
+
+```r
+mpg
+```
+
+```
+## # A tibble: 234 x 11
+##    manufacturer model    displ  year   cyl trans   drv     cty   hwy fl    class
+##    &lt;chr&gt;        &lt;chr&gt;    &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;   &lt;chr&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt; &lt;chr&gt;
+##  1 audi         a4         1.8  1999     4 auto(l… f        18    29 p     comp…
+##  2 audi         a4         1.8  1999     4 manual… f        21    29 p     comp…
+##  3 audi         a4         2    2008     4 manual… f        20    31 p     comp…
+##  4 audi         a4         2    2008     4 auto(a… f        21    30 p     comp…
+##  5 audi         a4         2.8  1999     6 auto(l… f        16    26 p     comp…
+##  6 audi         a4         2.8  1999     6 manual… f        18    26 p     comp…
+##  7 audi         a4         3.1  2008     6 auto(a… f        18    27 p     comp…
+##  8 audi         a4 quat…   1.8  1999     4 manual… 4        18    26 p     comp…
+##  9 audi         a4 quat…   1.8  1999     4 auto(l… 4        16    25 p     comp…
+## 10 audi         a4 quat…   2    2008     4 manual… 4        20    28 p     comp…
+## # … with 224 more rows
+```
+]
+
+.note.yellow[
+&lt;svg viewBox="0 0 352 512" style="position:relative;display:inline-block;top:.1em;height:2em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M176 80c-52.94 0-96 43.06-96 96 0 8.84 7.16 16 16 16s16-7.16 16-16c0-35.3 28.72-64 64-64 8.84 0 16-7.16 16-16s-7.16-16-16-16zM96.06 459.17c0 3.15.93 6.22 2.68 8.84l24.51 36.84c2.97 4.46 7.97 7.14 13.32 7.14h78.85c5.36 0 10.36-2.68 13.32-7.14l24.51-36.84c1.74-2.62 2.67-5.7 2.68-8.84l.05-43.18H96.02l.04 43.18zM176 0C73.72 0 0 82.97 0 176c0 44.37 16.45 84.85 43.56 115.78 16.64 18.99 42.74 58.8 52.42 92.16v.06h48v-.12c-.01-4.77-.72-9.51-2.15-14.07-5.59-17.81-22.82-64.77-62.17-109.67-20.54-23.43-31.52-53.15-31.61-84.14-.2-73.64 59.67-128 127.95-128 70.58 0 128 57.42 128 128 0 30.97-11.24 60.85-31.65 84.14-39.11 44.61-56.42 91.47-62.1 109.46a47.507 47.507 0 0 0-2.22 14.3v.1h48v-.05c9.68-33.37 35.78-73.18 52.42-92.16C335.55 260.85 352 220.37 352 176 352 78.8 273.2 0 176 0z"&gt;&lt;/path&gt;&lt;/svg&gt;
+You can get more information about the `mpg` data by running the command `?mpg` in the console.
+]
+]
+
+---
+
+# A basic example
+
+.left-column[
+## The data
+## The plot
+]
+
+.right-column[
+
+```r
+library(ggplot2)
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy))
+```
+
+&lt;img src="./figures/data_visualisation_with_ggplot2_basic_plot-1.png" width="432" /&gt;
+]
+
+---
+
+# A basic example
+
+.left-column[
+## The data
+## The plot
+## The library call
+]
+
+.right-column[
+
+```r
+*library(ggplot2)
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy))
+```
+
+Loads the ggplot2 package.
+This we only have to do once in each session.
+]
+
+---
+
+# A basic example
+
+.left-column[
+## The data
+## The plot
+## The library call
+## The initialisation
+]
+
+.right-column[
+
+```r
+library(ggplot2)
+*ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy))
+```
+
+Initialises an empty plot using the `mpg` data.
+
+&lt;img src="./figures/data_visualisation_with_ggplot2_basic_plot_init2-1.png" width="324" /&gt;
+
+]
+
+---
+
+# A basic example
+
+.left-column[
+## The data
+## The plot
+## The library call
+## The initialisation
+## The points
+]
+
+.right-column[
+
+```r
+library(ggplot2)
+ggplot(data = mpg) +
+* geom_point(mapping = aes(x = displ, y = hwy))
+```
+
+Add a layer of points to the plot.
+The `aes` (aestethics) maps variables in our data to properties of the plot, and here we set the variable `displ` (engine displacement in litres) as our x-variable and `hwy` (miles per gallon on highway) as our y-variable.
+
+&lt;img src="./figures/data_visualisation_with_ggplot2_basic_plot_points2-1.png" width="324" /&gt;
+]
+
+---
+
+# A general scheme
+
+.big[
+
+```r
+ggplot(data = &lt;DATA&gt;) +
+  &lt;GEOM_FUNCTION&gt;(mapping = aes(&lt;MAPPINGS&gt;))
+```
+]
+
+- `&lt;DATA&gt;`: A data frame with the data we want to visualise
+- `&lt;GEOM_FUNCTION&gt;`: The graphical layer that will represent our data
+- `&lt;MAPPINGS&gt;`: Mappings between the data and the aesthetics of the plot
+
+---
+
+# Aesthetic mappings
+
+.left-column[
+## What are they?
+]
+
+.right-column[
+Associations between the data and the visual properties (aesthetics) of the plot.
+
+Different geoms have different aesthetics that are required to be set:
+
+- `geom_point`: `x`, `y`
+- `geom_histogram`: `x`
+- `geom_segment`: `x`, `xend`, `y`, `yend`
+
+.pull-left[
+
+```
+## # A tibble: 5 x 2
+##    var1   var2
+##   &lt;int&gt;  &lt;dbl&gt;
+## 1     1 -0.207
+## 2     2  2.28 
+## 3     3  4.08 
+## 4     4  1.65 
+## 5     5  5.43
+```
+]
+
+.pull-right[
+&lt;img src="./figures/data_visualisation_with_ggplot2_aestetic_example_plot-1.png" width="432" /&gt;
+]
+]
+
+---
+
+# Aesthetic mappings
+
+.left-column[
+## What are they?
+## Types of aesthetics
+]
+
+.right-column[
+- Positions (`x`, `y`, ...)
+- Outline colour (`colour`)
+- Fill colour (`fill`)
+- Shape (`shape`)
+- Transparency (`alpha`)
+- Size (`size`)
+
+The specific geom_function that is used will determine exactly which ones are available and how they will behave.
+
+.note.yellow[
+&lt;svg viewBox="0 0 352 512" style="position:relative;display:inline-block;top:.1em;height:2em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M176 80c-52.94 0-96 43.06-96 96 0 8.84 7.16 16 16 16s16-7.16 16-16c0-35.3 28.72-64 64-64 8.84 0 16-7.16 16-16s-7.16-16-16-16zM96.06 459.17c0 3.15.93 6.22 2.68 8.84l24.51 36.84c2.97 4.46 7.97 7.14 13.32 7.14h78.85c5.36 0 10.36-2.68 13.32-7.14l24.51-36.84c1.74-2.62 2.67-5.7 2.68-8.84l.05-43.18H96.02l.04 43.18zM176 0C73.72 0 0 82.97 0 176c0 44.37 16.45 84.85 43.56 115.78 16.64 18.99 42.74 58.8 52.42 92.16v.06h48v-.12c-.01-4.77-.72-9.51-2.15-14.07-5.59-17.81-22.82-64.77-62.17-109.67-20.54-23.43-31.52-53.15-31.61-84.14-.2-73.64 59.67-128 127.95-128 70.58 0 128 57.42 128 128 0 30.97-11.24 60.85-31.65 84.14-39.11 44.61-56.42 91.47-62.1 109.46a47.507 47.507 0 0 0-2.22 14.3v.1h48v-.05c9.68-33.37 35.78-73.18 52.42-92.16C335.55 260.85 352 220.37 352 176 352 78.8 273.2 0 176 0z"&gt;&lt;/path&gt;&lt;/svg&gt;
+For aesthetics that have different spelling in British English compared to American English (e.g. `colour` and `color`), both variants are available, so you can choose whichever style you prefer.
+]
+]
+
+---
+
+# Aesthetic mappings
+
+.left-column[
+## What are they?
+## Types of aesthetics
+## Multiple aesthetics
+]
+
+.right-column[
+
+```r
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy,
+                           colour = class))
+```
+
+&lt;img src="./figures/data_visualisation_with_ggplot2_multiple_aes-1.png" width="432" /&gt;
+]
+  
+---
+
+# Aesthetic mappings
+
+.left-column[
+## What are they?
+## Types of aesthetics
+## Multiple aesthetics
+]
+
+.right-column[
+
+```r
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy,
+                           colour = class,
+                           shape = drv))
+```
+
+&lt;img src="./figures/data_visualisation_with_ggplot2_multiple_aes2-1.png" width="432" /&gt;
+]
+  
+---
+
+# Aesthetic mappings
+
+.left-column[
+## What are they?
+## Types of aesthetics
+## Multiple aesthetics
+]
+
+.right-column[
+
+```r
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy,
+                           colour = class,
+                           shape = drv))
+```
+
+&lt;img src="./figures/data_visualisation_with_ggplot2_multiple_aes4-1.png" width="432" /&gt;
+
+.small[
+
+|manufacturer |model  | displ| year| cyl|trans    |drv | cty| hwy|fl |class   |
+|:------------|:------|-----:|----:|---:|:--------|:---|---:|---:|:--|:-------|
+|chevrolet    |malibu |   3.5| 2008|   6|auto(l4) |f   |  18|  29|r  |midsize |
+]
+]
+
+---
+
+# Aesthetic mappings
+
+.left-column[
+## What are they?
+## Types of aesthetics
+## Multiple aesthetics
+## Manual aesthetics
+]
+
+.right-column[
+Aesthetics can also be set manually by declaring them *outside* of the `aes` call.
+
+
+```r
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy), colour = "blue")
+```
+
+&lt;img src="./figures/data_visualisation_with_ggplot2_manual_aes-1.png" width="432" /&gt;
+]
+
+---
+
+# Aesthetic mappings
+
+.left-column[
+## What are they?
+## Types of aesthetics
+## Multiple aesthetics
+## Manual aesthetics
+]
+
+.right-column[
+.note.red[
+&lt;svg viewBox="0 0 576 512" style="position:relative;display:inline-block;top:.1em;height:2em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M569.517 440.013C587.975 472.007 564.806 512 527.94 512H48.054c-36.937 0-59.999-40.055-41.577-71.987L246.423 23.985c18.467-32.009 64.72-31.951 83.154 0l239.94 416.028zM288 354c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z"&gt;&lt;/path&gt;&lt;/svg&gt;
+A common mistake when trying to set aesthetics manually is to put these *inside* the `aes` call.
+This will result in ggplot2 interpreting this as a constant related to the dataset, and apply this to all rows, and then set the scales for this aesthetic automatically.
+]
+
+
+```r
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, colour = "blue"))
+```
+
+&lt;img src="./figures/data_visualisation_with_ggplot2_manual_aes2-1.png" width="432" /&gt;
+]
+
+---
+
+# Aesthetic mappings
+
+.left-column[
+## What are they?
+## Types of aesthetics
+## Multiple aesthetics
+## Manual aesthetics
+## Summary
+]
+
+.right-column[
+When mapping a variable to an aesthetic, ggplot2 takes care of everything else: setting an appropriate scale and sets up a legend.
+
+Very flexible system for quickly visualising structure in your data. If a variable exists in your dataset, it can be mapped to an aesthetic.
+
+What if a variable that you are interested in is not in the dataset?
+We will get to ways of solving this next week.
+]
+
+---
+
+# Manual aesthetics
+
+.left-column[
+## Points
+]
+
+.right-column[
+&lt;img src="./figures/data_visualisation_with_ggplot2_point_types-1.png" width="432" /&gt;
+
+Some points only have outlines (1&amp;ndash;14), some are solid (15&amp;ndash;20), and some have separate stroke and fill colours (21&amp;ndash;25).
+]
+
+---
+
+# Manual aesthetics
+
+.left-column[
+## Points
+## Lines
+]
+
+.right-column[
+&lt;img src="./figures/data_visualisation_with_ggplot2_line_types-1.png" width="432" /&gt;
+]
+
+---
+
+# Manual aesthetics
+
+.left-column[
+## Points
+## Lines
+## Colours
+]
+
+.right-column[
+
+```r
+colours()
+```
+
+&lt;img src="./figures/data_visualisation_with_ggplot2_colours-1.png" width="1080" /&gt;
+]
+
+---
+
+# Manual aesthetics
+
+.left-column[
+## Points
+## Lines
+## Colours
+]
+
+.right-column[
+Colours can also be specified using the `rgb` function, which generates a hexidecimal colour value.
+
+
+```r
+rgb(0.8, 0.3, 0.1)
+```
+
+```
+## [1] "#CC4D1A"
+```
+
+If you are fluent in hexadecimal, you can also specify colours directly as such.
+
+
+```r
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy), colour = "#CC4D1A")
+```
+
+&lt;img src="./figures/data_visualisation_with_ggplot2_rgb_plot-1.png" width="288" /&gt;
+]
+
+---
+
+# Facets
+
+.left-column[
+## What are they?
+]
+
+.right-column[
+Another way of mapping variable to aesthetics is by using facets.
+This is based on the concept of ["small multiples"](https://en.wikipedia.org/wiki/Small_multiple): many panels of a figure that share scales and axes, allowing for easy comparison.
+
+.center[![:scale 80%](https://upload.wikimedia.org/wikipedia/commons/7/73/The_Horse_in_Motion.jpg)]
+
+.smaller.center[
+The Horse in Motion &amp;mdash; Eadweard Muybridge, 1878
+]
+]
+
+???
+
+The Horse in Motion is probably one of the oldest examples of the concept of small multiples.
+
+---
+
+# Facets
+
+.left-column[
+## What are they?
+## `facet_wrap`
+]
+
+.right-column[
+When we have single categorical variable with many different values that we want to facet on, we generally use `facet_wrap`.
+This will create one sub-plot for each level of the faceting variable.
+
+
+```r
+ggplot(data = mpg) +
+  facet_wrap(facets = vars(class), nrow = 2) +
+  geom_point(mapping = aes(x = displ, y = hwy))
+```
+
+&lt;img src="./figures/data_visualisation_with_ggplot2_facet_example-1.png" width="432" /&gt;
+]
+
+---
+
+# Facets
+
+.left-column[
+## What are they?
+## `facet_wrap`
+]
+
+.right-column[
+Compare these two versions.
+They are visualising the same relationship (engine size vs fuel efficiency), and they are grouped by the class of car.
+The difference is that one uses facets, and the other uses colour.
+Which one is easier to read?
+
+.pull-left[
+![](figures/data_visualisation_with_ggplot2_facet_example-1.png)
+]
+
+.pull-right[
+![](figures/data_visualisation_with_ggplot2_multiple_aes-1.png)
+]
+]
+
+---
+
+# Facets
+
+.left-column[
+## What are they?
+## `facet_wrap`
+## `facet_grid`
+]
+
+.right-column[
+If we instead have two categorical variables that should be faceted, we can use `facet_grid`.
+One variable will then represent the rows and the other the columns.
+
+
+```r
+ggplot(data = mpg) +
+  facet_grid(rows = vars(drv), cols = vars(cyl)) +
+  geom_point(mapping = aes(x = displ, y = hwy))
+```
+
+&lt;img src="./figures/data_visualisation_with_ggplot2_facet_grid_example-1.png" width="432" /&gt;
+]
+
+???
+
+Here we have the `drv` variable, the type of drivetrain of the cars, as rows and the number of cylinders representing the columns.
+Note that all facets have the same scales.
+
+What do you think it means if a facet is empty?
+
+---
+
+# Geometric objects
+
+???
+
+So far we have talked about how we can map different variables to aesthetics in our plot, but we've only looked at scatter plots, i.e. points, so far.
+What if we want to represent our data differently?
+
+--
+
+.pull-left[
+.center[
+&lt;img src="figures/data_visualisation_with_ggplot2_basic_plot-1.png" width="432" /&gt;
+]
+]
+
+???
+
+Consider this figure, that we now have seen a few times.
+
+--
+
+.pull-right[
+.center[
+&lt;img src="./figures/data_visualisation_with_ggplot2_smooth_geom_example-1.png" width="432" /&gt;
+]
+]
+
+???
+
+And now consider this.
+The underlying data and the variables on the axes are the same, but they look quite different.
+The reason for this is that they are using different geoms.
+
+--
+
+.pull-left.center[
+`geom_point`
+]
+
+--
+
+.pull-right.center[
+`geom_smooth`
+]
+
+---
+
+# Geometric objects
+
+.left-column[
+## What are they?
+]
+
+.right-column[
+The geometrical object that is used to represent the underlying data.
+
+Every geom function takes a `mapping` argument, but the aesthetics that you can set vary between them.
+For example, you can set the shape for `geom_point`, but that wouldn't make sense for `geom_line`.
+]
+
+--
+
+.right-column[
+Geoms roughly correspond to the type of plot we want to create:
+
+- Scatter plot: `geom_point`
+- Line plot: `geom_line`
+- Histogram: `geom_histogram`
+- Boxplot: `geom_boxplot`
+]
+
+--
+
+.right-column[
+The [ggplot2 cheat sheet](https://www.rstudio.com/resources/cheatsheets/) is a great way of getting an overview of the over 40 geoms that are available.
+]
+
+--
+
+.right-column[
+.note.yellow[
+&lt;svg viewBox="0 0 352 512" style="position:relative;display:inline-block;top:.1em;height:2em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M176 80c-52.94 0-96 43.06-96 96 0 8.84 7.16 16 16 16s16-7.16 16-16c0-35.3 28.72-64 64-64 8.84 0 16-7.16 16-16s-7.16-16-16-16zM96.06 459.17c0 3.15.93 6.22 2.68 8.84l24.51 36.84c2.97 4.46 7.97 7.14 13.32 7.14h78.85c5.36 0 10.36-2.68 13.32-7.14l24.51-36.84c1.74-2.62 2.67-5.7 2.68-8.84l.05-43.18H96.02l.04 43.18zM176 0C73.72 0 0 82.97 0 176c0 44.37 16.45 84.85 43.56 115.78 16.64 18.99 42.74 58.8 52.42 92.16v.06h48v-.12c-.01-4.77-.72-9.51-2.15-14.07-5.59-17.81-22.82-64.77-62.17-109.67-20.54-23.43-31.52-53.15-31.61-84.14-.2-73.64 59.67-128 127.95-128 70.58 0 128 57.42 128 128 0 30.97-11.24 60.85-31.65 84.14-39.11 44.61-56.42 91.47-62.1 109.46a47.507 47.507 0 0 0-2.22 14.3v.1h48v-.05c9.68-33.37 35.78-73.18 52.42-92.16C335.55 260.85 352 220.37 352 176 352 78.8 273.2 0 176 0z"&gt;&lt;/path&gt;&lt;/svg&gt;
+You can use the help to get more information about a certain geom: `?geom_smooth`.
+]
+]
+
+---
+
+# Geometric objects
+
+.left-column[
+## What are they?
+## Aesthetics
+]
+
+.right-column[
+Many geoms, such as `geom_smooth`, uses a single geometric object to visualise multiple observations.
+Setting an aesthetic such as linetype for `geom_smooth` to a categorical variable will create a geometric object for each level of that variable.
+
+
+```r
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, linetype = drv))
+
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, colour = drv))
+```
+
+&lt;img src="./figures/data_visualisation_with_ggplot2_geom_smooth_aes-1.png" width="50%" /&gt;&lt;img src="./figures/data_visualisation_with_ggplot2_geom_smooth_aes-2.png" width="50%" /&gt;
+]
+
+---
+
+# Geometric objects
+
+.left-column[
+## What are they?
+## Aesthetics
+## Grouping
+]
+
+.right-column[
+An aesthetic that can be useful for these types of geoms is `group`.
+This will group observations according to a categorical variable, but not change any other aesthetic for those groups, and it will thus not create a legend either.
+
+
+```r
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, linetype = drv))
+
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, group = drv))
+```
+
+&lt;img src="./figures/data_visualisation_with_ggplot2_geom_grouping-1.png" width="50%" /&gt;&lt;img src="./figures/data_visualisation_with_ggplot2_geom_grouping-2.png" width="50%" /&gt;
+]
+
+---
+
+# Statistical transformations
+
+.left-column[
+## The bar chart
+]
+
+.right-column[
+Here we introduce a new dataset: `diamonds`.
+This contains data on more than 50,000 diamonds.
+
+Here we create a bar chart of the diamond cut qualities.
+Notice how we only specify the `x` aesthetic, but still we have a y-axis our figure.
+How come?
+
+
+```r
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut))
+```
+
+&lt;img src="./figures/data_visualisation_with_ggplot2_bar_chart-1.png" width="432" /&gt;
+]
+
+---
+
+# Statistical transformations
+
+.left-column[
+## The bar chart
+## `stat_count`
+]
+
+.right-column[
+By default, `geom_bar` uses a statistical transformation in order to produce the variables needed for the plot.
+
+.held.smaller[
+
+|manufacturer |
+|:------------|
+|audi         |
+|audi         |
+|chevrolet    |
+|chevrolet    |
+|dodge        |
+|dodge        |
+|ford         |
+|ford         |
+|honda        |
+|honda        |
+
+<div>
+<svg viewBox="0 0 448 512" style="position:relative;display:inline-block;top:.1em;height:3em;" xmlns="http://www.w3.org/2000/svg">
+<path d="M313.941 216H12c-6.627 0-12 5.373-12 12v56c0 6.627 5.373 12 12 12h301.941v46.059c0 21.382 25.851 32.09 40.971 16.971l86.059-86.059c9.373-9.373 9.373-24.569 0-33.941l-86.059-86.059c-15.119-15.119-40.971-4.411-40.971 16.971V216z"></path>
+</svg>
+</div>
+
+|manufacturer | count|
+|:------------|-----:|
+|audi         |    18|
+|chevrolet    |    19|
+|dodge        |    37|
+|ford         |    25|
+|honda        |     9|
+|hyundai      |    14|
+
+<div>
+<svg viewBox="0 0 448 512" style="position:relative;display:inline-block;top:.1em;height:3em;" xmlns="http://www.w3.org/2000/svg">
+<path d="M313.941 216H12c-6.627 0-12 5.373-12 12v56c0 6.627 5.373 12 12 12h301.941v46.059c0 21.382 25.851 32.09 40.971 16.971l86.059-86.059c9.373-9.373 9.373-24.569 0-33.941l-86.059-86.059c-15.119-15.119-40.971-4.411-40.971 16.971V216z"></path>
+</svg>
+</div><div>
+<img src="figures/data_visualisation_with_ggplot2_bar_chart-1.png"/>
+</div>
+]
+]
+
+---
+
+# Statistical transformations
+
+.left-column[
+## The bar chart
+## `stat_count`
+## Default stats
+]
+
+.right-column[
+All geoms perform some type of statistical transformation (`stat`) of the data before plotting it.
+For a scatter plot, the transformation function simply returns the values that are supplied.
+
+All geoms have a default `stat`, and all statistical transformations have a default `geom`:
+
+- `geom_point`: `stat_identity`
+- `geom_smooth`: `stat_smooth`
+- `geom_histogram`: `stat_bin`
+- `geom_boxplot`: `stat_boxplot`
+- `geom_bar`: `stat_count`
+
+.note.yellow[
+&lt;svg viewBox="0 0 352 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M176 80c-52.94 0-96 43.06-96 96 0 8.84 7.16 16 16 16s16-7.16 16-16c0-35.3 28.72-64 64-64 8.84 0 16-7.16 16-16s-7.16-16-16-16zM96.06 459.17c0 3.15.93 6.22 2.68 8.84l24.51 36.84c2.97 4.46 7.97 7.14 13.32 7.14h78.85c5.36 0 10.36-2.68 13.32-7.14l24.51-36.84c1.74-2.62 2.67-5.7 2.68-8.84l.05-43.18H96.02l.04 43.18zM176 0C73.72 0 0 82.97 0 176c0 44.37 16.45 84.85 43.56 115.78 16.64 18.99 42.74 58.8 52.42 92.16v.06h48v-.12c-.01-4.77-.72-9.51-2.15-14.07-5.59-17.81-22.82-64.77-62.17-109.67-20.54-23.43-31.52-53.15-31.61-84.14-.2-73.64 59.67-128 127.95-128 70.58 0 128 57.42 128 128 0 30.97-11.24 60.85-31.65 84.14-39.11 44.61-56.42 91.47-62.1 109.46a47.507 47.507 0 0 0-2.22 14.3v.1h48v-.05c9.68-33.37 35.78-73.18 52.42-92.16C335.55 260.85 352 220.37 352 176 352 78.8 273.2 0 176 0z"&gt;&lt;/path&gt;&lt;/svg&gt;
+Again, check the help to see what the default `stat` is for a geom, e.g. `?geom_bar`.
+]
+
+]
+
+---
+
+# Statistical transformations
+
+.left-column[
+## The bar chart
+## `stat_count`
+## Default stats
+]
+
+.right-column[
+
+```r
+ggplot(data = mpg) +
+  stat_identity(mapping = aes(x = displ, y = hwy))
+```
+
+&lt;img src="./figures/data_visualisation_with_ggplot2_stat_plotting-1.png" width="432" /&gt;
+]
+
+---
+
+# Positions
+
+.left-column[
+## The bar chart again
+]
+
+.right-column[
+When mapping the fill aesthetic for a bar chart to variable different from the x variable, the chart will by default be stacked.
+
+
+```r
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut, fill = clarity))
+```
+
+&lt;img src="./figures/data_visualisation_with_ggplot2_stacked_bar_chart-1.png" width="432" /&gt;
+]
+
+---
+
+# Positions
+
+.left-column[
+## The bar chart again
+## The position argument
+]
+
+.right-column[
+We can change this behaviour by modifying the `position` parameter.
+Looking at the help page for `geom_bar`, we see that the default is `"stacked"`.
+Other possible values for bar charts are `"identity"`, `"dodge"`, and `"fill"`.
+]
+
+---
+
+# Positions
+
+.left-column[
+## The bar chart again
+## The position argument
+### `"identity"`
+]
+
+.right-column[
+
+```r
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut, fill = clarity),
+           position = "identity")
+```
+
+&lt;img src="./figures/data_visualisation_with_ggplot2_bar_chart_position_identity-1.png" width="432" /&gt;
+
+.note.yellow[
+&lt;svg viewBox="0 0 352 512" style="position:relative;display:inline-block;top:.1em;height:2em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M176 80c-52.94 0-96 43.06-96 96 0 8.84 7.16 16 16 16s16-7.16 16-16c0-35.3 28.72-64 64-64 8.84 0 16-7.16 16-16s-7.16-16-16-16zM96.06 459.17c0 3.15.93 6.22 2.68 8.84l24.51 36.84c2.97 4.46 7.97 7.14 13.32 7.14h78.85c5.36 0 10.36-2.68 13.32-7.14l24.51-36.84c1.74-2.62 2.67-5.7 2.68-8.84l.05-43.18H96.02l.04 43.18zM176 0C73.72 0 0 82.97 0 176c0 44.37 16.45 84.85 43.56 115.78 16.64 18.99 42.74 58.8 52.42 92.16v.06h48v-.12c-.01-4.77-.72-9.51-2.15-14.07-5.59-17.81-22.82-64.77-62.17-109.67-20.54-23.43-31.52-53.15-31.61-84.14-.2-73.64 59.67-128 127.95-128 70.58 0 128 57.42 128 128 0 30.97-11.24 60.85-31.65 84.14-39.11 44.61-56.42 91.47-62.1 109.46a47.507 47.507 0 0 0-2.22 14.3v.1h48v-.05c9.68-33.37 35.78-73.18 52.42-92.16C335.55 260.85 352 220.37 352 176 352 78.8 273.2 0 176 0z"&gt;&lt;/path&gt;&lt;/svg&gt;
+Note that the position argument goes *outside* of `aes`.
+It is an argument to the geom, not to the mapping.
+]
+]
+
+---
+
+# Positions
+
+.left-column[
+## The bar chart again
+## The position argument
+### `"identity"`
+]
+
+.right-column[
+
+```r
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut, fill = clarity),
+           position = "identity", alpha = 0.2)
+```
+
+&lt;img src="./figures/data_visualisation_with_ggplot2_bar_chart_position_identity_alpha-1.png" width="432" /&gt;
+
+.note.yellow[
+&lt;svg viewBox="0 0 352 512" style="position:relative;display:inline-block;top:.1em;height:2em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M176 80c-52.94 0-96 43.06-96 96 0 8.84 7.16 16 16 16s16-7.16 16-16c0-35.3 28.72-64 64-64 8.84 0 16-7.16 16-16s-7.16-16-16-16zM96.06 459.17c0 3.15.93 6.22 2.68 8.84l24.51 36.84c2.97 4.46 7.97 7.14 13.32 7.14h78.85c5.36 0 10.36-2.68 13.32-7.14l24.51-36.84c1.74-2.62 2.67-5.7 2.68-8.84l.05-43.18H96.02l.04 43.18zM176 0C73.72 0 0 82.97 0 176c0 44.37 16.45 84.85 43.56 115.78 16.64 18.99 42.74 58.8 52.42 92.16v.06h48v-.12c-.01-4.77-.72-9.51-2.15-14.07-5.59-17.81-22.82-64.77-62.17-109.67-20.54-23.43-31.52-53.15-31.61-84.14-.2-73.64 59.67-128 127.95-128 70.58 0 128 57.42 128 128 0 30.97-11.24 60.85-31.65 84.14-39.11 44.61-56.42 91.47-62.1 109.46a47.507 47.507 0 0 0-2.22 14.3v.1h48v-.05c9.68-33.37 35.78-73.18 52.42-92.16C335.55 260.85 352 220.37 352 176 352 78.8 273.2 0 176 0z"&gt;&lt;/path&gt;&lt;/svg&gt;
+Note that the position argument goes *outside* of `aes`.
+It is an argument to the geom, not to the mapping.
+]
+]
+
+---
+
+# Positions
+
+.left-column[
+## The bar chart again
+## The position argument
+### `"identity"`
+### `"dodge"`
+]
+
+.right-column[
+
+```r
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut, fill = clarity),
+           position = "dodge")
+```
+
+&lt;img src="./figures/data_visualisation_with_ggplot2_bar_chart_position_dodge-1.png" width="432" /&gt;
+]
+
+---
+
+# Positions
+
+.left-column[
+## The bar chart again
+## The position argument
+### `"identity"`
+### `"dodge"`
+### `"fill"`
+]
+
+.right-column[
+
+```r
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut, fill = clarity),
+           position = "fill")
+```
+
+&lt;img src="./figures/data_visualisation_with_ggplot2_bar_chart_position_fill-1.png" width="432" /&gt;
+]
+
+---
+
+# Positions
+
+.left-column[
+## The bar chart again
+## The position argument
+### `"identity"`
+### `"dodge"`
+### `"fill"`
+### `"jitter`"
+]
+
+.right-column[
+A position adjustment that doesn't work for bar charts, but can be useful for scatter plots, is `"jitter"`.
+Let's take a look at our previous scatter plot using the `mpg` data.
+
+&lt;img src="figures/data_visualisation_with_ggplot2_basic_plot_points2-1.png" width="432" /&gt;
+]
+
+???
+
+If you are really observant, you will see that there are 126 points in this figure...
+
+--
+
+.right-column.small[
+
+```r
+mpg
+```
+
+```
+## # A tibble: 234 x 11
+##    manufacturer model    displ  year   cyl trans   drv     cty   hwy fl    class
+##    &lt;chr&gt;        &lt;chr&gt;    &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;   &lt;chr&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt; &lt;chr&gt;
+##  1 audi         a4         1.8  1999     4 auto(l… f        18    29 p     comp…
+##  2 audi         a4         1.8  1999     4 manual… f        21    29 p     comp…
+##  3 audi         a4         2    2008     4 manual… f        20    31 p     comp…
+##  4 audi         a4         2    2008     4 auto(a… f        21    30 p     comp…
+##  5 audi         a4         2.8  1999     6 auto(l… f        16    26 p     comp…
+##  6 audi         a4         2.8  1999     6 manual… f        18    26 p     comp…
+##  7 audi         a4         3.1  2008     6 auto(a… f        18    27 p     comp…
+##  8 audi         a4 quat…   1.8  1999     4 manual… 4        18    26 p     comp…
+##  9 audi         a4 quat…   1.8  1999     4 auto(l… 4        16    25 p     comp…
+## 10 audi         a4 quat…   2    2008     4 manual… 4        20    28 p     comp…
+## # … with 224 more rows
+```
+]
+
+???
+
+while there are 234 observations in the data.
+
+This is something that is referred to as overplotting: several observations having the same value.
+The problem with this is that we from this figure can't tell how these are distributed.
+Is one combination of values more common than others, or are they evenly spread out?
+
+---
+
+# Positions
+
+.left-column[
+## The bar chart again
+## The position argument
+### `"identity"`
+### `"dodge"`
+### `"fill"`
+### `"jitter`"
+]
+
+.right-column[
+Adding jitter to the plot will add some noise to each point, and this will help avoid overplotting.
+A consequence of this, however, is that the points then don't exaclty represent the underlying data.
+
+
+```r
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy),
+             position = "jitter")
+```
+
+&lt;img src="./figures/data_visualisation_with_ggplot2_geom_point_jitter-1.png" width="432" /&gt;
+]
+
+???
+
+While being inaccurate at small scales, it really improves the bigger picture.
+
+---
+
+# Recommended exercises
+
+[R for Data Science: Data visualisation](https://r4ds.had.co.nz/data-visualisation.html)
+
+- [3.2.4 First steps](https://r4ds.had.co.nz/data-visualisation.html#exercises)
+- [3.3.1 Aesthetic mappings](https://r4ds.had.co.nz/data-visualisation.html#exercises-1)
+- [3.5.1 Facets](https://r4ds.had.co.nz/data-visualisation.html#exercises-2)
+- [3.6.1 Geometric objects](https://r4ds.had.co.nz/data-visualisation.html#exercises-3)
+- [3.7.1 Statistical transformations](https://r4ds.had.co.nz/data-visualisation.html#exercises-4)
+- [3.8.1 Position adjustments](https://r4ds.had.co.nz/data-visualisation.html#exercises-5)
+
+???
+
+The content of this lecture was heavily inspired by this chapter of the book, so you will likely recognise quite a few things.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="js/macros.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
