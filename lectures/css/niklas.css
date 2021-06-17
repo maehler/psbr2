@@ -36,6 +36,21 @@
   color: black;
 }
 
+.right-column {
+  padding: 0;
+}
+
+/* Held figures/tables */
+.held {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+  .held table {
+    margin: auto 0;
+  }
+
 /* Font size control */
 .body { font-size: 20px; } /* Base font size */
 .remark-code { font-size: 0.8em; }
