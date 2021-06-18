@@ -74,6 +74,11 @@
   flex-wrap: wrap;
 }
 
+iframe {
+  display: block;
+  width: 100%;
+}
+
 /* Note box */
 .note {
   position: relative;
