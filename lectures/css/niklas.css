@@ -68,11 +68,6 @@
 .remark-slide-content h3 {font-size: 1.15em;}
 .remark-slide-content h4 {font-size: 1em;}
 
-/* Source code width */
-.remark-code {
-  max-width: 80ch;
-}
-
 /* Element tiling */
 .tile {
   display: flex;
