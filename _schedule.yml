@@ -12,6 +12,7 @@ schedule:
     - start_time:
       end_time:
       topic: Introduction to R
+      url: lectures/02_introduction_to_r.html
       details: |
         - What is R
         - Short history of R
@@ -27,6 +28,7 @@ schedule:
     - start_time:
       end_time:
       topic: Data visualisation with ggplot2
+      url: lectures/04_data_visualisation_with_ggplot2.html
       details: |
         - Basic graphics
         - The structure of a ggplot

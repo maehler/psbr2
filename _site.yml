@@ -19,6 +19,8 @@ navbar:
             href: lectures/02_introduction_to_r.html
           - text: RStudio
             href: lectures/03_rstudio.html
+          - text: Data visualisation with ggplot2
+            href: lectures/04_data_visualisation_with_ggplot2.html
         - text: Week 2
         - text: Week 3
         - text: Week 4
