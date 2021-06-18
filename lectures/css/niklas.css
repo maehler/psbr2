@@ -79,7 +79,7 @@
   position: relative;
   font-size: 1em;
   background-color: #CCCCCC;
-  padding: 0 1.25em 0em 1.25em;
+  padding: 1px 1.25em 1px 1.25em;
 }
 
 .note svg {
@@ -87,9 +87,9 @@
   margin: 0 0.75em 0.2em 0;
 }
 
-.note p {
-  display: inline-block;
-}
-
 .note.yellow { background-color: #FFF4CC; }
 .note.red { background-color: #FEDEDF; }
+.note.midnight {
+  background-color: #1D2F55;
+  color: #EEEEEE;
+}
