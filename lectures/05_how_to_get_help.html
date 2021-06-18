@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Practical Skills for Biology Research II</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Niklas Mähler" />
+    <meta name="date" content="2021-10-01" />
+    <script src="libs/header-attrs-2.8/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/niklas.css" type="text/css" />
+    <link rel="stylesheet" href="css/niklas-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: left, middle, inverse, title-slide
+
+# Practical Skills for Biology Research II
+## How to get help
+### Niklas Mähler
+### Umeå University
+### 2021-10-01
+
+---
+
+
+
+
+# Learning goals
+
+- How to find help for R functions
+- How to find package documentation
+
+---
+
+# Getting help
+
+We've already seen that we can use `?` to get help:
+
+
+```r
+?mean
+```
+
+![](../img/help_example_screenshot.png)
+
+---
+
+# Anatomy of a help page
+
+.left-column[
+## Header
+]
+
+.right-column[
+.note.midnight.midnight[
+mean {base}
+
+## Arithmetic Mean
+]
+]
+
+???
+
+I will go over some of the most common sections that can be found on these help pages.
+Sometimes you might not find all of these, and sometimes you might find other sections that describes the functionality in more detail.
+
+First you will have the name of the function.
+Sometimes, multiple functions are documented on the same page.
+Then this will either be the name of one of the functions on that page, or just a short name related to the contents.
+
+Inside the curly braces is the name of the package where this function is found.
+
+---
+
+# Anatomy of a help page
+
+.left-column[
+## Header
+## Description
+]
+
+.right-column[
+Name of the function and package together with the title of the help page.
+
+.note.midnight[
+### Description
+
+Generic function for the (trimmed) arithmetic mean.
+]
+]
+
+---
+
+# Anatomy of a help page
+
+.left-column[
+## Header
+## Description
+## Usage
+]
+
+.right-column[
+Short description of how to call the function, its parameters and defaults.
+
+.note.midnight[
+### Usage
+
+```
+mean(x, ...)
+
+## Default S3 method:
+mean(x, trim = 0, na.rm = FALSE, ...)
+```
+]
+]
+
+---
+
+# Anatomy of a help page
+
+.left-column[
+## Header
+## Description
+## Usage
+## Arguments
+]
+
+.right-column[
+Detailed description of the arguments of the function.
+
+.note.midnight[
+### Arguments
+
+<div>
+<div class="row" style="display: flex; margin-top: 0.5em;">
+<div style="min-width: 30%;">
+<code>x</code>
+</div>
+<div>
+<p style="margin: 0;">
+An
+<code>R</code>
+Object. Currently there are methods for numeric/logical vectors and date, date-time and time interval objects. Complex vectors are allowed for 
+<code>trim = 0</code>
+, only.
+</p>
+</div>
+</div>
+<div class="row" style="display: flex; margin-top: 0.5em;">
+<div style="min-width: 30%;">
+<code>trim</code>
+</div>
+<div>
+<p style="margin: 0;">
+the fraction (0 to 0.5) of observations to be trimmed from each end of 
+<code>x</code>
+ before the mean is computed. Values of trim outside that range are taken as the nearest endpoint.
+</p>
+</div>
+</div>
+<div class="row" style="display: flex; margin-top: 0.5em;">
+<div style="min-width: 30%;">
+<code>na.rm</code>
+</div>
+<div>
+<p style="margin: 0;">
+a logical value indicating whether 
+<code>NA</code>
+ values should be stripped before the computation proceeds.
+</p>
+</div>
+</div>
+<div class="row" style="display: flex; margin: 0.5em 0;">
+<div style="min-width: 30%; margin: 0 0 0.5em 0;">
+<code>...</code>
+</div>
+<div>
+<p style="margin: 0 0 0.5em 0;">further arguments passed to or from other methods</p>
+</div>
+</div>
+</div>
+]
+]
+
+---
+
+# Anatomy of a help page
+
+.left-column[
+## Header
+## Description
+## Usage
+## Arguments
+## Details
+]
+
+.right-column[
+The "Details" section can sometimes give a more detailed explanatio of some of the function arguments.
+The `mean` function does not have such a section.
+]
+
+---
+
+# Anatomy of a help page
+
+.left-column[
+## Header
+## Description
+## Usage
+## Arguments
+## Details
+## Value
+]
+
+.right-column[
+The return value of the function
+
+.note.midnight[
+### Value
+
+If `trim` is zero (the default), the arithmetic mean of the values in `x` is computed, as a numeric or complex vector of length one. If `x` is not logical (coerced to a numeric), numeric (including integer) or complex, `NA_real_` is returned, with a warning.
+
+If `trim` is non-zero, a symmetrical trimmed mean is computed with a fraction of `trim` observations deleted from each end before the mean is computed.
+]
+]
+
+---
+
+# Anatomy of a help page
+
+.left-column[
+## Header
+## Description
+## Usage
+## Arguments
+## Details
+## Value
+## References
+]
+
+.right-column[
+Any references related to the implementation, good for diving deeper into the functionality.
+
+.note.midnight[
+### References
+
+Becker, R. A., Chambers, J. M. and Wilks, A. R. (1988) *The New S Language*. Wadsworth &amp; Brooks/Cole.
+]
+]
+
+---
+
+# Anatomy of a help page
+
+.left-column[
+## Header
+## Description
+## Usage
+## Arguments
+## Details
+## Value
+## References
+## See also
+]
+
+.right-column[
+Related functions.
+
+.note.midnight[
+### See Also
+
+`weighted.mean`, `mean.POSIXct`, `colMeans` for row and column means.
+]
+]
+
+---
+
+# Anatomy of a help page
+
+.left-column[
+## Header
+## Description
+## Usage
+## Arguments
+## Details
+## Value
+## References
+## See also
+## Examples
+]
+
+.right-column[
+Examples of how to use the function. Can be copy-pasted into the console.
+
+.note.midnight[
+### Examples
+
+```
+x &lt;- c(0:10, 50)
+xm &lt;- mean(x)
+c(xm, mean(x, trim = 0.10))
+```
+]
+]
+
+---
+
+# Getting to the help page
+
+
+```r
+?mean
+```
+
+--
+
+
+```r
+help(mean)
+# ... or
+help("mean")
+```
+
+--
+
+The following will search for the keyword "mean" among all help pages, regardless whether the package is loaded or not.
+
+
+```r
+??mean
+```
+
+--
+
+In the editor (or in the console), set the caret onto a function call and press &lt;kbd&gt;F1&lt;/kbd&gt; on the keyboard.
+
+--
+
+We can also use the graphical user interface to get to the help.
+Basically does the same thing as `??`.
+
+![](../img/help_example_screenshot.png)
+
+---
+
+# Getting to the help page
+
+## Package not loaded
+
+
+```r
+?pheatmap
+```
+
+```
+## No documentation for 'pheatmap' in specified packages and libraries:
+## you could try '??pheatmap'
+```
+
+--
+
+
+```r
+library(pheatmap) # load the package containing the function
+?pheatmap
+```
+
+or
+
+
+```r
+?pheatmap::pheatmap
+```
+
+
+---
+
+# Getting to the help page
+
+## Package not installed
+
+
+```r
+?pheatmap
+```
+
+```
+## No documentation for 'pheatmap' in specified packages and libraries:
+## you could try '??pheatmap'
+```
+
+```r
+?pheatmap::pheatmap
+```
+
+```
+## Error in find.package(if (is.null(package)) loadedNamespaces() else package, : there is no package called 'pheatmap'
+```
+
+--
+
+
+```r
+install.packages("pheatmap")
+library(pheatmap)
+?pheatmap
+```
+
+---
+
+# Vignettes
+
+The help pages are useful if you know what function you are after.
+
+A vignette is a longer guide to a package that guides more than the function documentation.
+
+--
+
+List all vignettes:
+
+
+```r
+vignette()
+```
+
+--
+
+List vignettes for a specific package:
+
+
+```r
+vignette(package = "ggplot2")
+```
+
+--
+
+Open a specific vignette:
+
+
+```r
+vignette("ggplot2-specs", package = "ggplot2")
+```
+
+--
+
+To see the vignette of a package that is not installed, go to its CRAN or Bioconductor page.
+
+---
+
+# CRAN page // ggplot2
+
+&lt;iframe src="https://cran.r-project.org/web/packages/ggplot2/index.html" width="432" height="500px"&gt;&lt;/iframe&gt;
+
+---
+
+# Bioconductor page // qvalue
+
+&lt;iframe src="https://bioconductor.org/packages/release/bioc/html/qvalue.html" width="432" height="500px"&gt;&lt;/iframe&gt;
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="js/macros.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

@@ -37,6 +37,7 @@ schedule:
     - start_time:
       end_time:
       topic: How to get help
+      url: lectures/05_how_to_get_help.html
       details: |
         - Specific functions: `?`, `??`, `help`, F1, help pane
         - General problems: Google, Stackoverflow
