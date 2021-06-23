@@ -51,6 +51,7 @@ schedule:
         - Operators
           - Basic operators (`+`, `-`, `/`, `%%`, etc)
           - Comparators
+        - Calling functions
         - Data types
           - Atomic types
             - integer
@@ -63,17 +64,10 @@ schedule:
           - Lists
           - Data frames
         - Live demonstrations and practice using learnr (?)
-  - day:
-    - start_time:
-      end_time:
-      topic: Functions
-      details: |
-        - What are they?
-        - How are they structured?
     - start_time:
       end_time:
       topic: R packages
-      url: lectures/08_r_packages.html
+      url: lectures/07_r_packages.html
       details: |
         - What is an R package?
           - What is the base package?
@@ -109,6 +103,11 @@ schedule:
         - tidyverse
         - Examples of how untidy data can make life difficult
         - Are there times when these practices are not applicable?
+  - day:
+    - start_time:
+      end_time:
+      topic: Catching up/Q&A
+      lecture: false
   - day:
     - start_time:
       end_time:

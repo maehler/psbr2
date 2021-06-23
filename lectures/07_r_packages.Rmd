@@ -1,8 +1,9 @@
 ---
-title: Practical Skills for<br>Biology Research II
+title: Practical Skills for Biology Research II
 subtitle: R packages
 author: Niklas Mähler
-date: 2021-10-05
+institute: "Umeå University"
+date: 2021-10-04
 editor_options:
   chunk_output_type: console
 ---
