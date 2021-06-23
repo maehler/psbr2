@@ -550,8 +550,28 @@ Contrary to vectors and matrices, lists can contain objects of different types.
 These elements can also be named.
 
 ```{r}
-list(one = 1, two_vector = 1:3,
-     three_matrix = matrix(1:9, nrow = 3))
+x <- list(one = 1, two_vector = 1:3,
+          three_matrix = matrix(1:9, nrow = 3))
+x
+```
+]
+
+---
+
+# Composite data types
+
+.left-column[
+## Factor
+## Matrix
+## List
+]
+
+.right-column[
+Printing a very big list can become quite messy.
+In order to get an overview of what the list contains, without printing every single element and subelement, we can look at the **str**ucture of the list with the `str` function.
+
+```{r}
+str(x)
 ```
 ]
 
