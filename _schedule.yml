@@ -65,8 +65,14 @@ schedule:
   - day:
     - start_time:
       end_time:
+      topic: Functions
+      details: |
+        - What are they?
+        - How are they structured?
+    - start_time:
+      end_time:
       topic: R packages
-      url: lectures/07_r_packages.html
+      url: lectures/08_r_packages.html
       details: |
         - What is an R package?
           - What is the base package?
@@ -79,12 +85,6 @@ schedule:
           - stringr
           - readr
         - Many of these packages are part of the tidyverse
-    - start_time:
-      end_time:
-      topic: Functions
-      details: |
-        - What are they?
-        - How are they structured?
   - day:
     - start_time:
       end_time:
