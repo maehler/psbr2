@@ -19,3 +19,7 @@ base64_img <- function(filename) {
   }
   paste0("data:image/", ext, ";base64,", base64enc::base64encode(filename))
 }
+
+note_fa <- function(icon, scale = 2) {
+  icons::icon_style(icons::fontawesome(icon), scale = scale)
+}

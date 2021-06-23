@@ -1,0 +1,771 @@
+---
+title: "Practical Skills for Biology Research II"
+subtitle: "Basics of R programming"
+author: "Niklas Mähler"
+institute: "Umeå University"
+date: "2021-10-04"
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include = FALSE}
+source(here::here("scripts/setup.R"))
+setup_presentation("basics_of_r_programming")
+```
+
+# Learning goals
+
+- Know about the basic operators in R
+- Be able to interpret code written by someone else
+
+---
+
+# What is programming?
+
+- Writing instructions telling the computer what to do
+- Telling *others* what you want to do.
+
+???
+
+Not only are you telling the computer what you want to do, but you also communicate to others reading your code what you want to do.
+
+---
+
+# R can be a calculator
+
+```{r}
+1 / 200 * 30
+(59 + 73 + 2) / 3
+sin(pi / 2)
+```
+
+---
+
+# Common operators
+
+```{r, echo = FALSE}
+tribble(
+  ~Operator, ~Description,            ~Example,
+  "`+`",     "Addition",              "`5 + 2 == 7`",
+  "`-`",     "Subtraction",           "`5 - 2 == 3`",
+  "`*`",     "Multiplication",        "`5 * 2 == 10`",
+  "`/`",     "Division",              "`5 / 2 == 2.5`",
+  "`^`",     "Power",                 "`5 ^ 2 == 25`",
+  "`%%`",    "Modulo",                "`5 %% 2 == 1`",
+  "`%/%`",   "Integer division",      "`5 %/% 2 == 2`"
+) %>% knitr::kable()
+```
+
+???
+
+Just running these examples in the console, R will print the result.
+What if we want to store that result in order to use it somewhere else?
+
+---
+
+# Variable assignment
+
+Variable assignment uses the `<-` operator.
+
+```{r}
+x <- 5 + 2
+```
+
+This will save the result of the operation into an object `x`.
+You can read it as "x gets the value 5 + 2".
+This will make it possible to reuse this result later.
+
+```{r}
+y <- x ^ 2
+```
+
+In order to see what a variable contains, we can simply enter it into the console.
+
+```{r}
+y
+```
+
+
+---
+
+# Naming variables
+
+Variables must start with a letter, and they can only contain letters, numbers, and the characters `.` and `_`.
+
+.note.yellow[
+`r note_fa("lightbulb")`
+If you are familiar with other programming lanugages, you might think that `.` has a special meaning, like in Python where it is used for accessing methods of objects, for example.
+In R it's just any old character.
+]
+
+There are many conventions when it comes to variable naming:
+
+```
+i_use_snake_case
+otherPeopleUseCamelCase
+some.people.use.periods
+And_aFew.People_RENOUNCEconvention
+```
+
+I will use `snake_case` in all my examples, and I recommend you do to.
+However, the most important thing is **consistency**.
+
+.note.red[
+`r note_fa("exclamation-triangle")`
+Note that R is picky.
+Spelling and character case matters!
+There is a difference between `myVariable` and `myvariable`.
+]
+
+---
+
+# Use meaningful variable names
+
+What is easier to understand? This:
+
+```{r}
+a <- 100
+b <- 50
+c <- 5
+d <- rnorm(a, b, c)
+```
+
+or this:
+
+```{r}
+number_of_samples <- 100
+sample_mean <- 50
+sample_standard_deviation <- 5
+random_samples <- rnorm(number_of_samples, sample_mean, sample_standard_deviation)
+```
+
+???
+
+These two blocks of code do the exact same thing, but one of them also tries to **explain** what it is doing by having meaningful variable names.
+Sure, it's much more typing, but you will be happy when you revisit your code after a while and can pick up where you left off.
+
+---
+
+# Variable comparisons
+
+Often in programming we want to compare values, e.g. "is x larger than y?", or "is x equal to y?".
+
+```{r, echo = FALSE}
+tribble(
+  ~Operator, ~Description,            ~Example,
+  "`<`",     "Strictly less than",    "`5 < 7`",
+  "`>`",     "Strictly greater than", "`7 > 5`",
+  "`<=`",    "Less or equal to",      "`7 <= 7`",
+  "`>=`",    "Greater or equal to",   "`7 >= 6`",
+  "==",      "Equals",                "`7 == 7`",
+  "!=",      "Not equals",            "`7 != 5`"
+) %>% knitr::kable()
+```
+
+All of the examples in the table evaluate to `TRUE`.
+
+---
+
+# Comparisons of decimal numbers
+
+.note.red[
+`r note_fa("exclamation-triangle")`
+When doing exact comparisons of decimal numbers, you might get unexpected results.
+This is due to the inability of computers to represent decimal numbers accurately, something called [floating point precision](https://en.wikipedia.org/wiki/Floating-point_arithmetic).
+]
+
+```{r}
+(0.3 * 3) + 0.1 - 1
+```
+
+--
+
+```{r}
+(0.3 * 3) + 0.1 == 1
+```
+
+--
+
+```{r}
+all.equal((0.3 * 3) + 0.1, 1)
+```
+
+???
+
+So, we see here that we have different representations of variables in R.
+Decimal numbers, or floating point numbers, are different from integer numbers, and we have also seen that we have a `TRUE`/`FALSE`.
+
+---
+
+# Atomic data types
+
+.left-column[
+## Double
+]
+
+.right-column[
+Double-precision floating point values, "regular numbers".
+
+```{r}
+pi
+typeof(pi)
+typeof(5)
+```
+]
+
+???
+
+As the name implies, atomic data types refer to the smallest types that we have in R.
+From these we can build more complex structures.
+
+---
+
+# Atomic data types
+
+.left-column[
+## Double
+## Integer
+]
+
+.right-column[
+Numbers without any decimal fraction.
+These we normally don't come across in everyday analyses, at least not in their pure form, since numbers normally are represented as doubles.
+
+```{r}
+5L
+typeof(5L)
+```
+]
+
+---
+
+# Atomic data types
+
+.left-column[
+## Double
+## Integer
+## Logical
+]
+
+.right-column[
+Boolean values, either `TRUE` or `FALSE`.
+
+```{r, eval = FALSE}
+5 < 7
+```
+]
+
+---
+
+# Atomic data types
+
+.left-column[
+## Double
+## Integer
+## Logical
+## Character
+]
+
+.right-column[
+Text, or strings.
+Has to be enclosed in quotes.
+
+```{r, eval = FALSE}
+x <- "hello world"
+```
+
+If we need to represent quotes in a character string, we can escape them with a backslash:
+
+```{r}
+x <- "hello \"world\""
+```
+]
+
+???
+
+Both single and double quotes work, but preferably don't mix them.
+
+If we don't use quotes, this is something called a "bare name", and R will in most cases try to find an object with that name in your environment.
+I will not explain the exceptions to this here and now though, just assume that if you see a word without quotes, it is either referring to a reserved keyword in R, or an object.
+
+---
+
+# Vectors
+
+Everything we've done so far has been using vectors, and this is the default data structure in R.
+Vectors are composed of elements of a single data type, and they have a length.
+
+```{r}
+x <- 5
+length(x)
+```
+
+--
+
+We can use the `c` function to **c**ombine objects into a vector.
+
+```{r}
+x <- c(1, 2, 3, 4, 5)
+length(x)
+```
+
+--
+
+There is also a short-hand way of creating number vectors as the one above.
+
+```{r}
+x <- 1:5
+x
+```
+
+
+---
+
+# Vectors
+
+If we try to combine objects of different types, R tries to convert them to a representation common to all of them.
+
+```{r}
+c(1, 2, 3L, 4L)
+```
+
+--
+
+```{r}
+c("one", 2, 3L, "four")
+```
+
+--
+
+```{r}
+c(0, 1, TRUE, FALSE)
+```
+
+--
+
+```{r}
+c(0, 1, TRUE, FALSE, "hello")
+```
+
+---
+
+# Vectors
+
+The elements in a vector can be named.
+
+```{r}
+x <- c(first = 0, second = 1, third = 2)
+x
+```
+
+--
+
+```{r}
+names(x)
+```
+
+--
+
+```{r}
+names(x) <- c("one", "two", "three")
+x
+```
+
+---
+
+# Vectors
+
+We can access individual elements in a vector using square brackets.
+
+```{r}
+x <- 10:15
+x
+x[1]
+x[2]
+```
+
+.note.red[
+`r note_fa("exclamation-triangle")`
+If you have some experience in programming, you might be used to numbering starting at 0.
+This is not the case in R where indexing is 1-based.
+]
+
+---
+
+# Vectors
+
+You can also get a range of numbers by indexing a vector with another vector.
+
+```{r}
+x <- 10:15
+x
+x[c(1, 3, 5)]
+```
+
+--
+
+Yet another way of indexing is by using a boolean vector.
+
+```{r}
+x[c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE)]
+```
+
+---
+
+# Vectors
+
+Finally, if your vector has names, you can also access elements by using these.
+
+```{r}
+x <- c(first = 0, second = 1, third = 2, fourth = 3)
+x
+x["first"]
+```
+
+--
+
+Just as when indexing with numbers, you can use a vector of strings.
+
+```{r}
+x[c("first", "third")]
+```
+
+---
+
+# Composite data types
+
+.left-column[
+## Factor
+]
+
+.right-column[
+Used for representing categorical variables.
+
+```{r}
+factor(c(1, 1, 2, 2, 3, 3))
+```
+]
+
+--
+
+.right-column[
+Each level can also be associated with a label.
+By default, the label is the same as the original value.
+
+```{r}
+factor(c(1, 1, 2, 2, 3, 3), labels = c("one", "two", "three"))
+```
+]
+
+--
+
+.right-column[
+... but the underlying representation is still integers, regardless of the original data type.
+
+```{r}
+as.numeric(factor(c("one", "one", "two", "two", "three", "three")))
+```
+]
+
+---
+
+# Composite data types
+
+.left-column[
+## Factor
+## Matrix
+]
+
+.right-column[
+A matrix can be seen as a two-dimensional vector.
+Similar to vectors, the matrix must contain a single data type.
+
+```{r}
+matrix(1:9, nrow = 3)
+```
+
+Just like vectors, it can have names, but instead of every single element being associated with a name, each row and column get a name.
+
+```{r}
+x <- matrix(1:9, nrow = 3)
+rownames(x) <- c("row1", "row2", "row3")
+colnames(x) <- c("col1", "col2", "col3")
+x
+```
+]
+
+---
+
+# Composite data types
+
+.left-column[
+## Factor
+## Matrix
+]
+
+.right-column[
+Matrix indexing is similar to vector indexing, but we now have two dimensions to consider.
+We then refer separately to rows and columns.
+
+```{r}
+x <- matrix(1:9, nrow = 3)
+x
+row <- 1
+col <- 2
+x[row, col]
+```
+]
+
+---
+
+# Composite data types
+
+.left-column[
+## Factor
+## Matrix
+]
+
+.right-column[
+If one of them is left blank, it will return all elements in that row or column.
+
+```{r}
+x
+x[2, ]
+x[, 2]
+```
+]
+
+---
+
+# Composite data types
+
+.left-column[
+## Factor
+## Matrix
+## List
+]
+
+.right-column[
+Contrary to vectors and matrices, lists can contain objects of different types.
+These elements can also be named.
+
+```{r}
+list(one = 1, two_vector = 1:3,
+     three_matrix = matrix(1:9, nrow = 3))
+```
+]
+
+---
+
+# Composite data types
+
+.left-column[
+## Factor
+## Matrix
+## List
+]
+
+.right-column[
+Indexing a list is a bit different from indexing a vector.
+If we use single square brackets, we get a list back.
+
+```{r}
+x <- list(one = 1:3, two = letters[1:5], three = rnorm(4))
+x[1]
+typeof(x[1])
+```
+]
+
+---
+
+# Composite data types
+
+.left-column[
+## Factor
+## Matrix
+## List
+]
+
+.right-column[
+If we want the underlying object only, then use double brackets.
+
+```{r}
+x[[1]]
+typeof(x[[1]])
+```
+]
+
+---
+
+# Composite data types
+
+.left-column[
+## Factor
+## Matrix
+## List
+]
+
+.right-column[
+If the elements are named, we can index by name just as well as position.
+
+```{r}
+x["one"]
+x[["one"]]
+```
+
+... and we can also use the `$` operator.
+
+```{r}
+x$one
+```
+]
+
+---
+
+# Composite data types
+
+.left-column[
+## Factor
+## Matrix
+## List
+## Data frame
+]
+
+.right-column[
+Can be seen as a special case of a list where the length of each element is the same.
+
+```{r}
+x <- data.frame(some_letters = letters[1:5], x = 6:10, y = rnorm(5))
+x
+```
+]
+
+???
+
+This is probably the data structure that we will be spending most of our time with, at least during this course.
+
+---
+
+# Composite data types
+
+.left-column[
+## Factor
+## Matrix
+## List
+## Data frame
+]
+
+.right-column[
+Indexing a data frame has elements of all the different indexing methods we've seen so far.
+We can use square brackets to access rows and columns.
+
+```{r}
+# Element in first row, second column
+x[1, 2]
+# First row
+x[1, ]
+# Second column
+x[, 2]
+```
+]
+
+---
+
+# Composite data types
+
+.left-column[
+## Factor
+## Matrix
+## List
+## Data frame
+]
+
+.right-column[
+We can also use the `$` operator to access individual columns.
+
+```{r}
+x$some_letters
+```
+]
+
+--
+
+.right-column[
+... which in turn is a vector that we can index.
+
+```{r}
+x$some_letters[2]
+```
+]
+
+---
+
+# Composite data types
+
+.left-column[
+## Factor
+## Matrix
+## List
+## Data frame
+## Tibble
+]
+
+.right-column[
+For all practical purposes, this is a data frame, but with some extra bells and whistles.
+The datasets that we looked at last week (`mpg` and `diamonds`) were both tibbles.
+Anything you can do on a data frame, you can do on a tibble.
+
+.note.red[
+`r note_fa("exclamation-triangle")`
+Some packages do overly strict checks on data frames, and might cause some things to fail if you supply a tibble instead of a traditional data frame.
+Fortunately, this is easy to get around.
+Just convert your tibble to a data frame: `as.data.frame(your_tibble)`
+]
+]
+
+???
+
+I would argue that there are very few reasons to using traditional data frames instead of tibbles.
+There are some cases where you are kind of forced to use data frames, but these situations are few and far between.
+All of the tools that we will be presenting during these weeks work perfectly well with tibbles.
+
+---
+
+# Composite data types
+
+.left-column[
+## Factor
+## Matrix
+## List
+## Data frame
+## Tibble
+]
+
+.right-column.small[
+```{r}
+mpg
+```
+]
+
+---
+
+# Composite data types
+
+.left-column[
+## Factor
+## Matrix
+## List
+## Data frame
+## Tibble
+]
+
+.right-column.small[
+```{r}
+as.data.frame(mpg)
+```
+]
+
+???
+
+Not only does tibbles print better, but they also have functionality that can help us easier make sense of our data.
+We will go into these things later this week.

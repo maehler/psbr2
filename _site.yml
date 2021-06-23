@@ -24,6 +24,9 @@ navbar:
           - text: How to get help
             href: lectures/05_how_to_get_help.html
         - text: Week 2
+          menu:
+          - text: Basics of R Programming
+            href: lectures/06_basics_of_r_programming.html
         - text: Week 3
         - text: Week 4
         - text: Week 5
