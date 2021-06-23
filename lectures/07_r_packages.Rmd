@@ -15,130 +15,252 @@ setup_presentation("r_packages")
 
 # Learning goals
 
-- Know where to find documentation for functions
 - Can describe what an R package is
+- Know where to search for existing R packages
+- Install packages from different sources
+- See what packages are loaded in a session
+- Basic knowledge of namespaces
 
-# Getting help
+---
 
-```{r, echo = TRUE, attr.source=".numberLines"}
-?mean
+# R packages
+
+.left-column[
+## What are they?
+]
+
+.right-column[
+Source code that someone else wrote
+]
+
+---
+
+# R packages
+
+.left-column[
+## What are they?
+## How to use them
+]
+
+.right-column[
+The `library` function loads the package and makes anything exported from the package directly available.
+Whatever is exported from the package will be available for the duration of the session.
+
+```{r echo = TRUE}
+library(ggplot2)
+head(luv_colours)
 ```
+
+> "Unpack the box and put all the items on the table"
+]
+
+---
+
+# R packages
+
+.left-column[
+## What are they?
+## How to use them
+]
+
+.right-column[
+Another way of using them:
+
+```{r echo = TRUE}
+head(ggplot2::luv_colours)
+```
+
+> "Only take a specific item out of the box, use it, then put it back when you're done with it"
+]
+
+---
+
+# R packages
+
+.left-column[
+## What are they?
+## How to use them
+## What is loaded?
+]
+
+.right-column[
+```{r}
+sessionInfo()
+```
+]
+---
+
+# Where can they be found?
+
+- CRAN &ndash; official R repository
+- Bioconductor &ndash; mainly bioinformatics
+- Github
+
+An R package could really be uploaded anywhere, but at least CRAN and Bioconductor don't let anything through.
+
+---
+
+# Installing packages
+
+.left-column[
+## From CRAN
+]
+
+.right-column[
+```{r, eval = FALSE, echo = TRUE}
+# Install from CRAN
+install.packages("ggplot2")
+```
+]
+
+---
+
+# Installing packages
+
+.left-column[
+## From CRAN
+## From Bioconductor
+]
+
+.right-column[
+```{r, eval = FALSE}
+# Install the BiocManager from CRAN 
+install.packages("BiocManager")
+# Install package from Bioconductor
+BiocManager::install("qvalue")
+```
+]
+
+---
+
+# Installing packages
+
+.left-column[
+## From CRAN
+## From Bioconductor
+## From Github
+]
+
+.right-column[
+```{r, eval = FALSE}
+# We need the devtools package to install from Github
+install.packages("devtools")
+# Install the development version of ggplot2
+devtools::install_github("tidyverse/ggplot2")
+```
+]
+
+???
+
+BiocManager we only have to install once.
+After that we will have its `install` function available.
+
+---
+
+# Order of operations
+
+- Installing a package is only required once, with a few exceptions
+  - The R installation is updated
+  - You want to use features in a package that has been updated
+- `library` needs to be called for every new session
+
+---
+
+# Conflicting names
+
+```{r, echo = FALSE}
+# Need to clean up a bit for the example to work
+detach("package:tidyverse", unload = TRUE)
+unloadNamespace("modelr")
+unloadNamespace("broom")
+unloadNamespace("dbplyr")
+detach("package:tidyr", unload = TRUE)
+detach("package:dplyr", unload = TRUE)
+detach("package:conflicted", unload = TRUE)
+```
+
+```{r, message = TRUE, warning = TRUE}
+library(dplyr)
+```
+
+---
+
+# Conflicting names
+
+The function that was imported last takes precedence. To access other functions, use `<package>::<function>`.
+
+```{r, echo = TRUE}
+intersect
+base::intersect
+```
+
+---
+
+# Conflicting names
+
+The conflicted package can help us avoid mistakes
+
+```{r, echo = FALSE}
+# More cleanup
+unloadNamespace("modelr")
+unloadNamespace("broom")
+unloadNamespace("dbplyr")
+detach("package:dplyr", unload = TRUE)
+library(stats)
+```
+
+```{r, echo = TRUE, error = TRUE}
+library(conflicted)
+library(dplyr)
+
+filter
+```
+
+---
+
+# Conflicting names
+
+We can then resolve the conflict for the rest of our session
 
 ```{r}
-tags$img(src = base64_img(here("img/help_example_screenshot.png")),
-         class = "stretch")
+conflict_prefer("filter", "dplyr")
+filter
 ```
 
-# Anatomy of a help page { data-transition="slide-in none" }
+---
 
-```{r}
-tags$img(src = base64_img(here("img/help_example_screenshot.png")),
-         class = "stretch")
-```
+# Packages I use (almost) daily
 
-# Anatomy of a help page { data-transition="none" }
+.pull-left.big[
+- here
+- conflicted
+- dplyr
+- ggplot2
+- purrr
+- stringr
+- readr
+]
 
-```{r}
-tags$img(src = base64_img(here("img/help_example_screenshot.png")),
-         class = "stretch")
-```
-
-# Anatomy of a help page
-
-<div class="smaller left-justify stretch" style="background-color: #333; padding: 1em; margin: 0 auto; overflow: scroll;">
-
-<p style="margin-top: 0;">mean {base}</p>
-
-## Arithmetic Mean
-
-### Description
-
-Generic function for the (trimmed) arithmetic mean.
-
-### Usage
-
-<pre style="width: 100%; margin-top: 0; font-size: 1em;"><code>mean(x, ...)
-
-## Default S3 method:
-mean(x, trim = 0, na.rm = FALSE, ...)</code></pre>
-
-### Arguments
-
-```{r}
-tags$div(
-  tags$div(
-    class = "row",
-    style = "display: flex; margin-top: 0.5em;",
-    tags$div(
-      tags$code("x"),
-      style = "min-width: 30%;"
-    ),
-    tags$div(
-      tags$p(
-        "An", tags$code("R"), "Object. Currently there are methods for numeric/logical vectors and date, date-time and time interval objects. Complex vectors are allowed for ", tags$code("trim = 0"), ", only.",
-        style = "margin: 0;")
-    )
-  ),
-  tags$div(
-    class = "row",
-    style = "display: flex; margin-top: 0.5em;",
-    tags$div(
-      tags$code("trim"),
-      style = "min-width: 30%;"
-    ),
-    tags$div(
-      tags$p(
-        "the fraction (0 to 0.5) of observations to be trimmed from each end of ", tags$code("x"), " before the mean is computed. Values of trim outside that range are taken as the nearest endpoint.",
-        style = "margin: 0;")
-    )
-  ),
-  tags$div(
-    class = "row",
-    style = "display: flex; margin-top: 0.5em;",
-    tags$div(
-      tags$code("na.rm"),
-      style = "min-width: 30%;"
-    ),
-    tags$div(
-      tags$p(
-        "a logical value indicating whether ", tags$code("NA"), " values should be stripped before the computation proceeds.",
-        style = "margin: 0;")
-    )
-  ),
-  tags$div(
-    class = "row",
-    style = "display: flex; margin-top: 0.5em;",
-    tags$div(
-      tags$code("..."),
-      style = "min-width: 30%;"
-    ),
-    tags$div(
-      tags$p(
-        "further arguments passed to or from other methods",
-        style = "margin: 0;")
-    )
-  )
-)
-```
-
-### Value
-
-If `trim` is zero (the default), the arithmetic mean of the values in `x` is computed, as a numeric or complex vector of length one. If `x` is not logical (coerced to a numeric), numeric (including integer) or complex, `NA_real_` is returned, with a warning.
-
-If `trim` is non-zero, a symmetrical trimmed mean is computed with a fraction of `trim` observations deleted from each end before the mean is computed.
-
-### References
-
-Becker, R. A., Chambers, J. M. and Wilks, A. R. (1988) *The New S Language*. Wadsworth & Brooks/Cole.
-
-### See Also
-
-`weighted.mean`, `mean.POSIXct`, `colMeans` for row and column means.
-
-### Examples
-
-<pre style="width: 100%; margin-top: 0; font-size: 1em;">x <- c(0:10, 50)
-xm <- mean(x)
-c(xm, mean(x, trim = 0.10))</code></pre>
-
+.pull-right[
+<div style="position: relative; height: 280px; width: 450px;">
+<img style="width: 150px; margin: 0; position: absolute; top: 0; left: 0;" src="https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/ggplot2.png">
+<img style="width: 150px; margin: 0; position: absolute; top: 130px; left: 75px;" src="https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/purrr.png">
+<img style="width: 150px; margin: 0; position: absolute; top: 0; left: 150px;" src="https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/stringr.png">
+<img style="width: 150px; margin: 0; position: absolute; top: 130px; left: 225px;" src="https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/dplyr.png">
+<img style="width: 150px; margin: 0; position: absolute; top: 0; left: 300px;" src="https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/readr.png">
 </div>
+]
+
+---
+
+# You can write your own R packages!
+
+.pull-left[
+RStudio is an excellent tool for developing R packages, and helps out with a lot of the formalities that need to be in place.
+
+Not a part of this course though, but check out the book [R Packages](https://r-pkgs.org/) if you are interested.
+]
+
+.pull-right[
+![:scale 75%](https://d33wubrfki0l68.cloudfront.net/19c4a5cab01d9bcb1d2edeb63ce5ba0f21870e33/68feb/images/cover.png)
+]

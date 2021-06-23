@@ -27,6 +27,8 @@ navbar:
           menu:
           - text: Basics of R Programming
             href: lectures/06_basics_of_r_programming.html
+          - text: R packages
+            href: lectures/07_r_packages.html
         - text: Week 3
         - text: Week 4
         - text: Week 5
