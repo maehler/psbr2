@@ -10,6 +10,7 @@ setup_presentation <- function(cache_prefix) {
     library(here)
   })
   source(here("scripts/ggplot_themes.R"))
+  set.seed(12345)
 }
 
 base64_img <- function(filename) {
