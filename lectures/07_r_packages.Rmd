@@ -30,7 +30,21 @@ setup_presentation("r_packages")
 ]
 
 .right-column[
-Source code that someone else wrote
+Source code that someone else wrote.
+
+Collection of functions and/or data that collectively are aimed at solving a particular problem.
+
+```{r, echo = FALSE}
+tribble(
+  ~Package,   ~Description,
+  "ggplot2",  "Data visualisation",
+  "pheatmap", "Plotting pretty heatmaps",
+  "readxl",   "Reading Excel sheets into R",
+  "dplyr",    "Data frame manipulation",
+  "DESeq2",   "Differential gene expression analysis"
+) %>% knitr::kable()
+```
+
 ]
 
 ---
