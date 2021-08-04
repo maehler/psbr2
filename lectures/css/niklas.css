@@ -52,10 +52,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 1em auto;
 }
 
-  .held table {
-    margin: auto 0;
+  .held table, .held div, .held pre {
+    margin: 0 1em;
   }
 
 /* Font size control */

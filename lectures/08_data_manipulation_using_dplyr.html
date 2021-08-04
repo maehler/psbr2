@@ -1,0 +1,2169 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Practical Skills for Biology Research II</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Niklas Mähler" />
+    <meta name="date" content="2021-10-05" />
+    <script src="libs/header-attrs-2.8/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/niklas.css" type="text/css" />
+    <link rel="stylesheet" href="css/niklas-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: left, middle, inverse, title-slide
+
+# Practical Skills for Biology Research II
+## Data manipulation using dplyr
+### Niklas Mähler
+### Umeå University
+### 2021-10-05
+
+---
+
+
+
+
+# What is data manipulation?
+
+- Filtering
+- Creating new variables
+- Merging datasets
+- Summarising datasets
+
+---
+
+# dplyr
+
+&gt; dplyr is a grammar of data manipulation, providing a consistent set of verbs that help you solve the most common data manipulation challenges
+
+Just as ggplot2, dplyr is part of the [tidyverse](https://tidyverse.org).
+
+
+```r
+install.packages("tidyverse")
+```
+
+or
+
+
+```r
+install.packages("dplyr")
+```
+
+followed by
+
+
+```r
+library("tidyverse")
+```
+
+or
+
+
+```r
+library("dplyr")
+```
+
+---
+
+# dplyr verbs
+
+dplyr works exclusively on data frames, or tibbles, of which we have seen examples of already.
+
+These are some of the most commonly used verbs in dplyr:
+
+- `filter`: Select subsets of rows based on values
+- `select`: Select subsets of columns (variables) based on name
+- `mutate`: Create new variables based on existing columns
+- `summarise`: Reduce multiple rows into a single value
+- `arrange`: Change the ordering of the rows
+
+---
+
+# The `nycflights13` dataset
+
+As an example dataset we will be using `nycflights13` package, and the dataset `flights`.
+It consists the 336,776 flights that departed from New York in 2013.
+
+
+```r
+install.packages("nycflights13")
+library(nycflights13)
+flights
+```
+
+
+```
+## # A tibble: 336,776 x 19
+##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
+##  1  2013     1     1      517            515         2      830            819
+##  2  2013     1     1      533            529         4      850            830
+##  3  2013     1     1      542            540         2      923            850
+##  4  2013     1     1      544            545        -1     1004           1022
+##  5  2013     1     1      554            600        -6      812            837
+##  6  2013     1     1      554            558        -4      740            728
+##  7  2013     1     1      555            600        -5      913            854
+##  8  2013     1     1      557            600        -3      709            723
+##  9  2013     1     1      557            600        -3      838            846
+## 10  2013     1     1      558            600        -2      753            745
+## # … with 336,766 more rows, and 11 more variables: arr_delay &lt;dbl&gt;,
+## #   carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;,
+## #   air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+```
+
+???
+
+Check the help page for `flights` to see what the columns represent.
+
+---
+
+# dplyr basics
+
+All dplyr verbs act on data frames, and this should be the first argument to all of these functions.
+
+
+```r
+dplyr_function(&lt;data frame&gt;, ...)
+```
+
+The `...` represents other arguments that the function might take, and these vary depending on the verb.
+
+One very nice feature of dplyr is that we have access to all of the variables in the data frame that we are acting on.
+This means that we don't have to specify the data frame in addition to the variable we are interested whenever we want to use a variables, but we can simply refer to it by the variable name (i.e. the column name; without quotes).
+
+All dplyr verbs return a data frame.
+
+???
+
+Within the dplyr function call, all the variables in the data frame are available for us to use.
+Outside the function call, we still have to refer to the variables by specifying the data frame and the variable within the data frame.
+
+---
+
+# Selecting rows with `filter`
+
+Flights that were not delayed:
+
+
+```r
+filter(flights, dep_delay &lt;= 0)
+```
+
+```
+## # A tibble: 200,089 x 19
+##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
+## 1  2013     1     1      544            545        -1     1004           1022
+## 2  2013     1     1      554            600        -6      812            837
+## 3  2013     1     1      554            558        -4      740            728
+## 4  2013     1     1      555            600        -5      913            854
+## 5  2013     1     1      557            600        -3      709            723
+## # … with 200,084 more rows, and 11 more variables: arr_delay &lt;dbl&gt;,
+## #   carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;,
+## #   air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+```
+
+???
+
+So, we tell the `filter` function that we want to work on the `flights` data frame, and then to return all rows that fulfill the criteria that we specify.
+In this particular case, we say the the departure delay must be less than or equal to zero.
+What this then does is to create a new data frame containing only the rows that meet this criterion.
+
+---
+
+# Selecting rows with `filter`
+
+We can make more complex filters by setting up multiple criteria.
+
+
+```r
+filter(flights, dep_delay &lt;= 0, origin == "JFK")
+```
+
+```
+## # A tibble: 67,385 x 19
+##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
+## 1  2013     1     1      544            545        -1     1004           1022
+## 2  2013     1     1      557            600        -3      838            846
+## 3  2013     1     1      558            600        -2      849            851
+## 4  2013     1     1      558            600        -2      853            856
+## 5  2013     1     1      558            600        -2      924            917
+## # … with 67,380 more rows, and 11 more variables: arr_delay &lt;dbl&gt;,
+## #   carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;,
+## #   air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+```
+
+Adding more conditions separated by commas corresponds to AND-logic.
+This is the same as writing
+
+
+```r
+filter(flights, dep_delay &lt;= 0 &amp; origin == "JFK")
+```
+
+---
+
+# Selecting rows with `filter`
+
+If we want to use boolean operators other than AND, we have to specify them manually.
+
+
+```r
+filter(flights, dest == "CPH" | dest == "ARN")
+```
+
+```
+## # A tibble: 0 x 19
+## # … with 19 variables: year &lt;int&gt;, month &lt;int&gt;, day &lt;int&gt;, dep_time &lt;int&gt;,
+## #   sched_dep_time &lt;int&gt;, dep_delay &lt;dbl&gt;, arr_time &lt;int&gt;,
+## #   sched_arr_time &lt;int&gt;, arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;,
+## #   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+## #   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+```
+
+---
+
+# Common errors with `filter`
+
+.left-column[
+## Missing variable
+]
+
+.right-column[
+
+```r
+filter(flights, depdelay &lt;= 0)
+```
+
+```
+## Error: Problem with `filter()` input `..1`.
+## ℹ Input `..1` is `depdelay &lt;= 0`.
+## ✖ object 'depdelay' not found
+```
+]
+
+???
+
+Here the problem is that the variable is not called `depdelay`, but `dep` *underscore* `delay`.
+In this case it's a spelling error, but the result would be the same if you try to use any variable that is not in the data frame.
+
+--
+
+.right-column[
+
+```r
+depdelay &lt;- 10
+filter(flights, depdelay &lt;= 0)
+```
+
+```
+## # A tibble: 0 x 19
+## # … with 19 variables: year &lt;int&gt;, month &lt;int&gt;, day &lt;int&gt;, dep_time &lt;int&gt;,
+## #   sched_dep_time &lt;int&gt;, dep_delay &lt;dbl&gt;, arr_time &lt;int&gt;,
+## #   sched_arr_time &lt;int&gt;, arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;,
+## #   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+## #   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+```
+]
+
+???
+
+This is a more subtle variant of the previous error.
+Let's say that we have declared a variable `depdelay` *outside* of our data frame, and then try to access this in `filter`.
+The result is and empty data frame.
+Why?
+
+---
+
+# Common errors
+
+.left-column[
+## Missing variable
+## Comparison typo
+]
+
+When making strict checks for equality, make sure to use `==`.
+
+.right-column[
+
+```r
+filter(flights, origin = "JFK")
+```
+
+```
+## Error: Problem with `filter()` input `..1`.
+## ✖ Input `..1` is named.
+## ℹ This usually means that you've used `=` instead of `==`.
+## ℹ Did you mean `origin == "JFK"`?
+```
+]
+
+At least dplyr gives you a nice error message in this case.
+
+???
+
+This is a mistake I do from time to time, probably due to how you normally specify function arguments with a single equals sign.
+
+---
+
+# Selecting columns with `select`
+
+.left-column[
+## Basics
+]
+
+.right-column[
+We can subset a data frame to just the columns we are interested in with `select`.
+
+
+```r
+select(flights, origin, dest, dep_time)
+```
+
+```
+## # A tibble: 336,776 x 3
+##   origin dest  dep_time
+##   &lt;chr&gt;  &lt;chr&gt;    &lt;int&gt;
+## 1 EWR    IAH        517
+## 2 LGA    IAH        533
+## 3 JFK    MIA        542
+## 4 JFK    BQN        544
+## 5 LGA    ATL        554
+## # … with 336,771 more rows
+```
+
+This can be useful if we want to get a better overview of variables that we are interested in, or to save some resources if we're dealing with a very big dataset.
+]
+
+---
+
+# Selecting columns with `select`
+
+.left-column[
+## Basics
+## Ranges
+]
+
+.right-column[
+We can also select a range of columns with the `:` operator.
+
+
+```r
+select(flights, year:dep_time)
+```
+
+```
+## # A tibble: 336,776 x 4
+##    year month   day dep_time
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;
+## 1  2013     1     1      517
+## 2  2013     1     1      533
+## 3  2013     1     1      542
+## 4  2013     1     1      544
+## 5  2013     1     1      554
+## # … with 336,771 more rows
+```
+]
+
+---
+
+# Selecting columns with `select`
+
+.left-column[
+## Basics
+## Ranges
+## Helper functions
+### `starts_with`
+]
+
+.right-column[
+
+```r
+select(flights, starts_with("time"))
+```
+
+```
+## # A tibble: 336,776 x 1
+##   time_hour          
+##   &lt;dttm&gt;             
+## 1 2013-01-01 05:00:00
+## 2 2013-01-01 05:00:00
+## 3 2013-01-01 05:00:00
+## 4 2013-01-01 05:00:00
+## 5 2013-01-01 06:00:00
+## # … with 336,771 more rows
+```
+
+```r
+select(flights, starts_with(c("dep", "arr")))
+```
+
+```
+## # A tibble: 336,776 x 4
+##   dep_time dep_delay arr_time arr_delay
+##      &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+## 1      517         2      830        11
+## 2      533         4      850        20
+## 3      542         2      923        33
+## 4      544        -1     1004       -18
+## 5      554        -6      812       -25
+## # … with 336,771 more rows
+```
+]
+
+---
+
+# Selecting columns with `select`
+
+.left-column[
+## Basics
+## Ranges
+## Helper functions
+### `starts_with`
+### `ends_with`
+]
+
+.right-column[
+
+```r
+select(flights, ends_with("time"))
+```
+
+```
+## # A tibble: 336,776 x 5
+##   dep_time sched_dep_time arr_time sched_arr_time air_time
+##      &lt;int&gt;          &lt;int&gt;    &lt;int&gt;          &lt;int&gt;    &lt;dbl&gt;
+## 1      517            515      830            819      227
+## 2      533            529      850            830      227
+## 3      542            540      923            850      160
+## 4      544            545     1004           1022      183
+## 5      554            600      812            837      116
+## # … with 336,771 more rows
+```
+
+```r
+select(flights, ends_with(c("time", "delay")))
+```
+
+```
+## # A tibble: 336,776 x 7
+##   dep_time sched_dep_time arr_time sched_arr_time air_time dep_delay arr_delay
+##      &lt;int&gt;          &lt;int&gt;    &lt;int&gt;          &lt;int&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1      517            515      830            819      227         2        11
+## 2      533            529      850            830      227         4        20
+## 3      542            540      923            850      160         2        33
+## 4      544            545     1004           1022      183        -1       -18
+## 5      554            600      812            837      116        -6       -25
+## # … with 336,771 more rows
+```
+]
+
+---
+
+# Selecting columns with `select`
+
+.left-column[
+## Basics
+## Ranges
+## Helper functions
+### `starts_with`
+### `ends_with`
+### `contains`
+]
+
+.right-column[
+
+```r
+select(flights, contains("st"))
+```
+
+```
+## # A tibble: 336,776 x 2
+##   dest  distance
+##   &lt;chr&gt;    &lt;dbl&gt;
+## 1 IAH       1400
+## 2 IAH       1416
+## 3 MIA       1089
+## 4 BQN       1576
+## 5 ATL        762
+## # … with 336,771 more rows
+```
+]
+
+---
+
+# Selecting columns with `select`
+
+.left-column[
+## Basics
+## Ranges
+## Helper functions
+### `starts_with`
+### `ends_with`
+### `contains`
+### `matches`
+]
+
+.right-column[
+All of the previous functions match strings literally.
+`matches` is the most general of the bunch and can use [regular expressions](https://en.wikipedia.org/wiki/Regular_expression) for matching column names.
+
+
+```r
+select(flights, matches("d.*ay"))
+```
+
+```
+## # A tibble: 336,776 x 3
+##     day dep_delay arr_delay
+##   &lt;int&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1     1         2        11
+## 2     1         4        20
+## 3     1         2        33
+## 4     1        -1       -18
+## 5     1        -6       -25
+## # … with 336,771 more rows
+```
+]
+
+---
+
+# Create new variables with `mutate`
+
+.left-column[
+## Basics
+]
+
+.right-column[
+`mutate` will create new variables at the end of the dataset, so let's use `select` to get a better overview.
+
+
+```r
+flights_small &lt;- select(flights, ends_with("delay"), distance, air_time)
+mutate(flights_small,
+       speed_mph = distance / (air_time / 60))
+```
+
+```
+## # A tibble: 336,776 x 5
+##   dep_delay arr_delay distance air_time speed_mph
+##       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+## 1         2        11     1400      227      370.
+## 2         4        20     1416      227      374.
+## 3         2        33     1089      160      408.
+## 4        -1       -18     1576      183      517.
+## 5        -6       -25      762      116      394.
+## # … with 336,771 more rows
+```
+]
+
+---
+
+# Create new variables with `mutate`
+
+.left-column[
+## Basics
+]
+
+.right-column[
+We can even refer to our new variables *within* the call to `mutate`.
+
+
+```r
+mutate(flights_small,
+       gain = dep_delay - arr_delay,
+       gain_per_hour = gain / (air_time / 60))
+```
+
+```
+## # A tibble: 336,776 x 6
+##   dep_delay arr_delay distance air_time  gain gain_per_hour
+##       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;         &lt;dbl&gt;
+## 1         2        11     1400      227    -9         -2.38
+## 2         4        20     1416      227   -16         -4.23
+## 3         2        33     1089      160   -31        -11.6 
+## 4        -1       -18     1576      183    17          5.57
+## 5        -6       -25      762      116    19          9.83
+## # … with 336,771 more rows
+```
+]
+
+---
+
+# Create new variables with `mutate`
+
+.left-column[
+## Basics
+## Multiple columns
+]
+
+.right-column[
+If we want to apply a function to several variables in our dataset, this is also possible using `across`.
+
+
+```r
+mutate(flights_small,
+       speed = distance / (air_time / 60),
+       across(.cols = c(distance, speed),
+              .fns = ~ . / 1.609))
+```
+
+```
+## # A tibble: 336,776 x 5
+##   dep_delay arr_delay distance air_time speed
+##       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
+## 1         2        11     870.      227  230.
+## 2         4        20     880.      227  233.
+## 3         2        33     677.      160  254.
+## 4        -1       -18     979.      183  321.
+## 5        -6       -25     474.      116  245.
+## # … with 336,771 more rows
+```
+]
+
+---
+
+# Create new variables with `mutate`
+
+.left-column[
+## Basics
+## Multiple columns
+]
+
+.right-column[
+In the previous example, the original variables will be overwritten by the new ones we create.
+If we don't want to replace them, we can set the names of the new columns using the `.names` argument (check `?across` for details).
+
+
+```r
+mutate(flights_small,
+       speed = distance / (air_time / 60),
+       across(.cols = c(distance, speed),
+              .fns = ~ . / 1.609,
+              .names = "{.col}_km"))
+```
+
+```
+## # A tibble: 336,776 x 7
+##   dep_delay arr_delay distance air_time speed distance_km speed_km
+##       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;    &lt;dbl&gt;
+## 1         2        11     1400      227  370.        870.     230.
+## 2         4        20     1416      227  374.        880.     233.
+## 3         2        33     1089      160  408.        677.     254.
+## 4        -1       -18     1576      183  517.        979.     321.
+## 5        -6       -25      762      116  394.        474.     245.
+## # … with 336,771 more rows
+```
+]
+
+---
+
+# Create summaries with `summarise`
+
+.left-column[
+## Basics
+]
+
+.right-column[
+`summarise` boils down a dataframe to a single row.
+
+
+```r
+summarise(flights, arr_delay = mean(arr_delay, na.rm = TRUE))
+```
+
+```
+## # A tibble: 1 x 1
+##   arr_delay
+##       &lt;dbl&gt;
+## 1      6.90
+```
+
+Summarising like this is not that useful though.
+]
+
+---
+
+# Create summaries with `summarise`
+
+.left-column[
+## Basics
+## `group_by`
+]
+
+.right-column[
+Creating summaries on grouped data frames is much more useful.
+This can be accomplished with using `summarise` together with `group_by`.
+
+
+```r
+by_day &lt;- group_by(flights, year, month, day)
+summarise(by_day, arr_delay = mean(arr_delay, na.rm = TRUE))
+```
+
+```
+## # A tibble: 365 x 4
+## # Groups:   year, month [12]
+##    year month   day arr_delay
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;
+## 1  2013     1     1     12.7 
+## 2  2013     1     2     12.7 
+## 3  2013     1     3      5.73
+## 4  2013     1     4     -1.93
+## 5  2013     1     5     -1.53
+## # … with 360 more rows
+```
+
+In this example, we group by day, and then calculate the mean arrival delay for each day.
+The result is a data frame with one row per day.
+]
+
+---
+
+# Relational data
+
+.left-column[
+## Introduction
+]
+
+.right-column[
+
+It is often the case that we have multiple datasets with one or several variables in common between them.
+This is what we call **relational data**.
+
+There are four tibbles in the nycflights13 package that can be connected to each other.
+
+- `flights`: this we've already seen
+- `airports`: airport metadata
+- `planes`: airplane metadata
+- `weather`: weather data for the New York airports
+]
+
+---
+
+# Relational data
+
+.left-column[
+## Introduction
+]
+
+.right-column[
+![](https://d33wubrfki0l68.cloudfront.net/245292d1ea724f6c3fd8a92063dcd7bfb9758d02/5751b/diagrams/relational-nycflights.png)
+]
+
+---
+
+# Relational data
+
+.left-column[
+## Introduction
+## Keys
+]
+
+.right-column[
+The variables that determine what is a unique observation in each of these tibbles are called keys.
+There are two types of keys.
+
+### Primary keys
+
+Keys that identify unique observations in the tibble where they occur, e.g. `faa` in the `aiports` tibble.
+A primary key can be either a single variable, or a combination of variables.
+They have to be unique; no two observations can have the same primary key.
+
+### Foreign keys
+
+Keys that link between tibbles, e.g. `origin` in `fligths` is a foreign key referring to `faa` in `airports`.
+Foreign keys do not have to be unique, but they have to uniquely identify an observation in a different tibble.
+
+A variable can be both a primary key, *and* a foreign key.
+An example of this is `origin` which is part of the primary key in the `weather` tibble, but also a foreign key connecting it to `airports`.
+]
+
+---
+
+# Relational data
+
+.left-column[
+## Introduction
+## Keys
+]
+
+.right-column[
+![](https://d33wubrfki0l68.cloudfront.net/245292d1ea724f6c3fd8a92063dcd7bfb9758d02/5751b/diagrams/relational-nycflights.png)
+]
+
+---
+
+# Relational data
+
+.left-column[
+## Introduction
+## Keys
+## Joins
+]
+
+.right-column[
+There are three different ways that we can join relational data:
+
+- **Mutating joins**, which add variables from one tibble to another based on matching observations.
+- **Filtering joins**, which filter observations in one tibble based on whether or not they match observations in another tibble.
+- **Set operations**, which treats observations as set elements.
+]
+
+---
+
+# Mutating joins
+
+.left-column[
+## Introduction
+]
+
+.right-column[
+Let's say we want to add the name of the airline to the flights table.
+In order to make the output a bit more readable, we create a new tibble with fewer variables.
+
+
+```r
+flights2 &lt;- select(flights, year:day, hour, origin, dest, tailnum, carrier)
+```
+
+
+```r
+left_join(flights2, airlines, by = "carrier")
+```
+
+```
+## # A tibble: 336,776 x 9
+##     year month   day  hour origin dest  tailnum carrier name                    
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;                   
+##  1  2013     1     1     5 EWR    IAH   N14228  UA      United Air Lines Inc.   
+##  2  2013     1     1     5 LGA    IAH   N24211  UA      United Air Lines Inc.   
+##  3  2013     1     1     5 JFK    MIA   N619AA  AA      American Airlines Inc.  
+##  4  2013     1     1     5 JFK    BQN   N804JB  B6      JetBlue Airways         
+##  5  2013     1     1     6 LGA    ATL   N668DN  DL      Delta Air Lines Inc.    
+##  6  2013     1     1     5 EWR    ORD   N39463  UA      United Air Lines Inc.   
+##  7  2013     1     1     6 EWR    FLL   N516JB  B6      JetBlue Airways         
+##  8  2013     1     1     6 LGA    IAD   N829AS  EV      ExpressJet Airlines Inc.
+##  9  2013     1     1     6 JFK    MCO   N593JB  B6      JetBlue Airways         
+## 10  2013     1     1     6 LGA    ORD   N3ALAA  AA      American Airlines Inc.  
+## # … with 336,766 more rows
+```
+]
+
+---
+
+# Mutating joins
+
+.left-column[
+## Introduction
+## Types of joins
+]
+
+.right-column[
+There are a couple of different ways that we can join tibbles:
+
+- Inner join: `inner_join`; returns observations that are found in both tibbles.
+- Outer join: `left_join`, `right_join`, `full_join`; returns observations that are found in either the first or the second tibble, or both.
+- Full join: `full_join`; returns all observations from both tibbles.
+]
+
+---
+
+# Mutating joins
+
+.left-column[
+## Introduction
+## Types of joins
+### A toy example
+]
+
+.right-column[
+
+```r
+x &lt;- tribble(
+       ~key, ~val_x,
+       1,    "x1",
+       2,    "x2",
+       3,    "x3",
+)
+
+y &lt;- tribble(
+       ~key, ~val_y,
+       1,    "y1",
+       2,    "y2",
+       4,    "y3",
+)
+```
+
+.pull-left[
+<div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_x &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #CCEBC5 !important;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x3 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div>
+]
+
+.pull-right[
+<div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_y &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #DECBE4 !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y3 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div>
+]
+]
+
+???
+
+This might be the first time that you see the `tribble` function.
+It is similar to the `tibble` function, but is more suited for quick creation of small tibbles such as these.
+The way the code is written more closely resembles the final tibble than if we would have done it with the `tibble` function.
+
+---
+
+# Mutating joins
+
+.left-column[
+## Introduction
+## Types of joins
+### A toy example
+### Inner join
+]
+
+.right-column[
+Inner joins are the simplest type of join.
+It will return the observations that are found in both of the tibbles.
+
+
+```r
+inner_join(x, y, by = "key")
+```
+
+.held[
+<div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_x &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #CCEBC5 !important;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x3 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div><div>
+<svg viewBox="0 0 512 512" style="position:relative;display:inline-block;top:.1em;height:4em;" xmlns="http://www.w3.org/2000/svg">
+<path d="M377.941 169.941V216H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.568 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296h243.882v46.059c0 21.382 25.851 32.09 40.971 16.971l86.059-86.059c9.373-9.373 9.373-24.568 0-33.941l-86.059-86.059c-15.119-15.12-40.971-4.412-40.971 16.97z"></path>
+</svg>
+</div><div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_y &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #DECBE4 !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y3 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div>
+]
+]
+
+--
+
+.right-column[
+<div>
+<svg viewBox="0 0 256 512" style="position:relative;top:.1em;height:4em;display:block;margin:0 auto;" xmlns="http://www.w3.org/2000/svg">
+<path d="M168 345.941V44c0-6.627-5.373-12-12-12h-56c-6.627 0-12 5.373-12 12v301.941H41.941c-21.382 0-32.09 25.851-16.971 40.971l86.059 86.059c9.373 9.373 24.569 9.373 33.941 0l86.059-86.059c15.119-15.119 4.411-40.971-16.971-40.971H168z"></path>
+</svg>
+</div><div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_x &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_y &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y2 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div>
+]
+
+---
+
+# Mutating joins
+
+.left-column[
+## Introduction
+## Types of joins
+### A toy example
+### Inner join
+### Outer join
+]
+
+.right-column[
+`left_join` keeps all observations in `x`, regardless of whether there is a match in `y`.
+If a key is not found in `y`, the resulting observation will be set to `NA`.
+
+
+```r
+left_join(x, y, by = "key")
+```
+
+.held[
+<div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_x &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #CCEBC5 !important;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x3 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div><div>
+<svg viewBox="0 0 448 512" style="position:relative;display:inline-block;top:.1em;height:4em;" xmlns="http://www.w3.org/2000/svg">
+<path d="M134.059 296H436c6.627 0 12-5.373 12-12v-56c0-6.627-5.373-12-12-12H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.569 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296z"></path>
+</svg>
+</div><div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_y &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #DECBE4 !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y3 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div>
+]
+]
+
+--
+
+.right-column[
+<div>
+<svg viewBox="0 0 256 512" style="position:relative;top:.1em;height:4em;display:block;margin:0 auto;" xmlns="http://www.w3.org/2000/svg">
+<path d="M168 345.941V44c0-6.627-5.373-12-12-12h-56c-6.627 0-12 5.373-12 12v301.941H41.941c-21.382 0-32.09 25.851-16.971 40.971l86.059 86.059c9.373 9.373 24.569 9.373 33.941 0l86.059-86.059c15.119-15.119 4.411-40.971-16.971-40.971H168z"></path>
+</svg>
+</div><div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_x &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_y &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #CCEBC5 !important;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div>
+]
+
+---
+
+# Mutating joins
+
+.left-column[
+## Introduction
+## Types of joins
+### A toy example
+### Inner join
+### Outer join
+]
+
+.right-column[
+`right_join` keeps all observations in `y`, regardless of whether there is a match in `x`.
+If a key is not found in `x`, the resulting observation will be set to `NA`.
+
+
+```r
+right_join(x, y, by = "key")
+```
+
+.held[
+<div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_x &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #CCEBC5 !important;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x3 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div><div>
+<svg viewBox="0 0 448 512" style="position:relative;display:inline-block;top:.1em;height:4em;" xmlns="http://www.w3.org/2000/svg">
+<path d="M313.941 216H12c-6.627 0-12 5.373-12 12v56c0 6.627 5.373 12 12 12h301.941v46.059c0 21.382 25.851 32.09 40.971 16.971l86.059-86.059c9.373-9.373 9.373-24.569 0-33.941l-86.059-86.059c-15.119-15.119-40.971-4.411-40.971 16.971V216z"></path>
+</svg>
+</div><div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_y &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #DECBE4 !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y3 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div>
+]
+]
+
+--
+
+.right-column[
+<div>
+<svg viewBox="0 0 256 512" style="position:relative;top:.1em;height:4em;display:block;margin:0 auto;" xmlns="http://www.w3.org/2000/svg">
+<path d="M168 345.941V44c0-6.627-5.373-12-12-12h-56c-6.627 0-12 5.373-12 12v301.941H41.941c-21.382 0-32.09 25.851-16.971 40.971l86.059 86.059c9.373 9.373 24.569 9.373 33.941 0l86.059-86.059c15.119-15.119 4.411-40.971-16.971-40.971H168z"></path>
+</svg>
+</div><div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_x &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_y &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #DECBE4 !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y3 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div>
+]
+
+---
+
+# Mutating joins
+
+.left-column[
+## Introduction
+## Types of joins
+### A toy example
+### Inner join
+### Outer join
+### Full join
+]
+
+.right-column[
+`full_join` keeps all observations in both tibbles, setting all missing observations to `NA`.
+
+
+```r
+full_join(x, y, by = "key")
+```
+
+.held[
+<div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_x &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #CCEBC5 !important;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x3 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div><div>
+<svg viewBox="0 0 512 512" style="position:relative;display:inline-block;top:.1em;height:4em;" xmlns="http://www.w3.org/2000/svg">
+<path d="M377.941 169.941V216H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.568 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296h243.882v46.059c0 21.382 25.851 32.09 40.971 16.971l86.059-86.059c9.373-9.373 9.373-24.568 0-33.941l-86.059-86.059c-15.119-15.12-40.971-4.412-40.971 16.97z"></path>
+</svg>
+</div><div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_y &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #DECBE4 !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y3 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div>
+]
+]
+
+--
+
+.right-column[
+<div>
+<svg viewBox="0 0 256 512" style="position:relative;top:.1em;height:4em;display:block;margin:0 auto;" xmlns="http://www.w3.org/2000/svg">
+<path d="M168 345.941V44c0-6.627-5.373-12-12-12h-56c-6.627 0-12 5.373-12 12v301.941H41.941c-21.382 0-32.09 25.851-16.971 40.971l86.059 86.059c9.373 9.373 24.569 9.373 33.941 0l86.059-86.059c15.119-15.119 4.411-40.971-16.971-40.971H168z"></path>
+</svg>
+</div><div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_x &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_y &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #CCEBC5 !important;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #DECBE4 !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y3 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div>
+]
+
+---
+
+# Mutating joins
+
+.left-column[
+## Introduction
+## Types of joins
+### A toy example
+### Inner join
+### Outer join
+### Full join
+## Duplicate keys
+]
+
+.right-column[
+So far the data has been very nice to us in that there has been no duplicated keys.
+This is not always the case in real data, and sometimes duplicated keys are a necessity (e.g. foreign keys).
+
+.held[
+
+```r
+x2 &lt;- tribble(
+  ~key, ~x2_val,
+  1,    "x1",
+  2,    "x2",
+  2,    "x3",
+  3,    "x4"
+)
+```
+
+
+```r
+y2 &lt;- tribble(
+  ~key, ~y2_val,
+  1,    "y1",
+  2,    "y3",
+  4,    "y4"
+)
+```
+]
+
+.held[
+<div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; x2_val &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x3 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #CCEBC5 !important;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x4 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div><div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; y2_val &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y3 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #DECBE4 !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y4 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div>
+]
+]
+
+---
+
+# Mutating joins
+
+.left-column[
+## Introduction
+## Types of joins
+### A toy example
+### Inner join
+### Outer join
+### Full join
+## Duplicate keys
+]
+
+.right-column[
+
+```r
+left_join(x2, y2)
+```
+
+.held[
+<div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; x2_val &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x3 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #CCEBC5 !important;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x4 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div><div>
+<svg viewBox="0 0 448 512" style="position:relative;display:inline-block;top:.1em;height:4em;" xmlns="http://www.w3.org/2000/svg">
+<path d="M134.059 296H436c6.627 0 12-5.373 12-12v-56c0-6.627-5.373-12-12-12H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.569 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296z"></path>
+</svg>
+</div><div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; y2_val &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y3 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #DECBE4 !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y4 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div>
+]
+]
+
+--
+
+.right-column[
+<div>
+<svg viewBox="0 0 256 512" style="position:relative;top:.1em;height:4em;display:block;margin:0 auto;" xmlns="http://www.w3.org/2000/svg">
+<path d="M168 345.941V44c0-6.627-5.373-12-12-12h-56c-6.627 0-12 5.373-12 12v301.941H41.941c-21.382 0-32.09 25.851-16.971 40.971l86.059 86.059c9.373 9.373 24.569 9.373 33.941 0l86.059-86.059c15.119-15.119 4.411-40.971-16.971-40.971H168z"></path>
+</svg>
+</div><div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; x2_val &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; y2_val &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y3 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y3 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #CCEBC5 !important;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div>
+]
+
+---
+
+# Mutating joins
+
+.left-column[
+## Introduction
+## Types of joins
+### A toy example
+### Inner join
+### Outer join
+### Full join
+## Duplicate keys
+]
+
+.right-column[
+Another case is when we have duplicate keys in both tibbles that we want to join.
+Performing a join on these will result in all possible combinations of the duplicate keys being generated.
+This might sometimes be the behaviour that we want, but usually it is due to an error since none of the keys uniquely identifies observations in either tibble.
+
+.held[
+
+```r
+x3 &lt;- tribble(
+  ~key, ~x3_val,
+  1,    "x1",
+  2,    "x2",
+  2,    "x3",
+  3,    "x4"
+)
+```
+
+
+```r
+y3 &lt;- tribble(
+  ~key, ~y3_val,
+  1,    "y1",
+  2,    "y2",
+  2,    "y3",
+  3,    "y4"
+)
+```
+]
+
+.held[
+<div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; x3_val &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x3 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #CCEBC5 !important;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x4 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div><div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; y3_val &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y3 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #CCEBC5 !important;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y4 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div>
+]
+]
+
+---
+
+# Mutating joins
+
+.left-column[
+## Introduction
+## Types of joins
+### A toy example
+### Inner join
+### Outer join
+### Full join
+## Duplicate keys
+]
+
+.right-column[
+
+```r
+left_join(x3, y3, by = "key")
+```
+
+.held.small[
+<div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; x3_val &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x3 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #CCEBC5 !important;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x4 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div><div>
+<svg viewBox="0 0 448 512" style="position:relative;display:inline-block;top:.1em;height:4em;" xmlns="http://www.w3.org/2000/svg">
+<path d="M134.059 296H436c6.627 0 12-5.373 12-12v-56c0-6.627-5.373-12-12-12H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.569 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296z"></path>
+</svg>
+</div><div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; y3_val &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y3 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #CCEBC5 !important;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y4 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div>
+]
+]
+
+--
+
+.right-column.small[
+<div>
+<svg viewBox="0 0 256 512" style="position:relative;top:.1em;height:4em;display:block;margin:0 auto;" xmlns="http://www.w3.org/2000/svg">
+<path d="M168 345.941V44c0-6.627-5.373-12-12-12h-56c-6.627 0-12 5.373-12 12v301.941H41.941c-21.382 0-32.09 25.851-16.971 40.971l86.059 86.059c9.373 9.373 24.569 9.373 33.941 0l86.059-86.059c15.119-15.119 4.411-40.971-16.971-40.971H168z"></path>
+</svg>
+</div><div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; x3_val &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; y3_val &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y3 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y3 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #CCEBC5 !important;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y4 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div>
+]
+
+---
+
+# Filtering joins
+
+.left-column[
+## Introduction
+]
+
+.right-column[
+Filtering joins have the same mechanics as the mutating joins, but instead of focusing on the variables in the data, they focus more on the observations.
+There are two ways of performing filtering joins:
+
+- `semi_join(x, y)`: returns all observations in `x` found in `y`.
+- `anti_join(x, y)`: returns all observations in `x` *not* found in `y`.
+]
+
+---
+
+# Filtering joins
+
+.left-column[
+## Introduction
+## `semi_join`
+]
+
+.right-column[
+`semi_join` returns all observations in `x` that are found in `y`.
+
+
+```r
+semi_join(x, y, by = "key")
+```
+
+.held[
+<div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_x &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #CCEBC5 !important;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x3 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div><div>
+<svg viewBox="0 0 512 512" style="position:relative;display:inline-block;top:.1em;height:4em;" xmlns="http://www.w3.org/2000/svg">
+<path d="M377.941 169.941V216H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.568 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296h243.882v46.059c0 21.382 25.851 32.09 40.971 16.971l86.059-86.059c9.373-9.373 9.373-24.568 0-33.941l-86.059-86.059c-15.119-15.12-40.971-4.412-40.971 16.97z"></path>
+</svg>
+</div><div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_y &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #DECBE4 !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y3 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div>
+]
+]
+
+--
+
+.right-column[
+<div>
+<svg viewBox="0 0 256 512" style="position:relative;top:.1em;height:4em;display:block;margin:0 auto;" xmlns="http://www.w3.org/2000/svg">
+<path d="M168 345.941V44c0-6.627-5.373-12-12-12h-56c-6.627 0-12 5.373-12 12v301.941H41.941c-21.382 0-32.09 25.851-16.971 40.971l86.059 86.059c9.373 9.373 24.569 9.373 33.941 0l86.059-86.059c15.119-15.119 4.411-40.971-16.971-40.971H168z"></path>
+</svg>
+</div><div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_x &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x2 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div>
+]
+
+???
+
+So, you can see that the behaviour is similar to a left join, but here we don't keep the variables in `y`.
+
+---
+
+# Filtering joins
+
+.left-column[
+## Introduction
+## `semi_join`
+## `anti_join`
+]
+
+.right-column[
+`anti_join` returns all observations in `x` that are *not* found in `y`.
+
+
+```r
+anti_join(x, y, by = "key")
+```
+
+.held[
+<div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_x &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #CCEBC5 !important;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x3 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div><div>
+<svg viewBox="0 0 512 512" style="position:relative;display:inline-block;top:.1em;height:4em;" xmlns="http://www.w3.org/2000/svg">
+<path d="M377.941 169.941V216H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.568 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296h243.882v46.059c0 21.382 25.851 32.09 40.971 16.971l86.059-86.059c9.373-9.373 9.373-24.568 0-33.941l-86.059-86.059c-15.119-15.12-40.971-4.412-40.971 16.97z"></path>
+</svg>
+</div><div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_y &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FBB4AE !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #B3CDE3 !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #DECBE4 !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; y3 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div>
+]
+]
+
+--
+
+.right-column[
+<div>
+<svg viewBox="0 0 256 512" style="position:relative;top:.1em;height:4em;display:block;margin:0 auto;" xmlns="http://www.w3.org/2000/svg">
+<path d="M168 345.941V44c0-6.627-5.373-12-12-12h-56c-6.627 0-12 5.373-12 12v301.941H41.941c-21.382 0-32.09 25.851-16.971 40.971l86.059 86.059c9.373 9.373 24.569 9.373 33.941 0l86.059-86.059c15.119-15.119 4.411-40.971-16.971-40.971H168z"></path>
+</svg>
+</div><div>&lt;table class=" lightable-classic" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; key &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; val_x &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #CCEBC5 !important;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; x3 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</div>
+]
+
+---
+
+# A visual example
+
+&lt;img src="./figures/data_manipulation_using_dplyr_flights_map-1.png" width="936" style="display: block; margin: auto;" /&gt;
+
+???
+
+Here I map the number of flights to both the stroke thickness and the stroke opacity.
+This will make the more trafficked routes pop in the visualisation.
+
+---
+
+# Suggested reading
+
+- [R for Data Science: Data Transformation](https://r4ds.had.co.nz/transform.html)
+- [R for Data Science: Relational Data](https://r4ds.had.co.nz/relational-data.html)
+- [RStudio Data Wrangling Cheat Sheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="js/macros.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

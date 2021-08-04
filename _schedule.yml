@@ -83,7 +83,8 @@ schedule:
   - day:
     - start_time:
       end_time:
-      topic: Data wrangling using dplyr
+      topic: Data manipulation using dplyr
+      url: lectures/08_data_manipulation_using_dplyr.html
       details: |
         - Examples using the built-in datasets
           - `mpg`, `diamonds`, `nycflights13`

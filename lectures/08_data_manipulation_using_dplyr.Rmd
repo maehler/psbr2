@@ -1,0 +1,1096 @@
+---
+title: "Practical Skills for Biology Research II"
+subtitle: "Data manipulation using dplyr"
+author: "Niklas Mähler"
+institute: "Umeå University"
+date: "2021-10-05"
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include = FALSE}
+source(here::here("scripts/setup.R"))
+setup_presentation("data_manipulation_using_dplyr")
+library(kableExtra)
+```
+
+# What is data manipulation?
+
+- Filtering
+- Creating new variables
+- Merging datasets
+- Summarising datasets
+
+---
+
+# dplyr
+
+> dplyr is a grammar of data manipulation, providing a consistent set of verbs that help you solve the most common data manipulation challenges
+
+Just as ggplot2, dplyr is part of the [tidyverse](https://tidyverse.org).
+
+```{r, eval = FALSE}
+install.packages("tidyverse")
+```
+
+or
+
+```{r, eval = FALSE}
+install.packages("dplyr")
+```
+
+followed by
+
+```{r, eval = FALSE}
+library("tidyverse")
+```
+
+or
+
+```{r, eval = FALSE}
+library("dplyr")
+```
+
+---
+
+# dplyr verbs
+
+dplyr works exclusively on data frames, or tibbles, of which we have seen examples of already.
+
+These are some of the most commonly used verbs in dplyr:
+
+- `filter`: Select subsets of rows based on values
+- `select`: Select subsets of columns (variables) based on name
+- `mutate`: Create new variables based on existing columns
+- `summarise`: Reduce multiple rows into a single value
+- `arrange`: Change the ordering of the rows
+
+---
+
+# The `nycflights13` dataset
+
+As an example dataset we will be using `nycflights13` package, and the dataset `flights`.
+It consists the 336,776 flights that departed from New York in 2013.
+
+```{r, eval = FALSE}
+install.packages("nycflights13")
+library(nycflights13)
+flights
+```
+
+```{r, echo = FALSE}
+library(nycflights13)
+flights
+```
+
+???
+
+Check the help page for `flights` to see what the columns represent.
+
+---
+
+# dplyr basics
+
+All dplyr verbs act on data frames, and this should be the first argument to all of these functions.
+
+```{r, eval = FALSE}
+dplyr_function(<data frame>, ...)
+```
+
+The `...` represents other arguments that the function might take, and these vary depending on the verb.
+
+One very nice feature of dplyr is that we have access to all of the variables in the data frame that we are acting on.
+This means that we don't have to specify the data frame in addition to the variable we are interested whenever we want to use a variables, but we can simply refer to it by the variable name (i.e. the column name; without quotes).
+
+All dplyr verbs return a data frame.
+
+???
+
+Within the dplyr function call, all the variables in the data frame are available for us to use.
+Outside the function call, we still have to refer to the variables by specifying the data frame and the variable within the data frame.
+
+---
+
+# Selecting rows with `filter`
+
+Flights that were not delayed:
+
+```{r, render = print_df_5}
+filter(flights, dep_delay <= 0)
+```
+
+???
+
+So, we tell the `filter` function that we want to work on the `flights` data frame, and then to return all rows that fulfill the criteria that we specify.
+In this particular case, we say the the departure delay must be less than or equal to zero.
+What this then does is to create a new data frame containing only the rows that meet this criterion.
+
+---
+
+# Selecting rows with `filter`
+
+We can make more complex filters by setting up multiple criteria.
+
+```{r, render = print_df_5}
+filter(flights, dep_delay <= 0, origin == "JFK")
+```
+
+Adding more conditions separated by commas corresponds to AND-logic.
+This is the same as writing
+
+```{r, eval = FALSE}
+filter(flights, dep_delay <= 0 & origin == "JFK")
+```
+
+---
+
+# Selecting rows with `filter`
+
+If we want to use boolean operators other than AND, we have to specify them manually.
+
+```{r}
+filter(flights, dest == "CPH" | dest == "ARN")
+```
+
+---
+
+# Common errors with `filter`
+
+.left-column[
+## Missing variable
+]
+
+.right-column[
+```{r, error = TRUE}
+filter(flights, depdelay <= 0)
+```
+]
+
+???
+
+Here the problem is that the variable is not called `depdelay`, but `dep` *underscore* `delay`.
+In this case it's a spelling error, but the result would be the same if you try to use any variable that is not in the data frame.
+
+--
+
+.right-column[
+```{r, error = TRUE}
+depdelay <- 10
+filter(flights, depdelay <= 0)
+```
+]
+
+???
+
+This is a more subtle variant of the previous error.
+Let's say that we have declared a variable `depdelay` *outside* of our data frame, and then try to access this in `filter`.
+The result is and empty data frame.
+Why?
+
+---
+
+# Common errors
+
+.left-column[
+## Missing variable
+## Comparison typo
+]
+
+When making strict checks for equality, make sure to use `==`.
+
+.right-column[
+```{r, error = TRUE}
+filter(flights, origin = "JFK")
+```
+]
+
+At least dplyr gives you a nice error message in this case.
+
+???
+
+This is a mistake I do from time to time, probably due to how you normally specify function arguments with a single equals sign.
+
+---
+
+# Selecting columns with `select`
+
+.left-column[
+## Basics
+]
+
+.right-column[
+We can subset a data frame to just the columns we are interested in with `select`.
+
+```{r, render = print_df_5}
+select(flights, origin, dest, dep_time)
+```
+
+This can be useful if we want to get a better overview of variables that we are interested in, or to save some resources if we're dealing with a very big dataset.
+]
+
+---
+
+# Selecting columns with `select`
+
+.left-column[
+## Basics
+## Ranges
+]
+
+.right-column[
+We can also select a range of columns with the `:` operator.
+
+```{r, render = print_df_5}
+select(flights, year:dep_time)
+```
+]
+
+---
+
+# Selecting columns with `select`
+
+.left-column[
+## Basics
+## Ranges
+## Helper functions
+### `starts_with`
+]
+
+.right-column[
+```{r, render = print_df_5}
+select(flights, starts_with("time"))
+select(flights, starts_with(c("dep", "arr")))
+```
+]
+
+---
+
+# Selecting columns with `select`
+
+.left-column[
+## Basics
+## Ranges
+## Helper functions
+### `starts_with`
+### `ends_with`
+]
+
+.right-column[
+```{r, render = print_df_5}
+select(flights, ends_with("time"))
+select(flights, ends_with(c("time", "delay")))
+```
+]
+
+---
+
+# Selecting columns with `select`
+
+.left-column[
+## Basics
+## Ranges
+## Helper functions
+### `starts_with`
+### `ends_with`
+### `contains`
+]
+
+.right-column[
+```{r, render = print_df_5}
+select(flights, contains("st"))
+```
+]
+
+---
+
+# Selecting columns with `select`
+
+.left-column[
+## Basics
+## Ranges
+## Helper functions
+### `starts_with`
+### `ends_with`
+### `contains`
+### `matches`
+]
+
+.right-column[
+All of the previous functions match strings literally.
+`matches` is the most general of the bunch and can use [regular expressions](https://en.wikipedia.org/wiki/Regular_expression) for matching column names.
+
+```{r, render = print_df_5}
+select(flights, matches("d.*ay"))
+```
+]
+
+---
+
+# Create new variables with `mutate`
+
+.left-column[
+## Basics
+]
+
+.right-column[
+`mutate` will create new variables at the end of the dataset, so let's use `select` to get a better overview.
+
+```{r, render = print_df_5}
+flights_small <- select(flights, ends_with("delay"), distance, air_time)
+mutate(flights_small,
+       speed_mph = distance / (air_time / 60))
+```
+]
+
+---
+
+# Create new variables with `mutate`
+
+.left-column[
+## Basics
+]
+
+.right-column[
+We can even refer to our new variables *within* the call to `mutate`.
+
+```{r, render = print_df_5}
+mutate(flights_small,
+       gain = dep_delay - arr_delay,
+       gain_per_hour = gain / (air_time / 60))
+```
+]
+
+---
+
+# Create new variables with `mutate`
+
+.left-column[
+## Basics
+## Multiple columns
+]
+
+.right-column[
+If we want to apply a function to several variables in our dataset, this is also possible using `across`.
+
+```{r, render = print_df_5}
+mutate(flights_small,
+       speed = distance / (air_time / 60),
+       across(.cols = c(distance, speed),
+              .fns = ~ . / 1.609))
+```
+]
+
+---
+
+# Create new variables with `mutate`
+
+.left-column[
+## Basics
+## Multiple columns
+]
+
+.right-column[
+In the previous example, the original variables will be overwritten by the new ones we create.
+If we don't want to replace them, we can set the names of the new columns using the `.names` argument (check `?across` for details).
+
+```{r, render = print_df_5}
+mutate(flights_small,
+       speed = distance / (air_time / 60),
+       across(.cols = c(distance, speed),
+              .fns = ~ . / 1.609,
+              .names = "{.col}_km"))
+```
+]
+
+---
+
+# Create summaries with `summarise`
+
+.left-column[
+## Basics
+]
+
+.right-column[
+`summarise` boils down a dataframe to a single row.
+
+```{r}
+summarise(flights, arr_delay = mean(arr_delay, na.rm = TRUE))
+```
+
+Summarising like this is not that useful though.
+]
+
+---
+
+# Create summaries with `summarise`
+
+.left-column[
+## Basics
+## `group_by`
+]
+
+.right-column[
+Creating summaries on grouped data frames is much more useful.
+This can be accomplished with using `summarise` together with `group_by`.
+
+```{r, render = print_df_5}
+by_day <- group_by(flights, year, month, day)
+summarise(by_day, arr_delay = mean(arr_delay, na.rm = TRUE))
+```
+
+In this example, we group by day, and then calculate the mean arrival delay for each day.
+The result is a data frame with one row per day.
+]
+
+---
+
+# Relational data
+
+.left-column[
+## Introduction
+]
+
+.right-column[
+
+It is often the case that we have multiple datasets with one or several variables in common between them.
+This is what we call **relational data**.
+
+There are four tibbles in the nycflights13 package that can be connected to each other.
+
+- `flights`: this we've already seen
+- `airports`: airport metadata
+- `planes`: airplane metadata
+- `weather`: weather data for the New York airports
+]
+
+---
+
+# Relational data
+
+.left-column[
+## Introduction
+]
+
+.right-column[
+![](https://d33wubrfki0l68.cloudfront.net/245292d1ea724f6c3fd8a92063dcd7bfb9758d02/5751b/diagrams/relational-nycflights.png)
+]
+
+---
+
+# Relational data
+
+.left-column[
+## Introduction
+## Keys
+]
+
+.right-column[
+The variables that determine what is a unique observation in each of these tibbles are called keys.
+There are two types of keys.
+
+### Primary keys
+
+Keys that identify unique observations in the tibble where they occur, e.g. `faa` in the `aiports` tibble.
+A primary key can be either a single variable, or a combination of variables.
+They have to be unique; no two observations can have the same primary key.
+
+### Foreign keys
+
+Keys that link between tibbles, e.g. `origin` in `fligths` is a foreign key referring to `faa` in `airports`.
+Foreign keys do not have to be unique, but they have to uniquely identify an observation in a different tibble.
+
+A variable can be both a primary key, *and* a foreign key.
+An example of this is `origin` which is part of the primary key in the `weather` tibble, but also a foreign key connecting it to `airports`.
+]
+
+---
+
+# Relational data
+
+.left-column[
+## Introduction
+## Keys
+]
+
+.right-column[
+![](https://d33wubrfki0l68.cloudfront.net/245292d1ea724f6c3fd8a92063dcd7bfb9758d02/5751b/diagrams/relational-nycflights.png)
+]
+
+---
+
+# Relational data
+
+.left-column[
+## Introduction
+## Keys
+## Joins
+]
+
+.right-column[
+There are three different ways that we can join relational data:
+
+- **Mutating joins**, which add variables from one tibble to another based on matching observations.
+- **Filtering joins**, which filter observations in one tibble based on whether or not they match observations in another tibble.
+- **Set operations**, which treats observations as set elements.
+]
+
+---
+
+# Mutating joins
+
+.left-column[
+## Introduction
+]
+
+.right-column[
+Let's say we want to add the name of the airline to the flights table.
+In order to make the output a bit more readable, we create a new tibble with fewer variables.
+
+```{r}
+flights2 <- select(flights, year:day, hour, origin, dest, tailnum, carrier)
+```
+
+```{r}
+left_join(flights2, airlines, by = "carrier")
+```
+]
+
+---
+
+# Mutating joins
+
+.left-column[
+## Introduction
+## Types of joins
+]
+
+.right-column[
+There are a couple of different ways that we can join tibbles:
+
+- Inner join: `inner_join`; returns observations that are found in both tibbles.
+- Outer join: `left_join`, `right_join`, `full_join`; returns observations that are found in either the first or the second tibble, or both.
+- Full join: `full_join`; returns all observations from both tibbles.
+]
+
+---
+
+# Mutating joins
+
+.left-column[
+## Introduction
+## Types of joins
+### A toy example
+]
+
+.right-column[
+```{r}
+x <- tribble(
+       ~key, ~val_x,
+       1,    "x1",
+       2,    "x2",
+       3,    "x3",
+)
+
+y <- tribble(
+       ~key, ~val_y,
+       1,    "y1",
+       2,    "y2",
+       4,    "y3",
+)
+```
+
+.pull-left[
+```{r, echo = FALSE}
+join_tbl <- function(x, ...) {
+       kbl(x) %>%
+              kable_classic(full_width = FALSE, ...) %>%
+              column_spec(1, background = RColorBrewer::brewer.pal(4, "Pastel1")[x$key]) %>%
+              htmltools::div()
+}
+join_tbl(x)
+```
+]
+
+.pull-right[
+```{r, echo = FALSE}
+join_tbl(y)
+```
+]
+]
+
+???
+
+This might be the first time that you see the `tribble` function.
+It is similar to the `tibble` function, but is more suited for quick creation of small tibbles such as these.
+The way the code is written more closely resembles the final tibble than if we would have done it with the `tibble` function.
+
+---
+
+# Mutating joins
+
+.left-column[
+## Introduction
+## Types of joins
+### A toy example
+### Inner join
+]
+
+.right-column[
+Inner joins are the simplest type of join.
+It will return the observations that are found in both of the tibbles.
+
+```{r, eval = FALSE}
+inner_join(x, y, by = "key")
+```
+
+.held[
+```{r, echo = FALSE, results = "hold"}
+join_tbl(x)
+htmltools::div(icons::icon_style(icons::fontawesome("arrows-alt-h"), scale = 4))
+join_tbl(y)
+```
+]
+]
+
+--
+
+.right-column[
+```{r, echo = FALSE, results = "asis"}
+htmltools::div(icons::icon_style(icons::fontawesome("long-arrow-alt-down"), scale = 4, display = "block", margin = "0 auto"))
+x %>%
+  inner_join(y, by = "key") %>%
+  join_tbl()
+```
+]
+
+---
+
+# Mutating joins
+
+.left-column[
+## Introduction
+## Types of joins
+### A toy example
+### Inner join
+### Outer join
+]
+
+.right-column[
+`left_join` keeps all observations in `x`, regardless of whether there is a match in `y`.
+If a key is not found in `y`, the resulting observation will be set to `NA`.
+
+```{r, eval = FALSE}
+left_join(x, y, by = "key")
+```
+
+.held[
+```{r, echo = FALSE, results = "hold"}
+join_tbl(x)
+htmltools::div(icons::icon_style(icons::fontawesome("long-arrow-alt-left"), scale = 4))
+join_tbl(y)
+```
+]
+]
+
+--
+
+.right-column[
+```{r, echo = FALSE}
+htmltools::div(icons::icon_style(icons::fontawesome("long-arrow-alt-down"), scale = 4, display = "block", margin = "0 auto"))
+x %>%
+  left_join(y, by = "key") %>%
+  join_tbl()
+```
+]
+
+---
+
+# Mutating joins
+
+.left-column[
+## Introduction
+## Types of joins
+### A toy example
+### Inner join
+### Outer join
+]
+
+.right-column[
+`right_join` keeps all observations in `y`, regardless of whether there is a match in `x`.
+If a key is not found in `x`, the resulting observation will be set to `NA`.
+
+```{r, eval = FALSE}
+right_join(x, y, by = "key")
+```
+
+.held[
+```{r, echo = FALSE, results = "hold"}
+join_tbl(x)
+htmltools::div(icons::icon_style(icons::fontawesome("long-arrow-alt-right"), scale = 4))
+join_tbl(y)
+```
+]
+]
+
+--
+
+.right-column[
+```{r, echo = FALSE}
+htmltools::div(icons::icon_style(icons::fontawesome("long-arrow-alt-down"), scale = 4, display = "block", margin = "0 auto"))
+x %>%
+  right_join(y, by = "key") %>%
+  join_tbl()
+```
+]
+
+---
+
+# Mutating joins
+
+.left-column[
+## Introduction
+## Types of joins
+### A toy example
+### Inner join
+### Outer join
+### Full join
+]
+
+.right-column[
+`full_join` keeps all observations in both tibbles, setting all missing observations to `NA`.
+
+```{r, eval = FALSE}
+full_join(x, y, by = "key")
+```
+
+.held[
+```{r, echo = FALSE, results = "hold"}
+join_tbl(x)
+htmltools::div(icons::icon_style(icons::fontawesome("arrows-alt-h"), scale = 4))
+join_tbl(y)
+```
+]
+]
+
+--
+
+.right-column[
+```{r, echo = FALSE}
+htmltools::div(icons::icon_style(icons::fontawesome("long-arrow-alt-down"), scale = 4, display = "block", margin = "0 auto"))
+x %>%
+  full_join(y, by = "key") %>%
+  join_tbl()
+```
+]
+
+---
+
+# Mutating joins
+
+.left-column[
+## Introduction
+## Types of joins
+### A toy example
+### Inner join
+### Outer join
+### Full join
+## Duplicate keys
+]
+
+.right-column[
+So far the data has been very nice to us in that there has been no duplicated keys.
+This is not always the case in real data, and sometimes duplicated keys are a necessity (e.g. foreign keys).
+
+.held[
+```{r}
+x2 <- tribble(
+  ~key, ~x2_val,
+  1,    "x1",
+  2,    "x2",
+  2,    "x3",
+  3,    "x4"
+)
+```
+
+```{r}
+y2 <- tribble(
+  ~key, ~y2_val,
+  1,    "y1",
+  2,    "y3",
+  4,    "y4"
+)
+```
+]
+
+.held[
+```{r, echo = FALSE, results = "hold"}
+join_tbl(x2)
+join_tbl(y2)
+```
+]
+]
+
+---
+
+# Mutating joins
+
+.left-column[
+## Introduction
+## Types of joins
+### A toy example
+### Inner join
+### Outer join
+### Full join
+## Duplicate keys
+]
+
+.right-column[
+```{r, eval = FALSE}
+left_join(x2, y2)
+```
+
+.held[
+```{r, echo = FALSE, results = "hold"}
+join_tbl(x2)
+htmltools::div(icons::icon_style(icons::fontawesome("long-arrow-alt-left"), scale = 4))
+join_tbl(y2)
+```
+]
+]
+
+--
+
+.right-column[
+```{r, echo = FALSE}
+htmltools::div(icons::icon_style(icons::fontawesome("long-arrow-alt-down"), scale = 4, display = "block", margin = "0 auto"))
+x2 %>%
+  left_join(y2, by = "key") %>%
+  join_tbl()
+```
+]
+
+---
+
+# Mutating joins
+
+.left-column[
+## Introduction
+## Types of joins
+### A toy example
+### Inner join
+### Outer join
+### Full join
+## Duplicate keys
+]
+
+.right-column[
+Another case is when we have duplicate keys in both tibbles that we want to join.
+Performing a join on these will result in all possible combinations of the duplicate keys being generated.
+This might sometimes be the behaviour that we want, but usually it is due to an error since none of the keys uniquely identifies observations in either tibble.
+
+.held[
+```{r}
+x3 <- tribble(
+  ~key, ~x3_val,
+  1,    "x1",
+  2,    "x2",
+  2,    "x3",
+  3,    "x4"
+)
+```
+
+```{r}
+y3 <- tribble(
+  ~key, ~y3_val,
+  1,    "y1",
+  2,    "y2",
+  2,    "y3",
+  3,    "y4"
+)
+```
+]
+
+.held[
+```{r, echo = FALSE, results = "hold"}
+join_tbl(x3)
+join_tbl(y3)
+```
+]
+]
+
+---
+
+# Mutating joins
+
+.left-column[
+## Introduction
+## Types of joins
+### A toy example
+### Inner join
+### Outer join
+### Full join
+## Duplicate keys
+]
+
+.right-column[
+```{r, eval = FALSE}
+left_join(x3, y3, by = "key")
+```
+
+.held.small[
+```{r, echo = FALSE, results = "hold"}
+join_tbl(x3)
+htmltools::div(icons::icon_style(icons::fontawesome("long-arrow-alt-left"), scale = 4))
+join_tbl(y3)
+```
+]
+]
+
+--
+
+.right-column.small[
+```{r, echo = FALSE}
+htmltools::div(icons::icon_style(icons::fontawesome("long-arrow-alt-down"), scale = 4, display = "block", margin = "0 auto"))
+x3 %>% 
+  left_join(y3, by = "key") %>% 
+  join_tbl()
+```
+]
+
+---
+
+# Filtering joins
+
+.left-column[
+## Introduction
+]
+
+.right-column[
+Filtering joins have the same mechanics as the mutating joins, but instead of focusing on the variables in the data, they focus more on the observations.
+There are two ways of performing filtering joins:
+
+- `semi_join(x, y)`: returns all observations in `x` found in `y`.
+- `anti_join(x, y)`: returns all observations in `x` *not* found in `y`.
+]
+
+---
+
+# Filtering joins
+
+.left-column[
+## Introduction
+## `semi_join`
+]
+
+.right-column[
+`semi_join` returns all observations in `x` that are found in `y`.
+
+```{r, eval = FALSE}
+semi_join(x, y, by = "key")
+```
+
+.held[
+```{r, echo = FALSE, results = "hold"}
+join_tbl(x)
+htmltools::div(icons::icon_style(icons::fontawesome("arrows-alt-h"), scale = 4))
+join_tbl(y)
+```
+]
+]
+
+--
+
+.right-column[
+```{r, echo = FALSE}
+htmltools::div(icons::icon_style(icons::fontawesome("long-arrow-alt-down"), scale = 4, display = "block", margin = "0 auto"))
+x %>%
+  semi_join(y, by = "key") %>%
+  join_tbl()
+```
+]
+
+???
+
+So, you can see that the behaviour is similar to a left join, but here we don't keep the variables in `y`.
+
+---
+
+# Filtering joins
+
+.left-column[
+## Introduction
+## `semi_join`
+## `anti_join`
+]
+
+.right-column[
+`anti_join` returns all observations in `x` that are *not* found in `y`.
+
+```{r, eval = FALSE}
+anti_join(x, y, by = "key")
+```
+
+.held[
+```{r, echo = FALSE, results = "hold"}
+join_tbl(x)
+htmltools::div(icons::icon_style(icons::fontawesome("arrows-alt-h"), scale = 4))
+join_tbl(y)
+```
+]
+]
+
+--
+
+.right-column[
+```{r, echo = FALSE}
+htmltools::div(icons::icon_style(icons::fontawesome("long-arrow-alt-down"), scale = 4, display = "block", margin = "0 auto"))
+x %>%
+  anti_join(y, by = "key") %>%
+  join_tbl()
+```
+]
+
+---
+
+# A visual example
+
+```{r flights_map, echo = FALSE, fig.width = 13, fig.height = 8, fig.align = "center"}
+usa_map <- map_data("world", "usa")
+state_map <- map_data("state")
+ggplot() +
+  geom_polygon(data = state_map, mapping = aes(long, lat, group = group),
+               fill = "white", colour = "black", lwd = 0.1) +
+  geom_point(data = airports, mapping = aes(lon, lat), size = 0.5) +
+  geom_curve(data = flights %>%
+               inner_join(airports %>% select(origin = faa, o_lat = lat, o_lon = lon), by = "origin") %>% 
+               inner_join(airports %>% select(dest = faa, d_lat = lat, d_lon = lon), by = "dest") %>% 
+               group_by(origin, dest, o_lat, o_lon, d_lat, d_lon) %>% 
+               count(),
+             aes(x = o_lon, y = o_lat,
+                 xend = d_lon, yend = d_lat,
+                 alpha = n, size = n),
+             angle = 90, curvature = 0.2,
+             colour = "steelblue") +
+  scale_size_continuous(range = c(0.1, 1)) +
+  coord_quickmap(xlim = c(-125, -68), ylim = c(23, 50)) +
+  theme_bw() +
+  theme(legend.position = "none",
+        panel.border = element_blank(),
+        panel.grid = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank())
+```
+
+???
+
+Here I map the number of flights to both the stroke thickness and the stroke opacity.
+This will make the more trafficked routes pop in the visualisation.
+
+---
+
+# Suggested reading
+
+- [R for Data Science: Data Transformation](https://r4ds.had.co.nz/transform.html)
+- [R for Data Science: Relational Data](https://r4ds.had.co.nz/relational-data.html)
+- [RStudio Data Wrangling Cheat Sheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
