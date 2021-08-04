@@ -168,6 +168,17 @@ schedule:
   - day:
     - start_time:
       end_time:
+      topic: Data transformations
+      details: |
+        - `mutate`, `scale`, `log`
+        - Testing for normality
+          - Q-Q plots
+        - Heteroskedasticity
+          - What is it?
+          - Why do we see it?
+  - day:
+    - start_time:
+      end_time:
       topic: More on reproducibility
       details: |
         - Transparency
@@ -218,17 +229,6 @@ schedule:
         - Plotting subsets of large datasets
           - How do we choose a subset
           - Faceting in ggplot2
-  - day:
-    - start_time:
-      end_time:
-      topic: Data transformations
-      details: |
-        - `mutate`, `scale`, `log`
-        - Testing for normality
-          - Q-Q plots
-        - Heteroskedasticity
-          - What is it?
-          - Why do we see it?
   - day:
     - start_time:
       end_time:
