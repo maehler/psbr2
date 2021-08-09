@@ -1,0 +1,607 @@
+---
+title: "Practical Skills for Biology Research II"
+subtitle: "Tidy data"
+author: "Niklas Mähler"
+institute: "Umeå University"
+date: "2021-10-05"
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include = FALSE}
+source(here::here("scripts/setup.R"))
+setup_presentation("tidy_data")
+library(kableExtra)
+```
+
+# Data representation
+
+The same data can be represented in many different ways.
+
+---
+
+# `table1`
+
+```{r}
+table1
+```
+
+???
+
+This dataset shows the population of three countries together with the number of cases of tuberculosis.
+
+---
+
+# `table2`
+
+```{r}
+table2
+```
+
+---
+
+# `table3`
+
+```{r}
+table3
+```
+
+---
+
+# `table4`
+
+```{r}
+table4a
+table4b
+```
+
+This example differs from the others in that it has been separated into two datasets; one for population size and one for the number of cases.
+
+---
+
+# What is tidy data?
+
+- Each variable must have its own column
+- Each observation must have its own row
+- Each value must have its own cell
+
+![](https://d33wubrfki0l68.cloudfront.net/6f1ddb544fc5c69a2478e444ab8112fb0eea23f8/91adc/images/tidy-1.png)
+
+???
+
+Now we will go over the datasets that we just looked at and see if they fulfill these criteria.
+
+---
+
+# `table1`
+
+```{r}
+table1
+```
+
+```{r, echo = FALSE}
+check_circle <- icons::icon_style(icons::fontawesome("check-circle", style = "solid"), fill = "forestgreen")
+times_circle <- icons::icon_style(icons::fontawesome("times-circle", style = "solid"), fill = "#DC222B")
+```
+
+
+--
+
+`r check_circle` Each variable must have its own column
+
+--
+
+`r check_circle` Each observation must have its own row
+
+--
+
+`r check_circle` Each value must have its own cell
+
+---
+
+# `table2`
+
+```{r}
+table2
+```
+
+--
+
+`r times_circle` Each variable must have its own column
+
+--
+
+`r times_circle` Each observation must have its own row
+
+--
+
+`r check_circle` Each value must have its own cell
+
+---
+
+# `table3`
+
+```{r}
+table3
+```
+
+--
+
+`r times_circle` Each variable must have its own column
+
+--
+
+`r check_circle` Each observation must have its own row
+
+--
+
+`r times_circle` Each value must have its own cell
+
+---
+
+# `table4`
+
+```{r}
+table4a
+table4b
+```
+
+--
+
+`r times_circle` Each variable must have its own column
+
+--
+
+`r times_circle` Each observation must have its own row
+
+--
+
+`r times_circle` Each value must have its own cell
+
+---
+
+# How to make a dataset tidy
+
+In practice:
+
+- Put each dataset in a tibble
+- Put each variable in a column
+
+However, depending on the dataset, it might not be obvious what is an observation or a variable.
+Often it is possible to deduce from the dataset, but sometimes you will have to contact the person responsible for collecting the data in order to be sure.
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+]
+
+.right-column[
+Typically, this would be something like an Excel spreadsheet with some of the following problems:
+
+- Nested variables
+- Variables encoded as something other than text/numbers, e.g. colours or grouping of data
+
+These things might not only make it difficult to manipulate the data in R, but even difficult to properly load into R in the first place.
+Problems related to spreadsheets are quite common, and unfortunately there is no one solution that fits all here.
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+]
+
+.right-column[
+```{r, echo = FALSE}
+excelish <- function(x) {
+  kbl(x) %>% 
+    kable_styling(full_width = FALSE, htmltable_class = "excel")
+}
+
+tribble(
+  ~gene,  ~expression, ~"",  ~condition,
+  "gene1", 2,          "",   "treatment1",
+  "gene2", 1,          "",   "treatment2",
+  "gene3", 3,          "",   "wt",
+  "gene1", 2,          "",   "",
+  "gene2", 1,          "",   "",
+  "gene3", 5,          "",   "",
+  "gene1", 4,          "",   "",
+  "gene2", 1,          "",   "",
+  "gene3", 5,          "",   ""
+) %>% excelish() %>%
+  column_spec(1:2, background = rep(c("gold", "forestgreen", "steelblue"), each = 3)) %>% 
+  column_spec(3, width = "4em") %>% 
+  column_spec(4, background = c("gold", "forestgreen", "steelblue", rep("white", 6)))
+```
+]
+
+???
+
+Here I will talk about a couple of problems that we have to fix before we can even load the data into R.
+It is either that information will be lost by loading the data, or that it will make the loading process more complicated than necessary.
+
+One thing that I have seen more than once is that important variables are encoded as colours in a spreadsheet.
+This is something that works well when entering and viewing data, but not so much when processing the data.
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+]
+
+.right-column[
+<table class="excel">
+<thead>
+<tr><th colspan="2">treatment1</th><th></th><th colspan="2">treatment2</th><th></th><th colspan="2">wt</th></tr>
+<tr><th>gene</th><th style="text-align: right;">expression</th><th style="width: 2em;"></th><th>gene</th><th style="text-align: right;">expression</th><th style="width: 2em;"></th><th>gene</th><th style="text-align: right;">expression</th></tr>
+</thead>
+<tbody>
+<tr><td>gene1</td><td style="text-align: right;">2</td><td style="width: 2em;"></td><td>gene1</td><td style="text-align: right;">2</td><td style="width: 2em;"></td><td>gene1</td><td style="text-align: right;">4</td><tr>
+<tr><td>gene2</td><td style="text-align: right;">1</td><td style="width: 2em;"></td><td>gene2</td><td style="text-align: right;">1</td><td style="width: 2em;"></td><td>gene2</td><td style="text-align: right;">1</td><tr>
+<tr><td>gene3</td><td style="text-align: right;">3</td><td style="width: 2em;"></td><td>gene3</td><td style="text-align: right;">5</td><td style="width: 2em;"></td><td>gene3</td><td style="text-align: right;">5</td><tr>
+</tbody>
+</table>
+]
+
+???
+
+Another common way of representing what should really be a variable is by grouping data in smaller tables, similar to table 4 that I showed before, in different spreadsheets, or even in the same spreadsheet.
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+]
+
+.right-column[
+```{r, echo = FALSE}
+tibble(
+  gene = rep(str_c("gene", 1:3), 3),
+  condition = rep(c("treatment1", "treatment2", "wt"), each = 3),
+  expression = c(2, 1, 3, 2, 1, 5, 4, 1, 5)
+) %>% 
+  excelish()
+```
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+]
+
+.right-column[
+The tidyr package contains a number of functions that can help us tidy up our datasets.
+tidyr is a core member of the tidyverse, so by loading tidyverse you will also have access to tidyr.
+
+```{r, eval = FALSE}
+library(tidyverse)
+```
+
+We will go through the following functions:
+
+- `pivot_longer`
+- `pivot_wider`
+- `separate`
+- `unite`
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+]
+
+.right-column[
+Two of the most common issues related to untidy data that you will face are:
+
+1. Variables spread across multiple columns.
+2. Observations spread across multiple rows.
+
+To solve these problems, we can use two functions in the tidyr package: `pivot_longer` and `pivot_wider`.
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+### `pivot_longer`
+]
+
+.right-column[
+```{r, echo = FALSE}
+wide_data <- tribble(
+  ~gene,  ~treatment1, ~treatment2, ~wt,
+  "gene1", 2,           2,           4,
+  "gene2", 1,           1,           1,
+  "gene3", 3,           5,           5
+)
+```
+
+```{r}
+wide_data
+```
+
+This is a case where we have variables that are spread across multiple columns.
+The columns `treatment1`, `treatment2` and `wt` are actually all values of `condition`, and the values of these should be values of `expression`.
+
+`pivot_longer` takes a tibble and makes it longer than the original tibble by creating a pair of variables from a number of existing columns.
+You need three things:
+
+1. The columns that whose names should be a variable
+2. The name of the new variable to put the column names in.
+3. The name of the new variable to put the values in.
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+### `pivot_longer`
+]
+
+.right-column[
+```{r}
+pivot_longer(wide_data,
+             c(treatment1, treatment2, wt),
+             names_to = "condition",
+             values_to = "expression")
+```
+]
+
+???
+
+The columns to pivot are specified with `dplyr::select()` style notation.
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+### `pivot_longer`
+### `pivot_wider`
+]
+
+.right-column[
+```{r, echo = FALSE}
+long_data <- tribble(
+  ~gene, ~condition, ~type, ~value,
+  "gene1", "treatment1", "expression", 2,
+  "gene1", "treatment1", "accessibility", 22,
+  "gene1", "treatment2", "expression", 2,
+  "gene1", "treatment2", "accessibility", 30,
+  "gene1", "wt", "expression", 4,
+  "gene1", "wt", "accessibility", 50,
+  "gene2", "treatment1", "expression", 1,
+  "gene2", "treatment1", "accessibility", 15,
+  "gene2", "treatment2", "expression", 1,
+  "gene2", "treatment2", "accessibility", 12,
+  "gene2", "wt", "expression", 1,
+  "gene2", "wt", "accessibility", 18
+)
+```
+
+```{r}
+long_data
+```
+
+In this data, each combination of `gene` and `condition` is an observation.
+The `type` only represents two different variables (`expression` and `accessibility`) from the same observation.
+In other words, we have to make this dataset wider by making the values in the `type` column into variables.
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+### `pivot_longer`
+### `pivot_wider`
+]
+
+.right-column[
+`pivot_wider` can accomplish this, and it needs two things:
+
+1. The column that contains the names of the new variables.
+2. The column that contains the values of those new variables.
+
+```{r}
+pivot_wider(long_data, names_from = type, values_from = value)
+```
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+### `pivot_longer`
+### `pivot_wider`
+### `separate`
+]
+
+.right-column[
+Sometimes multiple variables are represented as a single variable.
+
+```{r, echo = FALSE}
+united_data <- tibble(
+  gene = c("gene1", "gene1", "gene1", "gene2", "gene2",  "gene2", "gene3", "gene3", "gene3"),
+  condition = c("treatment1", "treatment2", "wt", "treatment1", "treatment2", "wt", "treatment1", "treatment2", "wt"),
+  expression = c(2, 2, 4, 1, 1, 1, 3, 5, 5)
+) %>% 
+  unite(gene_condition, gene, condition)
+```
+
+```{r}
+united_data
+```
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+### `pivot_longer`
+### `pivot_wider`
+### `separate`
+]
+
+.right-column[
+tidyr has a function called `separate` that takes a character column, splits it and creates two **separate** columns.
+It needs two things:
+
+1. The column that should be separated.
+2. The names of the new variables to create.
+
+```{r}
+separate(united_data, col = gene_condition,
+         into = c("gene", "condition"))
+```
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+### `pivot_longer`
+### `pivot_wider`
+### `separate`
+]
+
+.right-column[
+By default, `separate` will split the column on any non-alphanumeric character.
+In this particular example, this was fine since the two variables were separated by an underscore.
+You can also explicitly state how they should be separated with `sep`:
+
+```{r}
+separate(united_data, col = gene_condition,
+         into = c("gene", "condition"),
+         sep = "_")
+```
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+### `pivot_longer`
+### `pivot_wider`
+### `separate`
+### `unite`
+]
+
+.right-column[
+There are also cases when we have the opposite situation from what we just went over, that you have a variable that is split across multiple columns.
+This can be corrected by uniting the columns with `unite`.
+
+```{r}
+table5
+```
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+### `pivot_longer`
+### `pivot_wider`
+### `separate`
+### `unite`
+]
+
+.right-column[
+`unite` needs two things:
+
+1. The name of the new column.
+2. The columns that should be united.
+
+```{r}
+unite(table5, "year", century, year)
+```
+
+Here we see that the default is to separate the original values with an underscore.
+This might be appropriate in some cases, but here it is not.
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+### `pivot_longer`
+### `pivot_wider`
+### `separate`
+### `unite`
+]
+
+.right-column[
+Analogously to `separate`, we can specify how the values should be joined in `unite` with `sep`:
+
+```{r}
+unite(table5, "year", century, year, sep = "")
+```
+]
+
+---
+
+# Suggested reading and exercises
+
+- [R for Data Science: Tidy data](https://r4ds.had.co.nz/tidy-data.html)
+  - Go through the case study in chapter 12.6.
+- [Data Import Cheat Sheet](https://github.com/rstudio/cheatsheets/blob/master/data-import.pdf)
+- [Tidy data, article by Hadley Wickham in Journal of Statistical Software](https://www.jstatsoft.org/index.php/jss/article/view/v059i10/v59i10.pdf)
+  - The theory underlying tidy data, more in-depth in case you are interested.

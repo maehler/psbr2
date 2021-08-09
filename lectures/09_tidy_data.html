@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Practical Skills for Biology Research II</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Niklas Mähler" />
+    <meta name="date" content="2021-10-05" />
+    <script src="libs/header-attrs-2.8/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <script src="libs/kePrint-0.0.1/kePrint.js"></script>
+    <link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/niklas.css" type="text/css" />
+    <link rel="stylesheet" href="css/niklas-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: left, middle, inverse, title-slide
+
+# Practical Skills for Biology Research II
+## Tidy data
+### Niklas Mähler
+### Umeå University
+### 2021-10-05
+
+---
+
+
+
+
+# Data representation
+
+The same data can be represented in many different ways.
+
+---
+
+# `table1`
+
+
+```r
+table1
+```
+
+```
+## # A tibble: 6 x 4
+##   country      year  cases population
+##   &lt;chr&gt;       &lt;int&gt;  &lt;int&gt;      &lt;int&gt;
+## 1 Afghanistan  1999    745   19987071
+## 2 Afghanistan  2000   2666   20595360
+## 3 Brazil       1999  37737  172006362
+## 4 Brazil       2000  80488  174504898
+## 5 China        1999 212258 1272915272
+## 6 China        2000 213766 1280428583
+```
+
+???
+
+This dataset shows the population of three countries together with the number of cases of tuberculosis.
+
+---
+
+# `table2`
+
+
+```r
+table2
+```
+
+```
+## # A tibble: 12 x 4
+##    country      year type            count
+##    &lt;chr&gt;       &lt;int&gt; &lt;chr&gt;           &lt;int&gt;
+##  1 Afghanistan  1999 cases             745
+##  2 Afghanistan  1999 population   19987071
+##  3 Afghanistan  2000 cases            2666
+##  4 Afghanistan  2000 population   20595360
+##  5 Brazil       1999 cases           37737
+##  6 Brazil       1999 population  172006362
+##  7 Brazil       2000 cases           80488
+##  8 Brazil       2000 population  174504898
+##  9 China        1999 cases          212258
+## 10 China        1999 population 1272915272
+## 11 China        2000 cases          213766
+## 12 China        2000 population 1280428583
+```
+
+---
+
+# `table3`
+
+
+```r
+table3
+```
+
+```
+## # A tibble: 6 x 3
+##   country      year rate             
+## * &lt;chr&gt;       &lt;int&gt; &lt;chr&gt;            
+## 1 Afghanistan  1999 745/19987071     
+## 2 Afghanistan  2000 2666/20595360    
+## 3 Brazil       1999 37737/172006362  
+## 4 Brazil       2000 80488/174504898  
+## 5 China        1999 212258/1272915272
+## 6 China        2000 213766/1280428583
+```
+
+---
+
+# `table4`
+
+
+```r
+table4a
+```
+
+```
+## # A tibble: 3 x 3
+##   country     `1999` `2000`
+## * &lt;chr&gt;        &lt;int&gt;  &lt;int&gt;
+## 1 Afghanistan    745   2666
+## 2 Brazil       37737  80488
+## 3 China       212258 213766
+```
+
+```r
+table4b
+```
+
+```
+## # A tibble: 3 x 3
+##   country         `1999`     `2000`
+## * &lt;chr&gt;            &lt;int&gt;      &lt;int&gt;
+## 1 Afghanistan   19987071   20595360
+## 2 Brazil       172006362  174504898
+## 3 China       1272915272 1280428583
+```
+
+This example differs from the others in that it has been separated into two datasets; one for population size and one for the number of cases.
+
+---
+
+# What is tidy data?
+
+- Each variable must have its own column
+- Each observation must have its own row
+- Each value must have its own cell
+
+![](https://d33wubrfki0l68.cloudfront.net/6f1ddb544fc5c69a2478e444ab8112fb0eea23f8/91adc/images/tidy-1.png)
+
+???
+
+Now we will go over the datasets that we just looked at and see if they fulfill these criteria.
+
+---
+
+# `table1`
+
+
+```r
+table1
+```
+
+```
+## # A tibble: 6 x 4
+##   country      year  cases population
+##   &lt;chr&gt;       &lt;int&gt;  &lt;int&gt;      &lt;int&gt;
+## 1 Afghanistan  1999    745   19987071
+## 2 Afghanistan  2000   2666   20595360
+## 3 Brazil       1999  37737  172006362
+## 4 Brazil       2000  80488  174504898
+## 5 China        1999 212258 1272915272
+## 6 China        2000 213766 1280428583
+```
+
+
+
+
+--
+
+&lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:forestgreen;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z"&gt;&lt;/path&gt;&lt;/svg&gt; Each variable must have its own column
+
+--
+
+&lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:forestgreen;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z"&gt;&lt;/path&gt;&lt;/svg&gt; Each observation must have its own row
+
+--
+
+&lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:forestgreen;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z"&gt;&lt;/path&gt;&lt;/svg&gt; Each value must have its own cell
+
+---
+
+# `table2`
+
+
+```r
+table2
+```
+
+```
+## # A tibble: 12 x 4
+##    country      year type            count
+##    &lt;chr&gt;       &lt;int&gt; &lt;chr&gt;           &lt;int&gt;
+##  1 Afghanistan  1999 cases             745
+##  2 Afghanistan  1999 population   19987071
+##  3 Afghanistan  2000 cases            2666
+##  4 Afghanistan  2000 population   20595360
+##  5 Brazil       1999 cases           37737
+##  6 Brazil       1999 population  172006362
+##  7 Brazil       2000 cases           80488
+##  8 Brazil       2000 population  174504898
+##  9 China        1999 cases          212258
+## 10 China        1999 population 1272915272
+## 11 China        2000 cases          213766
+## 12 China        2000 population 1280428583
+```
+
+--
+
+&lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#DC222B;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm121.6 313.1c4.7 4.7 4.7 12.3 0 17L338 377.6c-4.7 4.7-12.3 4.7-17 0L256 312l-65.1 65.6c-4.7 4.7-12.3 4.7-17 0L134.4 338c-4.7-4.7-4.7-12.3 0-17l65.6-65-65.6-65.1c-4.7-4.7-4.7-12.3 0-17l39.6-39.6c4.7-4.7 12.3-4.7 17 0l65 65.7 65.1-65.6c4.7-4.7 12.3-4.7 17 0l39.6 39.6c4.7 4.7 4.7 12.3 0 17L312 256l65.6 65.1z"&gt;&lt;/path&gt;&lt;/svg&gt; Each variable must have its own column
+
+--
+
+&lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#DC222B;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm121.6 313.1c4.7 4.7 4.7 12.3 0 17L338 377.6c-4.7 4.7-12.3 4.7-17 0L256 312l-65.1 65.6c-4.7 4.7-12.3 4.7-17 0L134.4 338c-4.7-4.7-4.7-12.3 0-17l65.6-65-65.6-65.1c-4.7-4.7-4.7-12.3 0-17l39.6-39.6c4.7-4.7 12.3-4.7 17 0l65 65.7 65.1-65.6c4.7-4.7 12.3-4.7 17 0l39.6 39.6c4.7 4.7 4.7 12.3 0 17L312 256l65.6 65.1z"&gt;&lt;/path&gt;&lt;/svg&gt; Each observation must have its own row
+
+--
+
+&lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:forestgreen;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z"&gt;&lt;/path&gt;&lt;/svg&gt; Each value must have its own cell
+
+---
+
+# `table3`
+
+
+```r
+table3
+```
+
+```
+## # A tibble: 6 x 3
+##   country      year rate             
+## * &lt;chr&gt;       &lt;int&gt; &lt;chr&gt;            
+## 1 Afghanistan  1999 745/19987071     
+## 2 Afghanistan  2000 2666/20595360    
+## 3 Brazil       1999 37737/172006362  
+## 4 Brazil       2000 80488/174504898  
+## 5 China        1999 212258/1272915272
+## 6 China        2000 213766/1280428583
+```
+
+--
+
+&lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#DC222B;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm121.6 313.1c4.7 4.7 4.7 12.3 0 17L338 377.6c-4.7 4.7-12.3 4.7-17 0L256 312l-65.1 65.6c-4.7 4.7-12.3 4.7-17 0L134.4 338c-4.7-4.7-4.7-12.3 0-17l65.6-65-65.6-65.1c-4.7-4.7-4.7-12.3 0-17l39.6-39.6c4.7-4.7 12.3-4.7 17 0l65 65.7 65.1-65.6c4.7-4.7 12.3-4.7 17 0l39.6 39.6c4.7 4.7 4.7 12.3 0 17L312 256l65.6 65.1z"&gt;&lt;/path&gt;&lt;/svg&gt; Each variable must have its own column
+
+--
+
+&lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:forestgreen;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z"&gt;&lt;/path&gt;&lt;/svg&gt; Each observation must have its own row
+
+--
+
+&lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#DC222B;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm121.6 313.1c4.7 4.7 4.7 12.3 0 17L338 377.6c-4.7 4.7-12.3 4.7-17 0L256 312l-65.1 65.6c-4.7 4.7-12.3 4.7-17 0L134.4 338c-4.7-4.7-4.7-12.3 0-17l65.6-65-65.6-65.1c-4.7-4.7-4.7-12.3 0-17l39.6-39.6c4.7-4.7 12.3-4.7 17 0l65 65.7 65.1-65.6c4.7-4.7 12.3-4.7 17 0l39.6 39.6c4.7 4.7 4.7 12.3 0 17L312 256l65.6 65.1z"&gt;&lt;/path&gt;&lt;/svg&gt; Each value must have its own cell
+
+---
+
+# `table4`
+
+
+```r
+table4a
+```
+
+```
+## # A tibble: 3 x 3
+##   country     `1999` `2000`
+## * &lt;chr&gt;        &lt;int&gt;  &lt;int&gt;
+## 1 Afghanistan    745   2666
+## 2 Brazil       37737  80488
+## 3 China       212258 213766
+```
+
+```r
+table4b
+```
+
+```
+## # A tibble: 3 x 3
+##   country         `1999`     `2000`
+## * &lt;chr&gt;            &lt;int&gt;      &lt;int&gt;
+## 1 Afghanistan   19987071   20595360
+## 2 Brazil       172006362  174504898
+## 3 China       1272915272 1280428583
+```
+
+--
+
+&lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#DC222B;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm121.6 313.1c4.7 4.7 4.7 12.3 0 17L338 377.6c-4.7 4.7-12.3 4.7-17 0L256 312l-65.1 65.6c-4.7 4.7-12.3 4.7-17 0L134.4 338c-4.7-4.7-4.7-12.3 0-17l65.6-65-65.6-65.1c-4.7-4.7-4.7-12.3 0-17l39.6-39.6c4.7-4.7 12.3-4.7 17 0l65 65.7 65.1-65.6c4.7-4.7 12.3-4.7 17 0l39.6 39.6c4.7 4.7 4.7 12.3 0 17L312 256l65.6 65.1z"&gt;&lt;/path&gt;&lt;/svg&gt; Each variable must have its own column
+
+--
+
+&lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#DC222B;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm121.6 313.1c4.7 4.7 4.7 12.3 0 17L338 377.6c-4.7 4.7-12.3 4.7-17 0L256 312l-65.1 65.6c-4.7 4.7-12.3 4.7-17 0L134.4 338c-4.7-4.7-4.7-12.3 0-17l65.6-65-65.6-65.1c-4.7-4.7-4.7-12.3 0-17l39.6-39.6c4.7-4.7 12.3-4.7 17 0l65 65.7 65.1-65.6c4.7-4.7 12.3-4.7 17 0l39.6 39.6c4.7 4.7 4.7 12.3 0 17L312 256l65.6 65.1z"&gt;&lt;/path&gt;&lt;/svg&gt; Each observation must have its own row
+
+--
+
+&lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;fill:#DC222B;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm121.6 313.1c4.7 4.7 4.7 12.3 0 17L338 377.6c-4.7 4.7-12.3 4.7-17 0L256 312l-65.1 65.6c-4.7 4.7-12.3 4.7-17 0L134.4 338c-4.7-4.7-4.7-12.3 0-17l65.6-65-65.6-65.1c-4.7-4.7-4.7-12.3 0-17l39.6-39.6c4.7-4.7 12.3-4.7 17 0l65 65.7 65.1-65.6c4.7-4.7 12.3-4.7 17 0l39.6 39.6c4.7 4.7 4.7 12.3 0 17L312 256l65.6 65.1z"&gt;&lt;/path&gt;&lt;/svg&gt; Each value must have its own cell
+
+---
+
+# How to make a dataset tidy
+
+In practice:
+
+- Put each dataset in a tibble
+- Put each variable in a column
+
+However, depending on the dataset, it might not be obvious what is an observation or a variable.
+Often it is possible to deduce from the dataset, but sometimes you will have to contact the person responsible for collecting the data in order to be sure.
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+]
+
+.right-column[
+Typically, this would be something like an Excel spreadsheet with some of the following problems:
+
+- Nested variables
+- Variables encoded as something other than text/numbers, e.g. colours or grouping of data
+
+These things might not only make it difficult to manipulate the data in R, but even difficult to properly load into R in the first place.
+Problems related to spreadsheets are quite common, and unfortunately there is no one solution that fits all here.
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+]
+
+.right-column[
+&lt;table class=" excel" style="width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; gene &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; expression &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt;  &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; condition &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;background-color: gold !important;"&gt; gene1 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: gold !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 4em; "&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: gold !important;"&gt; treatment1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;background-color: gold !important;"&gt; gene2 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: gold !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 4em; "&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: forestgreen !important;"&gt; treatment2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;background-color: gold !important;"&gt; gene3 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: gold !important;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 4em; "&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: steelblue !important;"&gt; wt &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;background-color: forestgreen !important;"&gt; gene1 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: forestgreen !important;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 4em; "&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: white !important;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;background-color: forestgreen !important;"&gt; gene2 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: forestgreen !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 4em; "&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: white !important;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;background-color: forestgreen !important;"&gt; gene3 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: forestgreen !important;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 4em; "&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: white !important;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;background-color: steelblue !important;"&gt; gene1 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: steelblue !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 4em; "&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: white !important;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;background-color: steelblue !important;"&gt; gene2 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: steelblue !important;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 4em; "&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: white !important;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;background-color: steelblue !important;"&gt; gene3 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: steelblue !important;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 4em; "&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: white !important;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+???
+
+Here I will talk about a couple of problems that we have to fix before we can even load the data into R.
+It is either that information will be lost by loading the data, or that it will make the loading process more complicated than necessary.
+
+One thing that I have seen more than once is that important variables are encoded as colours in a spreadsheet.
+This is something that works well when entering and viewing data, but not so much when processing the data.
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+]
+
+.right-column[
+&lt;table class="excel"&gt;
+&lt;thead&gt;
+&lt;tr&gt;&lt;th colspan="2"&gt;treatment1&lt;/th&gt;&lt;th&gt;&lt;/th&gt;&lt;th colspan="2"&gt;treatment2&lt;/th&gt;&lt;th&gt;&lt;/th&gt;&lt;th colspan="2"&gt;wt&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;th&gt;gene&lt;/th&gt;&lt;th style="text-align: right;"&gt;expression&lt;/th&gt;&lt;th style="width: 2em;"&gt;&lt;/th&gt;&lt;th&gt;gene&lt;/th&gt;&lt;th style="text-align: right;"&gt;expression&lt;/th&gt;&lt;th style="width: 2em;"&gt;&lt;/th&gt;&lt;th&gt;gene&lt;/th&gt;&lt;th style="text-align: right;"&gt;expression&lt;/th&gt;&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;gene1&lt;/td&gt;&lt;td style="text-align: right;"&gt;2&lt;/td&gt;&lt;td style="width: 2em;"&gt;&lt;/td&gt;&lt;td&gt;gene1&lt;/td&gt;&lt;td style="text-align: right;"&gt;2&lt;/td&gt;&lt;td style="width: 2em;"&gt;&lt;/td&gt;&lt;td&gt;gene1&lt;/td&gt;&lt;td style="text-align: right;"&gt;4&lt;/td&gt;&lt;tr&gt;
+&lt;tr&gt;&lt;td&gt;gene2&lt;/td&gt;&lt;td style="text-align: right;"&gt;1&lt;/td&gt;&lt;td style="width: 2em;"&gt;&lt;/td&gt;&lt;td&gt;gene2&lt;/td&gt;&lt;td style="text-align: right;"&gt;1&lt;/td&gt;&lt;td style="width: 2em;"&gt;&lt;/td&gt;&lt;td&gt;gene2&lt;/td&gt;&lt;td style="text-align: right;"&gt;1&lt;/td&gt;&lt;tr&gt;
+&lt;tr&gt;&lt;td&gt;gene3&lt;/td&gt;&lt;td style="text-align: right;"&gt;3&lt;/td&gt;&lt;td style="width: 2em;"&gt;&lt;/td&gt;&lt;td&gt;gene3&lt;/td&gt;&lt;td style="text-align: right;"&gt;5&lt;/td&gt;&lt;td style="width: 2em;"&gt;&lt;/td&gt;&lt;td&gt;gene3&lt;/td&gt;&lt;td style="text-align: right;"&gt;5&lt;/td&gt;&lt;tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+???
+
+Another common way of representing what should really be a variable is by grouping data in smaller tables, similar to table 4 that I showed before, in different spreadsheets, or even in the same spreadsheet.
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+]
+
+.right-column[
+&lt;table class=" excel" style="width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; gene &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; condition &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; expression &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; gene1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; treatment1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; gene2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; treatment1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; gene3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; treatment1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; gene1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; treatment2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; gene2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; treatment2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; gene3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; treatment2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; gene1 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; wt &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; gene2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; wt &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; gene3 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; wt &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+]
+
+.right-column[
+The tidyr package contains a number of functions that can help us tidy up our datasets.
+tidyr is a core member of the tidyverse, so by loading tidyverse you will also have access to tidyr.
+
+
+```r
+library(tidyverse)
+```
+
+We will go through the following functions:
+
+- `pivot_longer`
+- `pivot_wider`
+- `separate`
+- `unite`
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+]
+
+.right-column[
+Two of the most common issues related to untidy data that you will face are:
+
+1. Variables spread across multiple columns.
+2. Observations spread across multiple rows.
+
+To solve these problems, we can use two functions in the tidyr package: `pivot_longer` and `pivot_wider`.
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+### `pivot_longer`
+]
+
+.right-column[
+
+
+
+```r
+wide_data
+```
+
+```
+## # A tibble: 3 x 4
+##   gene  treatment1 treatment2    wt
+##   &lt;chr&gt;      &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;
+## 1 gene1          2          2     4
+## 2 gene2          1          1     1
+## 3 gene3          3          5     5
+```
+
+This is a case where we have variables that are spread across multiple columns.
+The columns `treatment1`, `treatment2` and `wt` are actually all values of `condition`, and the values of these should be values of `expression`.
+
+`pivot_longer` takes a tibble and makes it longer than the original tibble by creating a pair of variables from a number of existing columns.
+You need three things:
+
+1. The columns that whose names should be a variable
+2. The name of the new variable to put the column names in.
+3. The name of the new variable to put the values in.
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+### `pivot_longer`
+]
+
+.right-column[
+
+```r
+pivot_longer(wide_data,
+             c(treatment1, treatment2, wt),
+             names_to = "condition",
+             values_to = "expression")
+```
+
+```
+## # A tibble: 9 x 3
+##   gene  condition  expression
+##   &lt;chr&gt; &lt;chr&gt;           &lt;dbl&gt;
+## 1 gene1 treatment1          2
+## 2 gene1 treatment2          2
+## 3 gene1 wt                  4
+## 4 gene2 treatment1          1
+## 5 gene2 treatment2          1
+## 6 gene2 wt                  1
+## 7 gene3 treatment1          3
+## 8 gene3 treatment2          5
+## 9 gene3 wt                  5
+```
+]
+
+???
+
+The columns to pivot are specified with `dplyr::select()` style notation.
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+### `pivot_longer`
+### `pivot_wider`
+]
+
+.right-column[
+
+
+
+```r
+long_data
+```
+
+```
+## # A tibble: 12 x 4
+##    gene  condition  type          value
+##    &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;         &lt;dbl&gt;
+##  1 gene1 treatment1 expression        2
+##  2 gene1 treatment1 accessibility    22
+##  3 gene1 treatment2 expression        2
+##  4 gene1 treatment2 accessibility    30
+##  5 gene1 wt         expression        4
+##  6 gene1 wt         accessibility    50
+##  7 gene2 treatment1 expression        1
+##  8 gene2 treatment1 accessibility    15
+##  9 gene2 treatment2 expression        1
+## 10 gene2 treatment2 accessibility    12
+## 11 gene2 wt         expression        1
+## 12 gene2 wt         accessibility    18
+```
+
+In this data, each combination of `gene` and `condition` is an observation.
+The `type` only represents two different variables (`expression` and `accessibility`) from the same observation.
+In other words, we have to make this dataset wider by making the values in the `type` column into variables.
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+### `pivot_longer`
+### `pivot_wider`
+]
+
+.right-column[
+`pivot_wider` can accomplish this, and it needs two things:
+
+1. The column that contains the names of the new variables.
+2. The column that contains the values of those new variables.
+
+
+```r
+pivot_wider(long_data, names_from = type, values_from = value)
+```
+
+```
+## # A tibble: 6 x 4
+##   gene  condition  expression accessibility
+##   &lt;chr&gt; &lt;chr&gt;           &lt;dbl&gt;         &lt;dbl&gt;
+## 1 gene1 treatment1          2            22
+## 2 gene1 treatment2          2            30
+## 3 gene1 wt                  4            50
+## 4 gene2 treatment1          1            15
+## 5 gene2 treatment2          1            12
+## 6 gene2 wt                  1            18
+```
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+### `pivot_longer`
+### `pivot_wider`
+### `separate`
+]
+
+.right-column[
+Sometimes multiple variables are represented as a single variable.
+
+
+
+
+```r
+united_data
+```
+
+```
+## # A tibble: 9 x 2
+##   gene_condition   expression
+##   &lt;chr&gt;                 &lt;dbl&gt;
+## 1 gene1_treatment1          2
+## 2 gene1_treatment2          2
+## 3 gene1_wt                  4
+## 4 gene2_treatment1          1
+## 5 gene2_treatment2          1
+## 6 gene2_wt                  1
+## 7 gene3_treatment1          3
+## 8 gene3_treatment2          5
+## 9 gene3_wt                  5
+```
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+### `pivot_longer`
+### `pivot_wider`
+### `separate`
+]
+
+.right-column[
+tidyr has a function called `separate` that takes a character column, splits it and creates two **separate** columns.
+It needs two things:
+
+1. The column that should be separated.
+2. The names of the new variables to create.
+
+
+```r
+separate(united_data, col = gene_condition,
+         into = c("gene", "condition"))
+```
+
+```
+## # A tibble: 9 x 3
+##   gene  condition  expression
+##   &lt;chr&gt; &lt;chr&gt;           &lt;dbl&gt;
+## 1 gene1 treatment1          2
+## 2 gene1 treatment2          2
+## 3 gene1 wt                  4
+## 4 gene2 treatment1          1
+## 5 gene2 treatment2          1
+## 6 gene2 wt                  1
+## 7 gene3 treatment1          3
+## 8 gene3 treatment2          5
+## 9 gene3 wt                  5
+```
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+### `pivot_longer`
+### `pivot_wider`
+### `separate`
+]
+
+.right-column[
+By default, `separate` will split the column on any non-alphanumeric character.
+In this particular example, this was fine since the two variables were separated by an underscore.
+You can also explicitly state how they should be separated with `sep`:
+
+
+```r
+separate(united_data, col = gene_condition,
+         into = c("gene", "condition"),
+         sep = "_")
+```
+
+```
+## # A tibble: 9 x 3
+##   gene  condition  expression
+##   &lt;chr&gt; &lt;chr&gt;           &lt;dbl&gt;
+## 1 gene1 treatment1          2
+## 2 gene1 treatment2          2
+## 3 gene1 wt                  4
+## 4 gene2 treatment1          1
+## 5 gene2 treatment2          1
+## 6 gene2 wt                  1
+## 7 gene3 treatment1          3
+## 8 gene3 treatment2          5
+## 9 gene3 wt                  5
+```
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+### `pivot_longer`
+### `pivot_wider`
+### `separate`
+### `unite`
+]
+
+.right-column[
+There are also cases when we have the opposite situation from what we just went over, that you have a variable that is split across multiple columns.
+This can be corrected by uniting the columns with `unite`.
+
+
+```r
+table5
+```
+
+```
+## # A tibble: 6 x 4
+##   country     century year  rate             
+## * &lt;chr&gt;       &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;            
+## 1 Afghanistan 19      99    745/19987071     
+## 2 Afghanistan 20      00    2666/20595360    
+## 3 Brazil      19      99    37737/172006362  
+## 4 Brazil      20      00    80488/174504898  
+## 5 China       19      99    212258/1272915272
+## 6 China       20      00    213766/1280428583
+```
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+### `pivot_longer`
+### `pivot_wider`
+### `separate`
+### `unite`
+]
+
+.right-column[
+`unite` needs two things:
+
+1. The name of the new column.
+2. The columns that should be united.
+
+
+```r
+unite(table5, "year", century, year)
+```
+
+```
+## # A tibble: 6 x 3
+##   country     year  rate             
+##   &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;            
+## 1 Afghanistan 19_99 745/19987071     
+## 2 Afghanistan 20_00 2666/20595360    
+## 3 Brazil      19_99 37737/172006362  
+## 4 Brazil      20_00 80488/174504898  
+## 5 China       19_99 212258/1272915272
+## 6 China       20_00 213766/1280428583
+```
+
+Here we see that the default is to separate the original values with an underscore.
+This might be appropriate in some cases, but here it is not.
+]
+
+---
+
+# When to make a dataset tidy
+
+.left-column[
+## Before loading into R
+## After loading into R
+### tidyr
+### `pivot_longer`
+### `pivot_wider`
+### `separate`
+### `unite`
+]
+
+.right-column[
+Analogously to `separate`, we can specify how the values should be joined in `unite` with `sep`:
+
+
+```r
+unite(table5, "year", century, year, sep = "")
+```
+
+```
+## # A tibble: 6 x 3
+##   country     year  rate             
+##   &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;            
+## 1 Afghanistan 1999  745/19987071     
+## 2 Afghanistan 2000  2666/20595360    
+## 3 Brazil      1999  37737/172006362  
+## 4 Brazil      2000  80488/174504898  
+## 5 China       1999  212258/1272915272
+## 6 China       2000  213766/1280428583
+```
+]
+
+---
+
+# Suggested reading and exercises
+
+- [R for Data Science: Tidy data](https://r4ds.had.co.nz/tidy-data.html)
+  - Go through the case study in chapter 12.6.
+- [Data Import Cheat Sheet](https://github.com/rstudio/cheatsheets/blob/master/data-import.pdf)
+- [Tidy data, article by Hadley Wickham in Journal of Statistical Software](https://www.jstatsoft.org/index.php/jss/article/view/v059i10/v59i10.pdf)
+  - The theory underlying tidy data, more in-depth in case you are interested.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="js/macros.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

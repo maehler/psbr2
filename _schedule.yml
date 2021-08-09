@@ -97,6 +97,7 @@ schedule:
     - start_time:
       end_time:
       topic: Tidy data
+      url: lectures/09_tidy_data.html
       details: |
         - What are some best practices when it comes to data representation?
           - Each column is a variable

@@ -105,3 +105,15 @@ iframe {
   background-color: #1D2F55;
   color: #EEEEEE;
 }
+
+/* Excel style tables */
+.excel {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+  .excel td, table.excel thead th {
+    background-color: white;
+    border: 1px solid gray;
+    margin: 0;
+  }
