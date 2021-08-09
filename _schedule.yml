@@ -113,6 +113,13 @@ schedule:
   - day:
     - start_time:
       end_time:
+      topic: Loading data into R
+      details: |
+        - readr package
+        - readxl package (?)
+        - Load the data from the first course
+    - start_time:
+      end_time:
       topic: Reproducibility in data science
       details: |
         - Why is reproducibility important?
@@ -124,13 +131,6 @@ schedule:
         - How to ask for help
           - reprex package
           - Rubber ducking
-    - start_time:
-      end_time:
-      topic: Loading data into R
-      details: |
-        - readr package
-        - readxl package (?)
-        - Load the data from the first course
   - day:
     - start_time:
       end_time:
