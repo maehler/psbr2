@@ -1,6 +1,6 @@
 ---
-title: "Practical Skills for Biology Research II"
-subtitle: "Tidy data"
+title: "Tidy data"
+subtitle: "Practical Skills for Biology Research II"
 author: "Niklas Mähler"
 institute: "Umeå University"
 date: "2021-10-05"

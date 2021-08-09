@@ -1,6 +1,6 @@
 ---
-title: "Practical Skills for Biology Research II"
-subtitle: "Data visualisation with ggplot2"
+title: "Data visualisation with ggplot2"
+subtitle: "Practical Skills for Biology Research II"
 author: "Niklas Mähler"
 institute: "Umeå University"
 date: "2021-10-01"

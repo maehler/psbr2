@@ -1,6 +1,6 @@
 ---
-title: "Practical Skills for Biology Research II"
-subtitle: "How to get help"
+title: "How to get help"
+subtitle: "Practical Skills for Biology Research II"
 author: "Niklas Mähler"
 institute: "Umeå University"
 date: "2021-10-01"

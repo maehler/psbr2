@@ -1,6 +1,6 @@
 ---
-title: "Practical skills for biology research II"
-subtitle: "Course Introduction"
+title: "Course Introduction"
+subtitle: "Practical skills for biology research II"
 author: "Niklas Mähler"
 institute: "Umeå University"
 date: "2021-09-30"
