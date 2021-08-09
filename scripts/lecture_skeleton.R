@@ -44,21 +44,25 @@ topic_df <- tibble(
     schedule_data$schedule, seq_along(schedule_data$schedule),
     ~ rep(.y, length(.x$day)))),
   date = add_business_day(schedule_data$start_date, course_day-1),
-  topic_slug = str_to_lower(topic) %>%
-    str_replace_all("[-: ]", "_") %>%
-    str_replace_all("['\"]", "") %>%
-    str_replace_all("_+", "_"),
-  topic_filename = path(
-    args$outdir,
-    str_c(sprintf("%02d", seq_along(topic)),
-          "_", topic_slug, ".Rmd")) %>%
-    here(),
   lecture = flatten_lgl(map(schedule_data$schedule,
-                            ~ map_lgl(.$day, ~ is.null(.$lecture) || .$lecture))),
+                            ~ map_lgl(.$day, ~ is.null(.$lecture) || .$lecture)))
 )
 
 # Only include topics that should have lectures associated with them
-topic_df <- topic_df %>% filter(lecture)
+topic_df <- topic_df %>% filter(lecture) %>%
+  mutate(
+    topic_slug = str_to_lower(topic) %>%
+      str_replace_all("[-: ]", "_") %>%
+      str_replace_all("['\"]", "") %>%
+      str_replace_all("_+", "_"),
+    topic_filename = path(
+      args$outdir,
+      str_c(sprintf("%02d", seq_along(topic)),
+            "_", topic_slug, ".Rmd")) %>%
+      here()
+  ) %>%
+  select(-lecture)
+
 
 if (length(args$N) > 0) {
   topic_df <- topic_df %>% slice(all_of(as.integer(args$N)))
