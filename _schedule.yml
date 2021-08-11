@@ -45,8 +45,8 @@ schedule:
   - day:
     - start_time:
       end_time:
-      topic: Basics of R programming
-      url: lectures/06_basics_of_r_programming.html
+      topic: Basics of R coding
+      url: lectures/06_basics_of_r_coding.html
       details: |
         - Operators
           - Basic operators (`+`, `-`, `/`, `%%`, etc)
