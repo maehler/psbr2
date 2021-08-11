@@ -79,6 +79,11 @@
 .tile {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
+}
+
+.spaced * {
+  margin: 0.5em;
 }
 
 iframe {

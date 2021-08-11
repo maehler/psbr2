@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Importing data into R</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Niklas Mähler" />
+    <meta name="date" content="2021-10-07" />
+    <script src="libs/header-attrs-2.8/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/niklas.css" type="text/css" />
+    <link rel="stylesheet" href="css/niklas-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: left, middle, inverse, title-slide
+
+# Importing data into R
+## Practical Skills for Biology Research II
+### Niklas Mähler
+### Umeå University
+### 2021-10-07
+
+---
+
+
+
+
+# Importing data into R
+
+So far we have looked at how data can look before we load it into R, and how it looks when it is already loaded into R, but how do we actually import the data into R?
+
+Here we will look at two different packages for reading (and writing) data:
+
+- The readr package
+- The readxl package
+
+---
+
+# Data formats
+
+.left-column[
+## Data formats
+]
+
+.right-column[
+Data can come in many different formats.
+One of the first things we have to consider is whether the data is rectangular or not.
+]
+
+---
+
+# Data formats
+
+.left-column[
+## Data formats
+### Rectangular data
+]
+
+.right-column[
+Each value is associated with an observation and a variable.
+Missing values (`NA`) are allowed.
+
+- Gene expression
+- Sequence alignments
+- Phenotype data
+
+This is usually what we want to work with, but there exceptions.
+]
+
+---
+
+# Data formats
+
+.left-column[
+## Data formats
+### Rectangular data
+### Non-rectangular data
+]
+
+.right-column[
+Also sometimes referred to as unstructured data.
+
+- Images
+- Sounds
+- GenBank files
+- Data from APIs (Application Programming Interfaces)
+  - JSON (Javascript Object Notation)
+  - XML (Extensible Markup Language)
+
+We will not go into how to handle these types of data in this course.
+]
+
+---
+
+# Data formats
+
+.left-column[
+## Data formats
+### Rectangular data
+### Non-rectangular data
+## Flat files
+]
+
+.right-column[
+While not being a data format in itself, **flat file** is a term that you might come across.
+All of the data you will be importing into R will be contained in flat files.
+These are files that might have relations within the dataset, or relations to other datasets, but there is nothing in the files themselves that keep track of these relationships.
+
+The opposite of a flat file would be a **structured file**, or a **hierarchical file**, where any relationships are constrained.
+A typical example of this would be any proper database management system, such as MySQL, SQLite or MongoDB.
+]
+
+---
+
+# File formats
+
+.left-column[
+## CSV
+]
+
+.right-column[
+Comma-separated values (CSV) is a very popular file format for storing and sharing data.
+The file format has quite a few siblings that we will introduce soon.
+As the name implies, values in the file are separated by commas.
+
+Here's an example of how the first few line of the `flights` data could look as a CSV file:
+
+```
+year,month,day,dep_time,sched_dep_time,dep_delay,arr_time,sched_arr_time,arr_delay,carrier,flight,tailnum,origin,dest,air_time,distance,hour,minute,time_hour
+2013,1,1,517,515,2,830,819,11,UA,1545,N14228,EWR,IAH,227,1400,5,15,2013-01-01T10:00:00Z
+2013,1,1,533,529,4,850,830,20,UA,1714,N24211,LGA,IAH,227,1416,5,29,2013-01-01T10:00:00Z
+2013,1,1,542,540,2,923,850,33,AA,1141,N619AA,JFK,MIA,160,1089,5,40,2013-01-01T10:00:00Z
+2013,1,1,544,545,-1,1004,1022,-18,B6,725,N804JB,JFK,BQN,183,1576,5,45,2013-01-01T10:00:00Z
+2013,1,1,554,600,-6,812,837,-25,DL,461,N668DN,LGA,ATL,116,762,6,0,2013-01-01T11:00:00Z
+2013,1,1,554,558,-4,740,728,12,UA,1696,N39463,EWR,ORD,150,719,5,58,2013-01-01T10:00:00Z
+...
+```
+]
+
+---
+
+# File formats
+
+.left-column[
+## CSV
+]
+
+.right-column[
+One caveat with CSV files is that they're not always comma-separated (!).
+For example, if you are using Microsoft Excel set up with a Swedish locale, the fields will be separated by semicolons (`;`) instead.
+The reason for this is that the comma is used as the decimal point for decimal numbers.
+This is quite common throughout Europe, but there are ways around this.
+
+```
+year;month;day;dep_time;sched_dep_time;dep_delay;arr_time;sched_arr_time;arr_delay;carrier;flight;tailnum;origin;dest;air_time;distance;hour;minute;time_hour
+2013;1;1;517;515;2;830;819;11;UA;1545;N14228;EWR;IAH;227;1400;5;15;2013-01-01T10:00:00Z
+2013;1;1;533;529;4;850;830;20;UA;1714;N24211;LGA;IAH;227;1416;5;29;2013-01-01T10:00:00Z
+2013;1;1;542;540;2;923;850;33;AA;1141;N619AA;JFK;MIA;160;1089;5;40;2013-01-01T10:00:00Z
+2013;1;1;544;545;-1;1004;1022;-18;B6;725;N804JB;JFK;BQN;183;1576;5;45;2013-01-01T10:00:00Z
+2013;1;1;554;600;-6;812;837;-25;DL;461;N668DN;LGA;ATL;116;762;6;0;2013-01-01T11:00:00Z
+2013;1;1;554;558;-4;740;728;12;UA;1696;N39463;EWR;ORD;150;719;5;58;2013-01-01T10:00:00Z
+...
+```
+]
+
+---
+
+# File formats
+
+.left-column[
+## CSV
+## TSV
+]
+
+.right-column[
+Another very common file format, that is very closely related to CSV, is the tab-separated values (TSV) file format.
+As you might guess, the values in this format are separated by tab characters instead of commas.
+
+```
+year	month	day	dep_time	sched_dep_time	dep_delay	arr_time	sched_arr_time	arr_delay	carrier	flight	tailnum	origin	dest	air_time	distance	hour	minute	time_hour
+2013	1	1	517	515	2	830	819	11	UA	1545	N14228	EWR	IAH	227	1400	5	15	2013-01-01T10:00:00Z
+2013	1	1	533	529	4	850	830	20	UA	1714	N24211	LGA	IAH	227	1416	5	29	2013-01-01T10:00:00Z
+2013	1	1	542	540	2	923	850	33	AA	1141	N619AA	JFK	MIA	160	1089	5	40	2013-01-01T10:00:00Z
+2013	1	1	544	545	-1	1004	1022	-18	B6	725	N804JB	JFK	BQN	183	1576	5	45	2013-01-01T10:00:00Z
+2013	1	1	554	600	-6	812	837	-25	DL	461	N668DN	LGA	ATL	116	762	6	0	2013-01-01T11:00:00Z
+2013	1	1	554	558	-4	740	728	12	UA	1696	N39463	EWR	ORD	150	719	5	58	2013-01-01T10:00:00Z
+...
+```
+]
+
+---
+
+# File formats
+
+.left-column[
+## CSV
+## TSV
+## Fixed width
+]
+
+.right-column[
+A special case of a delimited file is a fixed-width file.
+Instead of the fields being separated by a single character (like a comma or a tab), all fields have the same width.
+
+```
+year	month	day	dep_time	sched_dep_time	dep_delay	arr_time	sched_arr_time	arr_delay	carrier	flight	tailnum	origin	dest	air_time	distance	hour	minute	time_hour          
+2013	1    	1  	517     	515           	2        	830     	819           	11       	UA     	1545  	N14228 	EWR   	IAH 	227     	1400    	5   	15    	2013-01-01 05:00:00
+2013	1    	1  	533     	529           	4        	850     	830           	20       	UA     	1714  	N24211 	LGA   	IAH 	227     	1416    	5   	29    	2013-01-01 05:00:00
+2013	1    	1  	542     	540           	2        	923     	850           	33       	AA     	1141  	N619AA 	JFK   	MIA 	160     	1089    	5   	40    	2013-01-01 05:00:00
+2013	1    	1  	544     	545           	-1       	1004    	1022          	-18      	B6     	725   	N804JB 	JFK   	BQN 	183     	1576    	5   	45    	2013-01-01 05:00:00
+2013	1    	1  	554     	600           	-6       	812     	837           	-25      	DL     	461   	N668DN 	LGA   	ATL 	116     	762     	6   	0     	2013-01-01 06:00:00
+2013	1    	1  	554     	558           	-4       	740     	728           	12       	UA     	1696  	N39463 	EWR   	ORD 	150     	719     	5   	58    	2013-01-01 05:00:00
+...
+```
+]
+
+---
+
+# File formats
+
+.left-column[
+## CSV
+## TSV
+## Fixed width
+## Excel
+]
+
+.right-column[
+The file formats we've been looking at so far have all been plain text.
+There is also the possibility to import Excel files directly into R.
+
+.note.yellow[
+&lt;svg viewBox="0 0 352 512" style="position:relative;display:inline-block;top:.1em;height:2em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M176 80c-52.94 0-96 43.06-96 96 0 8.84 7.16 16 16 16s16-7.16 16-16c0-35.3 28.72-64 64-64 8.84 0 16-7.16 16-16s-7.16-16-16-16zM96.06 459.17c0 3.15.93 6.22 2.68 8.84l24.51 36.84c2.97 4.46 7.97 7.14 13.32 7.14h78.85c5.36 0 10.36-2.68 13.32-7.14l24.51-36.84c1.74-2.62 2.67-5.7 2.68-8.84l.05-43.18H96.02l.04 43.18zM176 0C73.72 0 0 82.97 0 176c0 44.37 16.45 84.85 43.56 115.78 16.64 18.99 42.74 58.8 52.42 92.16v.06h48v-.12c-.01-4.77-.72-9.51-2.15-14.07-5.59-17.81-22.82-64.77-62.17-109.67-20.54-23.43-31.52-53.15-31.61-84.14-.2-73.64 59.67-128 127.95-128 70.58 0 128 57.42 128 128 0 30.97-11.24 60.85-31.65 84.14-39.11 44.61-56.42 91.47-62.1 109.46a47.507 47.507 0 0 0-2.22 14.3v.1h48v-.05c9.68-33.37 35.78-73.18 52.42-92.16C335.55 260.85 352 220.37 352 176 352 78.8 273.2 0 176 0z"&gt;&lt;/path&gt;&lt;/svg&gt;
+Remember to keep the caveats of formatting in Excel in mind whenever trying to import these types of files.
+]
+]
+
+---
+
+# A note on file extensions
+
+File extensions, i.e. the last part of the filename (e.g. `.txt`, `.csv`, `.xlsx`), can be useful in order to quickly know what type of file you are dealing with.
+However, this is not something that in itself affects the contents of the file.
+If you rename `my_data.csv` to `my_data.exe`, R could not care less.
+The contents of the file is still the same.
+
+Many operating systems enforce extensions quite strictly, and can sometimes change the way the operating system handles the file, for example what the default program for opening the file should be.
+
+Having said that, using file extensions is a great way of keeping track of what is what, but it is not the be-all and end-all when it comes to the actual format of the file.
+
+---
+
+# readr and readxl
+
+The [readr](https://readr.tidyverse.org) and [readxl](https://readxl.tidyverse.org) packages are both part of the tidyverse, and they contain all functions we need to read all these different file types.
+readr is a core member of the tidyverse, so it will be loaded when loading the tidyverse:
+
+
+```r
+library(tidyverse)
+```
+
+readxl is *not* a core member, so this package has to be loaded directly:
+
+
+```r
+library(readxl)
+```
+
+
+.tile.spaced[![:scale 20%](https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/readr.png)![:scale 20%](https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/readxl.png)]
+
+---
+
+# Importing data
+
+.left-column[
+## Introduction
+]
+
+.right-column[
+Starting with the plain-text formats, the readr package is the first choice for importing.
+
+- `read_csv`: importing CSV files
+- `read_csv2`: importing CSV files where comma is used decimal point
+- `read_tsv`: importing TSV files
+- `read_fwf`: importing fixed-width files
+
+The structure of the functions in the readr package are very similar, so I will focus on `read_csv` and point out where the other functions differ.
+]
+
+---
+
+# Importing data
+
+.left-column[
+## Introduction
+## Filename
+]
+
+.right-column[
+The first, and single most important argument for `read_csv` is of course the name of the file.
+
+.small[
+
+```r
+heights &lt;- read_csv("data/heights.csv")
+```
+
+```
+## 
+## ── Column specification ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+## cols(
+##   earn = col_double(),
+##   height = col_double(),
+##   sex = col_character(),
+##   ed = col_double(),
+##   age = col_double(),
+##   race = col_character()
+## )
+```
+]
+
+Whenever we use the `read_*` functions, a column specification is printed.
+This can be very useful to see how the file is interpreted, and to spot any issues with the file format.
+]
+
+---
+
+# Importing data
+
+.left-column[
+## Introduction
+## Filename
+## Header
+]
+
+.right-column[
+Instead of giving a file name, we can also supply an inline CSV file.
+This can be useful for demonstrations, testing, or for creating reproducible examples.
+
+
+```r
+read_csv("year,month,day,temperature
+2021,8,10,19
+2021,8,11,22
+2021,8,12,16")
+```
+
+```
+## # A tibble: 3 x 4
+##    year month   day temperature
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
+## 1  2021     8    10          19
+## 2  2021     8    11          22
+## 3  2021     8    12          16
+```
+
+As you can see, the first row in the file is by default considered the **header** of the file.
+These will become the column names in the resulting tibble.
+]
+
+---
+
+# Importing data
+
+.left-column[
+## Introduction
+## Filename
+## Header
+### No header
+]
+
+.right-column[
+Sometimes, it might be necessary to modify the default behaviour, for example when there is no header in the data:
+
+
+```r
+read_csv("2021,8,10,19
+2021,8,11,22
+2021,8,12,16")
+```
+
+```
+## # A tibble: 2 x 4
+##   `2021`   `8`  `10`  `19`
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1   2021     8    11    22
+## 2   2021     8    12    16
+```
+]
+
+---
+
+# Importing data
+
+.left-column[
+## Introduction
+## Filename
+## Header
+### No header
+]
+
+.right-column[
+We can change the behaviour with the `col_names` argument.
+By setting it to `FALSE`, column names will be generated for us:
+
+
+```r
+read_csv("2021,8,10,19
+2021,8,11,22
+2021,8,12,16", col_names = FALSE)
+```
+
+```
+## # A tibble: 3 x 4
+##      X1    X2    X3    X4
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1  2021     8    10    19
+## 2  2021     8    11    22
+## 3  2021     8    12    16
+```
+]
+
+---
+
+# Importing data
+
+.left-column[
+## Introduction
+## Filename
+## Header
+### No header
+]
+
+.right-column[
+We can also specify the names manually:
+
+
+```r
+read_csv("2021,8,10,19
+2021,8,11,22
+2021,8,12,16",
+col_names = c("year", "month", "day", "temperature"))
+```
+
+```
+## # A tibble: 3 x 4
+##    year month   day temperature
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
+## 1  2021     8    10          19
+## 2  2021     8    11          22
+## 3  2021     8    12          16
+```
+]
+
+---
+
+# Importing data
+
+.left-column[
+## Introduction
+## Filename
+## Header
+### No header
+### Extra metadata
+]
+
+.right-column[
+It is not uncommon for files to contain extra information before the actual data in the file.
+Those lines can be avoided with `skip`.
+It takes a number, and that number of lines will be ignored.
+
+
+```r
+read_csv("Temperature was measured using a very cheap
+thermometer from Clas Ohlson at noon
+year,month,day,temperature
+2021,8,10,19
+2021,8,11,22
+2021,8,12,16", skip = 2)
+```
+
+```
+## # A tibble: 3 x 4
+##    year month   day temperature
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
+## 1  2021     8    10          19
+## 2  2021     8    11          22
+## 3  2021     8    12          16
+```
+
+]
+
+---
+
+# Importing data
+
+.left-column[
+## Introduction
+## Filename
+## Header
+### No header
+### Extra metadata
+]
+
+.right-column[
+Other times, the metadata has the appearence of a comment with the line starting with a special character, typically `#`.
+All lines, no matter where they are found in the file, can be ignored with `comment`.
+
+
+```r
+read_csv("# Temperature was measured using a very cheap
+# thermometer from Clas Ohlson at noon
+year,month,day,temperature
+2021,8,10,19
+2021,8,11,22
+# I'm not sure about the next observation...
+2021,8,12,16", comment = "#")
+```
+
+```
+## # A tibble: 3 x 4
+##    year month   day temperature
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
+## 1  2021     8    10          19
+## 2  2021     8    11          22
+## 3  2021     8    12          16
+```
+]
+
+---
+
+# Importing data
+
+.left-column[
+## Introduction
+## Filename
+## Header
+### No header
+### Extra metadata
+### Missing data
+]
+
+.right-column[
+If missing data is reprsented in the file, we have to make sure that it is also properly represented after being imported.
+This can be accomplished with the `na` argument.
+By default it considers an empty value or the string `"NA"` to be missing values, but we can use whatever we like.
+
+
+```r
+read_csv("year,month,day,temperature
+2021,8,10,19
+2021,8,11,22
+2021,8,12,.", na = ".")
+```
+
+```
+## # A tibble: 3 x 4
+##    year month   day temperature
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
+## 1  2021     8    10          19
+## 2  2021     8    11          22
+## 3  2021     8    12          NA
+```
+]
+
+---
+
+# Importing data
+
+.left-column[
+## Introduction
+## Filename
+## Header
+### No header
+### Extra metadata
+### Missing data
+## Excel
+]
+
+.right-column[
+All the readr functions behave very similarly, but reading Excel data is a little bit different.
+
+.small[
+
+```r
+library(readxl)
+readxl_example("datasets.xlsx")
+```
+
+```
+## [1] "/Library/Frameworks/R.framework/Versions/4.1/Resources/library/readxl/extdata/datasets.xlsx"
+```
+]
+
+![:scale 60%](../img/excel_datasets_screenshot.png)
+]
+
+---
+
+# Importing data
+
+.left-column[
+## Introduction
+## Filename
+## Header
+### No header
+### Extra metadata
+### Missing data
+## Excel
+]
+
+.right-column[
+The main function in the readxl package that we would use is `read_excel`.
+]
+
+.right-column.small[
+
+```r
+xlsx_example &lt;- readxl_example("datasets.xlsx")
+read_excel(xlsx_example)
+```
+
+```
+## # A tibble: 150 x 5
+##    Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+##           &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt;  
+##  1          5.1         3.5          1.4         0.2 setosa 
+##  2          4.9         3            1.4         0.2 setosa 
+##  3          4.7         3.2          1.3         0.2 setosa 
+##  4          4.6         3.1          1.5         0.2 setosa 
+##  5          5           3.6          1.4         0.2 setosa 
+##  6          5.4         3.9          1.7         0.4 setosa 
+##  7          4.6         3.4          1.4         0.3 setosa 
+##  8          5           3.4          1.5         0.2 setosa 
+##  9          4.4         2.9          1.4         0.2 setosa 
+## 10          4.9         3.1          1.5         0.1 setosa 
+## # … with 140 more rows
+```
+]
+
+---
+
+# Importing data
+
+.left-column[
+## Introduction
+## Filename
+## Header
+### No header
+### Extra metadata
+### Missing data
+## Excel
+### Sheets
+]
+
+.right-column[
+In Excel, we can have multiple sheets in the same document.
+By default, `read_excel` reads the first sheet.
+This behaviour we can change by manipulating the `sheet` argument, and we can either give the sheet name, or a number.
+]
+
+.right-column.small[
+
+```r
+read_excel(xlsx_example, sheet = "mtcars")
+```
+
+```
+## # A tibble: 32 x 11
+##      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1  21       6  160    110  3.9   2.62  16.5     0     1     4     4
+##  2  21       6  160    110  3.9   2.88  17.0     0     1     4     4
+##  3  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1
+##  4  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1
+##  5  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2
+##  6  18.1     6  225    105  2.76  3.46  20.2     1     0     3     1
+##  7  14.3     8  360    245  3.21  3.57  15.8     0     0     3     4
+##  8  24.4     4  147.    62  3.69  3.19  20       1     0     4     2
+##  9  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2
+## 10  19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4
+## # … with 22 more rows
+```
+]
+
+.right-column[
+We can also list the sheets in a document.
+
+
+```r
+excel_sheets(xlsx_example)
+```
+
+```
+## [1] "iris"     "mtcars"   "chickwts" "quakes"
+```
+]
+
+---
+
+# Importing data
+
+.left-column[
+## Introduction
+## Filename
+## Header
+### No header
+### Extra metadata
+### Missing data
+## Excel
+### Sheets
+### Data ranges
+]
+
+.right-column[
+We can specify a range of cells that should be read.
+
+
+```r
+readxl_example("deaths.xlsx")
+```
+
+![:scale 65%](../img/excel_deaths_screenshot.png)
+]
+
+---
+
+# Importing data
+
+.left-column[
+## Introduction
+## Filename
+## Header
+### No header
+### Extra metadata
+### Missing data
+## Excel
+### Sheets
+### Data ranges
+]
+
+.right-column.small[
+
+```r
+read_excel(readxl_example("deaths.xlsx"), range = "A5:F15")
+```
+
+```
+## # A tibble: 10 x 6
+##    Name      Profession   Age `Has kids` `Date of birth`     `Date of death`    
+##    &lt;chr&gt;     &lt;chr&gt;      &lt;dbl&gt; &lt;lgl&gt;      &lt;dttm&gt;              &lt;dttm&gt;             
+##  1 David Bo… musician      69 TRUE       1947-01-08 00:00:00 2016-01-10 00:00:00
+##  2 Carrie F… actor         60 TRUE       1956-10-21 00:00:00 2016-12-27 00:00:00
+##  3 Chuck Be… musician      90 TRUE       1926-10-18 00:00:00 2017-03-18 00:00:00
+##  4 Bill Pax… actor         61 TRUE       1955-05-17 00:00:00 2017-02-25 00:00:00
+##  5 Prince    musician      57 TRUE       1958-06-07 00:00:00 2016-04-21 00:00:00
+##  6 Alan Ric… actor         69 FALSE      1946-02-21 00:00:00 2016-01-14 00:00:00
+##  7 Florence… actor         82 TRUE       1934-02-14 00:00:00 2016-11-24 00:00:00
+##  8 Harper L… author        89 FALSE      1926-04-28 00:00:00 2016-02-19 00:00:00
+##  9 Zsa Zsa … actor         99 TRUE       1917-02-06 00:00:00 2016-12-18 00:00:00
+## 10 George M… musician      53 FALSE      1963-06-25 00:00:00 2016-12-25 00:00:00
+```
+]
+
+
+---
+
+# Parsing
+
+.left-column[
+## Introduction
+]
+
+.right-column[
+You will inevitably encounter issues at some point when trying to import data into R.
+In order to understand what is going wrong, we have to know a little bit of how readr works under the hood.
+
+As you might have noticed in the previous examples, when importing data the types of the columns in the imported data has been determined automatically, even though there is no distinction between a number and a string in a text file.
+The process of translating the text in the files to variables with correct types is called **parsing**.
+
+.small[
+
+```r
+read_csv("data/heights.csv")
+```
+
+```
+## 
+## ── Column specification ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+## cols(
+##   earn = col_double(),
+##   height = col_double(),
+##   sex = col_character(),
+##   ed = col_double(),
+##   age = col_double(),
+##   race = col_character()
+## )
+```
+
+```
+## # A tibble: 1,192 x 6
+##     earn height sex       ed   age race    
+##    &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   
+##  1 50000   74.4 male      16    45 white   
+##  2 60000   65.5 female    16    58 white   
+##  3 30000   63.6 female    16    29 white   
+##  4 50000   63.1 female    16    91 other   
+##  5 51000   63.4 female    17    39 white   
+##  6  9000   64.4 female    15    26 white   
+##  7 29000   61.7 female    12    49 white   
+##  8 32000   72.7 male      17    46 white   
+##  9  2000   72.0 male      15    21 hispanic
+## 10 27000   72.2 male      12    26 white   
+## # … with 1,182 more rows
+```
+]
+]
+
+---
+
+# Parsing
+
+.left-column[
+## Introduction
+## Vector parsing
+]
+
+.right-column[
+There are a number of functions that readr uses in order to parse data:
+
+- `parse_integer`
+- `parse_logical`
+- `parse_number`
+- `parse_double`
+- `parse_character`
+- `parse_date`
+- `parse_datetime`
+- `parse_time`
+
+They all accept a character vector, and from those tries to convert the text to the type the function indicates.
+]
+
+---
+
+# Parsing
+
+.left-column[
+## Introduction
+## Vector parsing
+]
+
+.right-column[
+
+```r
+parse_integer(c("1", "2", "15"))
+```
+
+```
+## [1]  1  2 15
+```
+
+```r
+parse_logical(c("TRUE", "FALSE", "T", "0"))
+```
+
+```
+## [1]  TRUE FALSE  TRUE FALSE
+```
+
+```r
+parse_number(c("1", "3.14", "1e-6"))
+```
+
+```
+## [1] 1.000000 3.140000 0.000001
+```
+
+```r
+parse_date(c("2021-08-10", "1632-11-06", "1986-02-07"))
+```
+
+```
+## [1] "2021-08-10" "1632-11-06" "1986-02-07"
+```
+
+```r
+parse_time(c("13:37", "20:23:15", "9:15 pm"))
+```
+
+```
+## 13:37:00
+## 20:23:15
+## 21:15:00
+```
+]
+
+---
+
+# Parsing
+
+.left-column[
+## Introduction
+## Vector parsing
+]
+
+.right-column[
+If a value is not possible to convert to the given type, an error will be generated and the value will be `NA`.
+
+
+```r
+parse_integer(c("1", "2", "five"))
+```
+
+```
+## Warning: 1 parsing failure.
+## row col   expected actual
+##   3  -- an integer   five
+```
+
+```
+## [1]  1  2 NA
+## attr(,"problems")
+## # A tibble: 1 x 4
+##     row   col expected   actual
+##   &lt;int&gt; &lt;int&gt; &lt;chr&gt;      &lt;chr&gt; 
+## 1     3    NA an integer five
+```
+]
+
+---
+
+# Parsing
+
+.left-column[
+## Introduction
+## Vector parsing
+## File parsing
+]
+
+.right-column[
+So far we have given the parsing functions more or less what they expect, but in order to parse a file, readr has to guess what type each column should be.
+It does this by looking at the first 1000 values in the file and applying some heuristics.
+
+
+```r
+guess_parser(c("1", "2", "3"))
+```
+
+```
+## [1] "double"
+```
+
+```r
+guess_parser(c("TRUE", "FALSE", "F"))
+```
+
+```
+## [1] "logical"
+```
+
+```r
+guess_parser("2012-11-13T20:15")
+```
+
+```
+## [1] "datetime"
+```
+
+```r
+guess_parser("Practical skills for biology research")
+```
+
+```
+## [1] "character"
+```
+]
+
+---
+
+# Parsing
+
+.left-column[
+## Introduction
+## Vector parsing
+## File parsing
+### Identifying problems
+]
+
+.right-column[
+Depending on the file, these guesses can sometimes be wrong.
+For example, if you have a file where the first 1000 rows contain missing values in a column, or a file where the first 1000 rows are a special case.
+]
+
+---
+
+# Parsing
+
+.left-column[
+## Introduction
+## Vector parsing
+## File parsing
+### Identifying problems
+]
+
+.right-column.small[
+
+```r
+challenge &lt;- read_csv(readr_example("challenge.csv"))
+```
+
+```
+## 
+## ── Column specification ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+## cols(
+##   x = col_double(),
+##   y = col_logical()
+## )
+```
+
+```
+## Warning: 1000 parsing failures.
+##  row col           expected     actual                                                                                         file
+## 1001   y 1/0/T/F/TRUE/FALSE 2015-01-16 '/Library/Frameworks/R.framework/Versions/4.1/Resources/library/readr/extdata/challenge.csv'
+## 1002   y 1/0/T/F/TRUE/FALSE 2018-05-18 '/Library/Frameworks/R.framework/Versions/4.1/Resources/library/readr/extdata/challenge.csv'
+## 1003   y 1/0/T/F/TRUE/FALSE 2015-09-05 '/Library/Frameworks/R.framework/Versions/4.1/Resources/library/readr/extdata/challenge.csv'
+## 1004   y 1/0/T/F/TRUE/FALSE 2012-11-28 '/Library/Frameworks/R.framework/Versions/4.1/Resources/library/readr/extdata/challenge.csv'
+## 1005   y 1/0/T/F/TRUE/FALSE 2020-01-13 '/Library/Frameworks/R.framework/Versions/4.1/Resources/library/readr/extdata/challenge.csv'
+## .... ... .................. .......... ............................................................................................
+## See problems(...) for more details.
+```
+
+```r
+challenge
+```
+
+```
+## # A tibble: 2,000 x 2
+##        x y    
+##    &lt;dbl&gt; &lt;lgl&gt;
+##  1   404 NA   
+##  2  4172 NA   
+##  3  3004 NA   
+##  4   787 NA   
+##  5    37 NA   
+##  6  2332 NA   
+##  7  2489 NA   
+##  8  1449 NA   
+##  9  3665 NA   
+## 10  3863 NA   
+## # … with 1,990 more rows
+```
+]
+
+---
+
+# Parsing
+
+.left-column[
+## Introduction
+## Vector parsing
+## File parsing
+### Identifying problems
+]
+
+.right-column.small[
+
+```r
+problems(challenge)
+```
+
+```
+## # A tibble: 1,000 x 5
+##      row col   expected       actual   file                                     
+##    &lt;int&gt; &lt;chr&gt; &lt;chr&gt;          &lt;chr&gt;    &lt;chr&gt;                                    
+##  1  1001 y     1/0/T/F/TRUE/… 2015-01… '/Library/Frameworks/R.framework/Version…
+##  2  1002 y     1/0/T/F/TRUE/… 2018-05… '/Library/Frameworks/R.framework/Version…
+##  3  1003 y     1/0/T/F/TRUE/… 2015-09… '/Library/Frameworks/R.framework/Version…
+##  4  1004 y     1/0/T/F/TRUE/… 2012-11… '/Library/Frameworks/R.framework/Version…
+##  5  1005 y     1/0/T/F/TRUE/… 2020-01… '/Library/Frameworks/R.framework/Version…
+##  6  1006 y     1/0/T/F/TRUE/… 2016-04… '/Library/Frameworks/R.framework/Version…
+##  7  1007 y     1/0/T/F/TRUE/… 2011-05… '/Library/Frameworks/R.framework/Version…
+##  8  1008 y     1/0/T/F/TRUE/… 2020-07… '/Library/Frameworks/R.framework/Version…
+##  9  1009 y     1/0/T/F/TRUE/… 2011-04… '/Library/Frameworks/R.framework/Version…
+## 10  1010 y     1/0/T/F/TRUE/… 2010-05… '/Library/Frameworks/R.framework/Version…
+## # … with 990 more rows
+```
+]
+
+--
+
+.right-column[
+Looking at this, we see that there are a lot of problems with the `y` column, and the first issue is seen on row 1001.
+It expects a logical value, but it looks like this column actually contains a date.
+]
+
+---
+
+# Parsing
+
+.left-column[
+## Introduction
+## Vector parsing
+## File parsing
+### Identifying problems
+]
+
+.right-column[
+Every `parse_*` function has a corresponding `col_*` function.
+]
+
+.right-column.small[
+
+```r
+challenge &lt;- read_csv(readr_example("challenge.csv"),
+                      col_types = cols(y = col_date()))
+challenge
+```
+
+```
+## # A tibble: 2,000 x 2
+##        x y         
+##    &lt;dbl&gt; &lt;date&gt;    
+##  1   404 NA        
+##  2  4172 NA        
+##  3  3004 NA        
+##  4   787 NA        
+##  5    37 NA        
+##  6  2332 NA        
+##  7  2489 NA        
+##  8  1449 NA        
+##  9  3665 NA        
+## 10  3863 NA        
+## # … with 1,990 more rows
+```
+
+```r
+tail(challenge)
+```
+
+```
+## # A tibble: 6 x 2
+##       x y         
+##   &lt;dbl&gt; &lt;date&gt;    
+## 1 0.805 2019-11-21
+## 2 0.164 2018-03-29
+## 3 0.472 2014-08-04
+## 4 0.718 2015-08-16
+## 5 0.270 2020-02-04
+## 6 0.608 2019-01-06
+```
+]
+
+---
+
+# Parsing
+
+.left-column[
+## Introduction
+## Vector parsing
+## File parsing
+### Identifying problems
+]
+
+.right-column[
+In this particular example we were a bit unlucky.
+If we would have looked at row more before guessing the type, we would have guessed correctly.
+This is also something we can change by modifying the `guess_max` argument.
+]
+
+.right-column.small[
+
+```r
+challenge &lt;- read_csv(readr_example("challenge.csv"),
+                      guess_max = 1001)
+```
+
+```
+## 
+## ── Column specification ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+## cols(
+##   x = col_double(),
+##   y = col_date(format = "")
+## )
+```
+
+```r
+tail(challenge)
+```
+
+```
+## # A tibble: 6 x 2
+##       x y         
+##   &lt;dbl&gt; &lt;date&gt;    
+## 1 0.805 2019-11-21
+## 2 0.164 2018-03-29
+## 3 0.472 2014-08-04
+## 4 0.718 2015-08-16
+## 5 0.270 2020-02-04
+## 6 0.608 2019-01-06
+```
+]
+
+???
+
+You might get surprised at how often you are unlucky throughout your data science venture. 😀
+
+---
+
+# Writing data
+
+.left-column[
+## Introduction
+]
+
+.right-column[
+Writing data is in many ways less complicated than reading data.
+If you have followed the best practices in order to keep your dataset tidy, then saving it to a file will be straightforward.
+
+The readr package not only contains functions for reading data, but also for writing data.
+
+- `write_csv`
+- `write_tsv`
+- `write_delim`
+
+Files written by these functions will in most cases behave nicely and wll likely be easy to read back into R, either by you or someone else.
+]
+
+---
+
+# Writing data
+
+.left-column[
+## Introduction
+## Arguments
+]
+
+.right-column[
+Two arguments are required in order to write a file:
+
+1. The tibble you want to save
+2. A file name
+
+
+```r
+write_csv(challenge, "data/challenge.csv")
+```
+]
+
+---
+
+# Writing data
+
+.left-column[
+## Introduction
+## Arguments
+## Metadata
+]
+
+.right-column[
+When writing a text file, any type information is lost.
+
+
+
+.small[
+
+```r
+challenge
+```
+
+```
+## # A tibble: 2,000 x 2
+##       x y         
+##   &lt;dbl&gt; &lt;date&gt;    
+## 1   404 NA        
+## 2  4172 NA        
+## 3  3004 NA        
+## 4   787 NA        
+## # … with 1,996 more rows
+```
+
+```r
+challenge2 &lt;- read_csv("data/challenge.csv")
+```
+
+```
+## 
+## ── Column specification ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+## cols(
+##   x = col_double(),
+##   y = col_logical()
+## )
+```
+
+```r
+challenge2
+```
+
+```
+## # A tibble: 2,000 x 2
+##       x y    
+##   &lt;dbl&gt; &lt;lgl&gt;
+## 1   404 NA   
+## 2  4172 NA   
+## 3  3004 NA   
+## 4   787 NA   
+## # … with 1,996 more rows
+```
+]
+]
+
+---
+
+# Writing data
+
+.left-column[
+## Introduction
+## Arguments
+## Metadata
+]
+
+.right-column[
+If we want to have a representation of our data that keeps the metadata in addition to the data, we can use the functions `write_rds` and `read_rds`.
+These functions don't handle plain text files, but binary files that keeps track of the R object itself.
+
+`write_rds`, takes a tibble and a file name and saves a binary representation of the file.
+
+
+```r
+write_rds(challenge, "data/challenge.rds")
+```
+
+When reading it back with `read_rds`, we get the whole R object, in this case a data frame.
+
+
+```r
+read_rds("data/challenge.rds")
+```
+
+```
+## # A tibble: 2,000 x 2
+##       x y         
+##   &lt;dbl&gt; &lt;date&gt;    
+## 1   404 NA        
+## 2  4172 NA        
+## 3  3004 NA        
+## 4   787 NA        
+## # … with 1,996 more rows
+```
+]
+
+---
+
+# Suggested reading
+
+- [R for Data Science: Data import](https://r4ds.had.co.nz/data-import.html)
+- [RStudio data import cheat sheet](https://github.com/rstudio/cheatsheets/blob/master/data-import.pdf)
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="js/macros.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

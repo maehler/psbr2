@@ -113,7 +113,8 @@ schedule:
   - day:
     - start_time:
       end_time:
-      topic: Loading data into R
+      topic: Importing data into R
+      url: lectures/10_importing_data_into_r.html
       details: |
         - readr package
         - readxl package (?)
