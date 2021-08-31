@@ -1,0 +1,152 @@
+---
+title: "Data sharing"
+subtitle: "Practical Skills for Biology Research II"
+author: "Niklas Mähler"
+institute: "Umeå University"
+date: "2021-10-14"
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include = FALSE}
+source(here::here("scripts/setup.R"))
+setup_presentation("data_sharing")
+library(readxl)
+```
+
+# The FAIR principles
+
+FAIR was established in 2016, and it is an abbreviation that outlines a set of principles for how digital assets should be handled.
+
+[The FAIR Guiding Principles for scientific data management and stewardship](https://www.nature.com/articles/sdata201618)
+
+---
+
+# The FAIR principles
+
+.left-column[
+## Findable
+]
+
+.right-column[
+First of all, you must be able to find the data that you are looking for.
+For this to work well, a number of things are needed:
+
+- Metadata has to exist and be exhaustive enough.
+- The metadata has to be available for people to find.
+]
+
+---
+
+# The FAIR principles
+
+.left-column[
+## Findable
+## Accessible
+]
+
+.right-column[
+Second, you should be able to find information on how to access the data.
+This doesn't necessarily imply that the data has to be *publicly* accessible, but rather that any associated metadata should contain information on how to get access to the data.
+Any conditions for accessing and reusing the data should be stated as well.
+]
+
+---
+
+# The FAIR principles
+
+.left-column[
+## Findable
+## Accessible
+## Interoperable
+]
+
+.right-column[
+Interoperability is a complex topic which includes
+
+- Use of standards when recording data
+  - Dates
+  - Abbreviations
+  - Ontologies
+- Use of file formats
+  - They work on as many systems and software as possible
+    - Software in turn should also meet some requirements for longevity 
+  - They are well documented
+  - Should be accessible in the future
+  - Are open/non-proprietary
+]
+
+---
+
+# The FAIR principles
+
+.left-column[
+## Findable
+## Accessible
+## Interoperable
+## Reusable
+]
+
+.right-column[
+Finally, the data has to be reusable.
+This means that the data needs to have metadata that describes the data in detail, including the aim of the original study, and how the data was gathered and processed.
+Any licenses that apply to the data must be listed.
+]
+
+---
+
+# How FAIR are we?
+
+```{r fair_how_familiar, echo = FALSE, fig.align = "center", fig.height = 6, fig.width = 12}
+download.file("https://ndownloader.figshare.com/files/25563296", sod_file <- tempfile(fileext = ".xlsx"))
+sod_data <- read_excel(sod_file, skip = 1, sheet = 1)
+
+sod_data %>% 
+  select(Year, matches("Thinking about")) %>% 
+  rename(year = Year,
+         how_familiar = `Thinking about the FAIR principles: Findable, Accessible, Interoperable and Reusable. How familia...`) %>% 
+  filter(!is.na(year), !is.na(how_familiar), how_familiar != "0") %>% 
+  mutate(how_familiar = str_replace_all(how_familiar, c("I've" = "I have", "I'm" = "I am")) %>% 
+           str_wrap(width = 25),
+         across(c(year, how_familiar), as.factor),
+         how_familiar = fct_inorder(how_familiar),
+         year = fct_rev(year)) %>%
+  group_by(how_familiar) %>% 
+  count(year) %>% 
+  group_by(year) %>% 
+  mutate(fraction = n / sum(n)) %>% 
+
+  ggplot(aes(how_familiar, fraction, fill = year, group = year)) +
+  geom_col(position = position_dodge2()) +
+  coord_flip() +
+  scale_fill_brewer(palette = 7, type = "qual", guide = guide_legend(reverse = TRUE)) +
+  scale_y_continuous(labels = scales::label_percent(), limits = c(0, 0.6),
+                     expand = expansion(add = c(0.01, 0.02)), breaks = seq(0, 1, by = 0.2)) +
+  theme(legend.position = "top",
+        legend.title = element_blank(),
+        legend.text = element_text(size = 18),
+        axis.title = element_blank(),
+        axis.text = element_text(size = 20),
+        axis.ticks = element_blank(),
+        plot.background = element_blank(),
+        panel.background = element_blank(),
+        panel.grid = element_blank(),
+        panel.grid.major.x = element_line(colour = "gray"))
+```
+
+[State of Open Data survey 2020 data](https://figshare.com/articles/dataset/_/13274744)<br>
+[State of Open Data survey 2020 report](https://digitalscience.figshare.com/articles/report/The_State_of_Open_Data_2020/13227875)
+
+???
+
+This is from a survey from the State of Open Data --- a research project whose goal has been to the review state of the open data movement, and how it has progressed for the past 10 years.
+
+---
+
+# How FAIR are we?
+
+One problem with the FAIR principles is that they are quite open for interpretation, which results in different researchers and institutes implementing them differently.
+
+- [Swedish National Data Service](https://snd.gu.se/en/describe-and-share-data/what-does-fair-data-mean)
+- [The GO FAIR initiative](https://www.go-fair.org/fair-principles/)
+- [State of Open Data](https://stateofopendata.od4d.net)

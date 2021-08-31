@@ -1,0 +1,24 @@
+---
+title: "Code sharing: RMarkdown"
+subtitle: "Practical Skills for Biology Research II"
+author: "Niklas Mähler"
+institute: "Umeå University"
+date: "2021-10-14"
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include = FALSE}
+source(here::here("scripts/setup.R"))
+setup_presentation("code_sharing_rmarkdown")
+```
+
+# Coding standards
+
+A coding standard (or coding style) describes how source code should be written.
+There are usually many different ones, and it is often the case that a workplace or a project group adopts their own coding standard.
+
+What standard to use is not really that important.
+The important thing is that everyone involved use the same coding standard.
+
+[The tidyverse style guide](http://adv-r.had.co.nz/Style.html)

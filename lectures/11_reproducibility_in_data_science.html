@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Reproducibility in data science</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Niklas Mähler" />
+    <meta name="date" content="2021-10-07" />
+    <script src="libs/header-attrs-2.8/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/niklas.css" type="text/css" />
+    <link rel="stylesheet" href="css/niklas-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: left, middle, inverse, title-slide
+
+# Reproducibility in data science
+## Practical Skills for Biology Research II
+### Niklas Mähler
+### Umeå University
+### 2021-10-07
+
+---
+
+
+
+
+class: title
+
+# How do we define reproducibility?
+
+???
+
+There has been some confusion about what is being referred to when talking about reproducibility, so let's start with defining what we mean by reproducibility.
+
+---
+
+# Reproducibility vs repeatability vs replicability
+
+These are all terms that you might run into, and there is some confusion surrounding them.
+These definitions are taken from the [Association for Computing Machinery](https://www.acm.org/), and their document [Artifact Review and Badging](https://www.acm.org/publications/policies/artifact-review-and-badging-current).
+
+.tile[
+.tile-item.width33[
+## Repeatability
+
+.small[
+&gt; The measurement can be obtained with stated precision by the same team using the same measurement procedure, the same measuring system, under the same operating conditions, in the same location on multiple trials. For computational experiments, this means that a researcher can reliably repeat her own computation.
+]
+]
+
+.tile-item.width33[
+## Reproducibility
+
+.small[
+&gt; The measurement can be obtained with stated precision by a different team using the same measurement procedure, the same measuring system, under the same operating conditions, in the same or a different location on multiple trials. For computational experiments, this means that an independent group can obtain the same result using the author’s own artifacts.
+]
+]
+
+.tile-item.width33[
+## Replicability
+
+.small[
+&gt; The measurement can be obtained with stated precision by a different team, a different measuring system, in a different location on multiple trials. For computational experiments, this means that an independent group can obtain the same result using artifacts which they develop completely independently.
+]
+]
+]
+
+???
+
+Here are some terms that are closely related, and sometimes used interchangeably in everyday English.
+
+---
+
+# Reproducibility vs repeatability vs replicability
+
+.tile[
+.tile-item.width33[
+## Repeatability
+
+- Same team
+- Same experimental setup
+]
+
+.tile-item.width33[
+## Reproducibility
+
+- Different team
+- Same experimental setup
+]
+
+.tile-item.width33[
+## Replicability
+
+- Different team
+- Different experimental setup
+]
+]
+
+[ACM: Artifact Review and Badging](https://www.acm.org/publications/policies/artifact-review-and-badging-current)
+
+???
+
+To simplify things a bit, this is essentially a summary of the previous slide.
+
+The past 20 years or so, researchers have argued over what these definitions should be exactly.
+As a matter of fact, if you look at the ACM document linked here, you will see that these definitions were updated as late as in August of 2020.
+
+---
+
+# Focus on what's relevant
+
+Instead of splitting hairs over which of these should mean what, let's focus on *where* the reproducibility sits.
+
+.tile[
+.tile-item.width33[
+## Methods reproducibility
+
+&gt; Provide sufficient detail about procedures and data so that the same procedures could be exactly repeated.
+]
+
+.tile-item.width33[
+## Results reproducibility
+
+&gt; Obtain the same results from an independent study with procedures as closely matched to the original study as possible.
+]
+
+.tile-item.width33[
+## Inferential reproducibility
+
+&gt; Draw the same conclusions from either an independent replication of a study or a reanalysis of the original study.
+]
+]
+
+[Goodman *et al.* (2016): What does research reproducibility mean?](https://stm.sciencemag.org/content/8/341/341ps12)
+
+[Plesser (2018): Reproducibility vs. Replicability: A Brief History of a Confused Terminology](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5778115/)
+
+???
+
+Instead of focusing on language, let's focus on the science instead, and what implications different types of reproducibility has on science.
+This is exactly what Goodman *et al.* did in 2016 by definind three types of reproducibility: methods, results, and inferential reproducibility.
+
+---
+
+# What does reproducibility imply?
+
+There are many different types of reproducibility
+
+- In science: replicated study with similar inputs give the same result
+  - *Treating patients with drug A reduces symptoms more than a placebo*
+--
+  
+- In engineering: independent calculations reach the same conclusion
+  - *Forces applied to this planned bridge are within the tolerated levels*
+--
+
+- In data science
+  - Your code should run
+  - Data should be preserved
+  - Randomness should not be so random
+  
+???
+
+So, even within data science we have different levels of reproducibility
+
+---
+
+class: title
+
+# Why is reproducibility important?
+
+???
+
+I think you already have some ideas as to why reproducibility is important.
+
+---
+
+class: center
+
+&lt;img src="./figures/reproducibility_in_data_science_reproducibility_crisis-1.png" width="60%" /&gt;
+
+Reproduced from [1,500 scientists lift the lid on reproducibility](https://www.nature.com/articles/533452a)
+
+???
+
+This study asked over 1,500 scientists in various fields whether they think there is a reproducibility crisis.
+
+Just to try to prove a point, I tried to reproduce all the figures in this presentation from the original data that was available on Figshare.
+If you are interested, you can take a look in the Github repository for this course and see the code behind these slides.
+
+---
+
+&lt;img src="./figures/reproducibility_in_data_science_fail_to_reproduce-1.png" width="864" /&gt;
+
+.center[
+Reproduced from [1,500 scientists lift the lid on reproducibility](https://www.nature.com/articles/533452a)
+]
+
+???
+
+A lot of it stems from the inability to successfully reproduce experiments.
+
+---
+
+&lt;img src="./figures/reproducibility_in_data_science_fail_to_reproduce_biology-1.png" width="864" /&gt;
+
+.center[
+Reproduced from [1,500 scientists lift the lid on reproducibility](https://www.nature.com/articles/533452a)
+]
+
+???
+
+I raise my hand for both of these categories.
+I've failed to reproduce results of others, as well as my own results.
+
+---
+
+# Reproducibility in data science
+
+.left-column[
+## Your code should run
+]
+
+.right-column[
+This might sound obvious, but it's not always so easy to make happen.
+
+- Different software versions
+- Different package versions
+- Different operating systems
+- For how long should your code run?
+]
+
+---
+
+# Reproducibility in data science
+
+.left-column[
+## Your code should run
+## Data should be preserved
+]
+
+.right-column[
+Code can always be rewritten, and you can always devise new ways of analysing your data, but the data itself is a different story.
+There are different options for storing of primary data.
+
+- Public repositories for more or less specific data types
+  - NCBI
+  - ENA
+  - SRA
+  - Figshare
+- Hard drives
+- Cloud storage services
+  - Dropbox
+  - OneDrive
+  - Google Drive
+]
+
+???
+
+We'll go into more details when it comes to sharing data later in the course.
+
+--
+
+.right-column[
+We'll talk more about how we can share data later in this course.
+]
+
+---
+
+# Reproducibility in data science
+
+.left-column[
+## Your code should run
+## Data should be preserved
+## Randomness should not be so random
+]
+
+.right-column[
+Oftentimes in data science, we use random numbers.
+They could for example be part of estimating p-values for a particular analysis.
+Due to the nature of (pseudo)random numbers, these will be different every time we generate them, but we can make sure that the same "random" numbers are generated every time by setting something called a seed.
+
+
+```r
+set.seed(12345)
+rnorm(5)
+```
+
+```
+## [1]  0.5855288  0.7094660 -0.1093033 -0.4534972  0.6058875
+```
+
+```r
+rnorm(5)
+```
+
+```
+## [1] -1.8179560  0.6300986 -0.2761841 -0.2841597 -0.9193220
+```
+
+```r
+set.seed(12345)
+rnorm(5)
+```
+
+```
+## [1]  0.5855288  0.7094660 -0.1093033 -0.4534972  0.6058875
+```
+]
+
+---
+
+class: title
+
+# Things that can help reproducibility
+
+---
+
+# RStudio projects
+
+When working in R and RStudio, there is already something in place that will help you, and that's RStudio projects.
+
+.pull-left[
+- Create an RStudio project for each analysis
+- Keep data there
+- Keep scripts there
+- Save results there (plots, reports, etc.)
+- Only use relative paths
+]
+
+.pull-right[
+![](https://d33wubrfki0l68.cloudfront.net/87562c4851bf4d0b0c8415dc9d6690493572e362/a6685/screenshots/rstudio-project-1.png)
+]
+
+???
+
+When starting out with R, it's easy to view the environment, i.e. all the variables in your current session, as the result of all your hard work.
+However, these are note worth very much if your session crashes, for example.
+Then all those things will be lost.
+
+Try to make a habit out of creating a new RStudio project for every analysis project that you're working on.
+This course, for example, could be one project.
+
+This would then mean that all the data belonging to a particular analysis is stored together with the source code that generates the results.
+There might of course be cases where it is infeasible to share the project with the data, due to size or other constraints, but then we fall back to the FAIR principles.
+As long as we make sure that our data is **F**indable, **A**ccessible, **Interoperable** and **R**eusable, then we can get away with just storing the metadata in the project.
+This is likely much smaller than the actual data, and thus much easier to include in the project.
+
+The scripts that we write will likely generate results in the form of cleaned datasets, plots, and reports.
+We should make a habit out of generating these things **from scripts**, and not relying on copy-pasting, screenshots, or manually exporting data from RStudio.
+Doing these things in code will make sure that you always have a way of regenerating your results.
+
+This is usually what I do, for example when it comes to figures for papers.
+I then try to have a single script associated with each figure of the paper.
+Whenever, inevitably, your supervisor/PI tells you that you have to update this or that, then you can just go back to your script and change the relevant parameters, and have your new figure.
+
+Absolute paths are not very useful from a reproducibility point of view.
+It locks the analysis to a single system, since there is likely no one with the same directory structure as you.
+If everything instead is stored in the project directory, and all paths are relative to the project directory, it can be shared as a single unit.
+
+---
+
+# Project structure
+
+There are attempts at making standardised project structures for data science, like the [Cookiecutter Data Science project structure](https://drivendata.github.io/cookiecutter-data-science/).
+
+.pull-left[
+- `LICENSE`: tells others how they can use/reuse your data and/or code.
+- `README.md`: a description of the project, including information on the structure, any prerequisites for running code, etc.
+- `data`: where the data for the project is stored.
+- `reports`: reports (and figures) generated by the scripts in the project.
+- `scripts`: all scripts related to the project.
+]
+
+.pull-right[
+```
+📂project
+ ├─── 🗒LICENSE
+ ├─── 🗒README.md
+ ├─── 📁data
+ ├─── 📂docs
+ ├─── 📁reports
+ |    ├── 🗒 summary.html
+ |    └── 📂figures
+ |        └── 🖼 figure1.png
+ └─── 📂 scripts
+      └── 🗒 summary.Rmd
+```
+]
+
+???
+
+This is just a possible setup.
+As you go along, you will find something that works for you.
+I think the important thing is to think about how you structure your projects, and not just store everything as a pile of files on your desktop.
+
+---
+
+# Session information
+
+Sometimes it can be useful to share information about the R session that you have used in a particular analysis.
+
+.small[
+
+```r
+sessionInfo()
+```
+
+```
+## R version 4.1.0 (2021-05-18)
+## Platform: x86_64-apple-darwin17.0 (64-bit)
+## Running under: macOS Big Sur 10.16
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] readxl_1.3.1      htmltools_0.5.1.1 forcats_0.5.1     dplyr_1.0.6      
+##  [5] readr_1.4.0       tidyr_1.1.3       tibble_3.1.2      ggplot2_3.3.3    
+##  [9] tidyverse_1.3.1   conflicted_1.0.4  stringr_1.4.0     rmarkdown_2.8    
+## [13] purrr_0.3.4       here_1.0.1        fs_1.5.0         
+## 
+## loaded via a namespace (and not attached):
+##  [1] ggrepel_0.9.1    Rcpp_1.0.7       lubridate_1.7.10 ps_1.6.0        
+##  [5] assertthat_0.2.1 rprojroot_2.0.2  digest_0.6.27    utf8_1.2.1      
+##  [9] ggforce_0.3.3    R6_2.5.0         cellranger_1.1.0 backports_1.2.1 
+## [13] reprex_2.0.0     evaluate_0.14    highr_0.9        httr_1.4.2      
+## [17] xaringan_0.21    pillar_1.6.1     rlang_0.4.11     curl_4.3.1      
+## [21] rstudioapi_0.13  labeling_0.4.2   polyclip_1.10-0  munsell_0.5.0   
+## [25] broom_0.7.6      compiler_4.1.0   modelr_0.1.8     xfun_0.23       
+## [29] pkgconfig_2.0.3  tidyselect_1.1.1 emo_0.0.0.9000   fansi_0.5.0     
+## [33] crayon_1.4.1     dbplyr_2.1.1     withr_2.4.2      MASS_7.3-54     
+## [37] grid_4.1.0       jsonlite_1.7.2   gtable_0.3.0     lifecycle_1.0.0 
+## [41] DBI_1.1.1        magrittr_2.0.1   scales_1.1.1     docopt_0.7.1    
+## [45] cli_2.5.0        stringi_1.7.3    cachem_1.0.5     farver_2.1.0    
+## [49] xml2_1.3.2       ellipsis_0.3.2   generics_0.1.0   vctrs_0.3.8     
+## [53] tools_4.1.0      glue_1.4.2       tweenr_1.0.2     hms_1.1.0       
+## [57] fastmap_1.1.0    yaml_2.2.1       colorspace_2.0-1 rvest_1.0.0     
+## [61] knitr_1.33       haven_2.4.1
+```
+]
+
+???
+
+The session information includes information on what version of R you're running, what operating system you're working on, and what packages are loaded.
+
+---
+
+# Session information
+
+There is also a package called sessioninfo, with the function `session_info`:
+
+.small[
+
+```r
+sessioninfo::session_info()
+```
+
+```
+## ─ Session info ───────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 4.1.0 (2021-05-18)
+##  os       macOS Big Sur 10.16         
+##  system   x86_64, darwin17.0          
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  ctype    en_US.UTF-8                 
+##  tz       Europe/Stockholm            
+##  date     2021-08-31                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────
+##  package     * version    date       lib source                     
+##  assertthat    0.2.1      2019-03-21 [1] CRAN (R 4.1.0)             
+##  backports     1.2.1      2020-12-09 [1] CRAN (R 4.1.0)             
+##  broom         0.7.6      2021-04-05 [1] CRAN (R 4.1.0)             
+##  cachem        1.0.5      2021-05-15 [1] CRAN (R 4.1.0)             
+##  cellranger    1.1.0      2016-07-27 [1] CRAN (R 4.1.0)             
+##  cli           2.5.0      2021-04-26 [1] CRAN (R 4.1.0)             
+##  colorspace    2.0-1      2021-05-04 [1] CRAN (R 4.1.0)             
+##  conflicted  * 1.0.4      2019-06-21 [1] CRAN (R 4.1.0)             
+##  crayon        1.4.1      2021-02-08 [1] CRAN (R 4.1.0)             
+##  curl          4.3.1      2021-04-30 [1] CRAN (R 4.1.0)             
+##  DBI           1.1.1      2021-01-15 [1] CRAN (R 4.1.0)             
+##  dbplyr        2.1.1      2021-04-06 [1] CRAN (R 4.1.0)             
+##  digest        0.6.27     2020-10-24 [1] CRAN (R 4.1.0)             
+##  docopt        0.7.1      2020-06-24 [1] CRAN (R 4.1.0)             
+##  dplyr       * 1.0.6      2021-05-05 [1] CRAN (R 4.1.0)             
+##  ellipsis      0.3.2      2021-04-29 [1] CRAN (R 4.1.0)             
+##  emo           0.0.0.9000 2021-08-11 [1] Github (hadley/emo@3f03b11)
+##  evaluate      0.14       2019-05-28 [1] CRAN (R 4.1.0)             
+##  fansi         0.5.0      2021-05-25 [1] CRAN (R 4.1.0)             
+##  farver        2.1.0      2021-02-28 [1] CRAN (R 4.1.0)             
+##  fastmap       1.1.0      2021-01-25 [1] CRAN (R 4.1.0)             
+##  forcats     * 0.5.1      2021-01-27 [1] CRAN (R 4.1.0)             
+##  fs          * 1.5.0      2020-07-31 [1] CRAN (R 4.1.0)             
+##  generics      0.1.0      2020-10-31 [1] CRAN (R 4.1.0)             
+##  ggforce       0.3.3      2021-03-05 [1] CRAN (R 4.1.0)             
+##  ggplot2     * 3.3.3      2020-12-30 [1] CRAN (R 4.1.0)             
+##  ggrepel       0.9.1      2021-01-15 [1] CRAN (R 4.1.0)             
+##  glue          1.4.2      2020-08-27 [1] CRAN (R 4.1.0)             
+##  gtable        0.3.0      2019-03-25 [1] CRAN (R 4.1.0)             
+##  haven         2.4.1      2021-04-23 [1] CRAN (R 4.1.0)             
+##  here        * 1.0.1      2020-12-13 [1] CRAN (R 4.1.0)             
+##  highr         0.9        2021-04-16 [1] CRAN (R 4.1.0)             
+##  hms           1.1.0      2021-05-17 [1] CRAN (R 4.1.0)             
+##  htmltools   * 0.5.1.1    2021-01-22 [1] CRAN (R 4.1.0)             
+##  httr          1.4.2      2020-07-20 [1] CRAN (R 4.1.0)             
+##  jsonlite      1.7.2      2020-12-09 [1] CRAN (R 4.1.0)             
+##  knitr         1.33       2021-04-24 [1] CRAN (R 4.1.0)             
+##  labeling      0.4.2      2020-10-20 [1] CRAN (R 4.1.0)             
+##  lifecycle     1.0.0      2021-02-15 [1] CRAN (R 4.1.0)             
+##  lubridate     1.7.10     2021-02-26 [1] CRAN (R 4.1.0)             
+##  magrittr      2.0.1      2020-11-17 [1] CRAN (R 4.1.0)             
+##  MASS          7.3-54     2021-05-03 [1] CRAN (R 4.1.0)             
+##  modelr        0.1.8      2020-05-19 [1] CRAN (R 4.1.0)             
+##  munsell       0.5.0      2018-06-12 [1] CRAN (R 4.1.0)             
+##  pillar        1.6.1      2021-05-16 [1] CRAN (R 4.1.0)             
+##  pkgconfig     2.0.3      2019-09-22 [1] CRAN (R 4.1.0)             
+##  polyclip      1.10-0     2019-03-14 [1] CRAN (R 4.1.0)             
+##  ps            1.6.0      2021-02-28 [1] CRAN (R 4.1.0)             
+##  purrr       * 0.3.4      2020-04-17 [1] CRAN (R 4.1.0)             
+##  R6            2.5.0      2020-10-28 [1] CRAN (R 4.1.0)             
+##  Rcpp          1.0.7      2021-07-07 [1] CRAN (R 4.1.0)             
+##  readr       * 1.4.0      2020-10-05 [1] CRAN (R 4.1.0)             
+##  readxl      * 1.3.1      2019-03-13 [1] CRAN (R 4.1.0)             
+##  reprex        2.0.0      2021-04-02 [1] CRAN (R 4.1.0)             
+##  rlang         0.4.11     2021-04-30 [1] CRAN (R 4.1.0)             
+##  rmarkdown   * 2.8        2021-05-07 [1] CRAN (R 4.1.0)             
+##  rprojroot     2.0.2      2020-11-15 [1] CRAN (R 4.1.0)             
+##  rstudioapi    0.13       2020-11-12 [1] CRAN (R 4.1.0)             
+##  rvest         1.0.0      2021-03-09 [1] CRAN (R 4.1.0)             
+##  scales        1.1.1      2020-05-11 [1] CRAN (R 4.1.0)             
+##  sessioninfo   1.1.1      2018-11-05 [1] CRAN (R 4.1.0)             
+##  stringi       1.7.3      2021-07-16 [1] CRAN (R 4.1.0)             
+##  stringr     * 1.4.0      2019-02-10 [1] CRAN (R 4.1.0)             
+##  tibble      * 3.1.2      2021-05-16 [1] CRAN (R 4.1.0)             
+##  tidyr       * 1.1.3      2021-03-03 [1] CRAN (R 4.1.0)             
+##  tidyselect    1.1.1      2021-04-30 [1] CRAN (R 4.1.0)             
+##  tidyverse   * 1.3.1      2021-04-15 [1] CRAN (R 4.1.0)             
+##  tweenr        1.0.2      2021-03-23 [1] CRAN (R 4.1.0)             
+##  utf8          1.2.1      2021-03-12 [1] CRAN (R 4.1.0)             
+##  vctrs         0.3.8      2021-04-29 [1] CRAN (R 4.1.0)             
+##  withr         2.4.2      2021-04-18 [1] CRAN (R 4.1.0)             
+##  xaringan      0.21       2021-05-19 [1] CRAN (R 4.1.0)             
+##  xfun          0.23       2021-05-15 [1] CRAN (R 4.1.0)             
+##  xml2          1.3.2      2020-04-23 [1] CRAN (R 4.1.0)             
+##  yaml          2.2.1      2020-02-01 [1] CRAN (R 4.1.0)             
+## 
+## [1] /Library/Frameworks/R.framework/Versions/4.1/Resources/library
+```
+]
+
+???
+
+This is another way of listing session information.
+It is similar to `sessionInfo`, but it excludes information that is rarely used, and instead adds other bits of information, like where packages were installed from.
+
+---
+
+# How to ask for help
+
+.left-column[
+## Different levels
+]
+
+.right-column[
+
+```r
+x &lt;- list(1, 2, 3, 4)
+x[[5]]
+```
+
+```
+## Error in x[[5]]: subscript out of bounds
+```
+]
+
+???
+
+Something that is related to reproducibility is when we are asking for help.
+In order to get good help, we have to give our helper enough information in order for them to be able to **reproduce** whatever error you are experiencing.
+
+Let's say you're running the code here, and you get this error.
+There are many ways you can ask for help in this case.
+
+--
+
+.right-column[
+- "It doesn't work."
+]
+
+???
+
+This is superunhelpful.
+Please never do this.
+
+--
+
+.right-column[
+- "I get an error message saying 'subscript out of bounds'."
+]
+
+???
+
+Ok, that's better.
+They have realised that something is not working, and they have seen an error message, but maybe they don't know what that implies.
+
+--
+
+.right-column[
+- "I have a list of integers that I'm trying to extract an element from, but I get an error message saying 'subscript out of bounds'."
+]
+
+???
+
+Even better.
+
+--
+
+.right-column[
+- "I have a list of 4 integers, and I'm trying to extract the fifth element, but I get an error message saying 'subscript out of bounds'."
+]
+
+???
+
+Ok, now that's perfect, but on the other hand, they should have figured out what the error is by now.
+
+Sometimes, the session information can contain important clues as to why something is not working as expected, so it can be good to include if nothing else helps.
+
+---
+
+# How to ask for help
+
+.left-column[
+## Different levels
+## Rubber ducking
+]
+
+.right-column[
+Explain your problem, out loud, to a rubber duck (or any other inanimate object).
+Just the effort of trying to explain the issue to someone else might make you see a solution.
+]
+
+.right-column.center[
+![:scale 60%, Enormous rubber duck floating in the water in a big city](https://live.staticflickr.com/3810/12671254994_37334d37cb_b.jpg)
+]
+
+---
+
+# Writing methods sections
+
+Oftentimes, the methods section in a published paper is the only thing we have in order to be able to reproduce methods, and more often than not, they are not very good.
+
+Minimum to include:
+
+- Any software used (including version numbers), properly cited.
+- Any non-default parameters that were used.
+- Non-base R packages used (including version numbers), properly cited
+
+Ideally:
+
+- All scripts that you used.
+
+???
+
+It's not uncommon that software is unpublished.
+In these cases, just put a link to wherever the software was obtained.
+If you wrote the software yourself, then definitely make it available to others.
+
+---
+
+# How to ask for help
+
+.left-column[
+## Different levels
+## Rubber ducking
+## reprex
+]
+
+.right-column[
+The reprex package is for helping out making **repr**oducible **ex**amples.
+It is a part of the tidyverse.
+
+In essense, the package just helps you copy-paste code, but as opposed to simple copy-paste, it also runs it and generates any output as comments.
+As a consequence, if not all dependencies of your code are fulfilled, it will fail.
+
+It can work in a couple of different ways, but the way I have been using it is to copy the relevant code (&lt;kbd&gt;Ctrl&lt;/kbd&gt;+&lt;kbd&gt;C&lt;/kbd&gt; or &lt;kbd&gt;Cmd&lt;/kbd&gt;+&lt;/kbd&gt;C&lt;/kbd&gt;) and running `reprex::reprex()`.
+By default, this creates a markdown snippet that can be shared wherever you want to ask for help.
+
+You can [read more about the reprex package on the tidyverse website](https://www.tidyverse.org/help/#reprex-pkg)
+]
+
+???
+
+I will show a live demo of how this package works.
+
+---
+
+# Take-home messages
+
+- Reproducibility is hard. Really hard.
+- Not meant for you to fully grasp all the complexities related to reproducibility, but if I can get you to think about it now and then, that's a win to me.
+
+---
+
+# Suggested reading
+
+- [R for Data Science: Workflow: projects](https://r4ds.had.co.nz/workflow-projects.html)
+- [Cookiecutter Data Science project structure](https://drivendata.github.io/cookiecutter-data-science/)
+- [State of Open Data](https://www.stateofopendata.od4d.net/)
+  - [State of Open Data: 2020 report](https://digitalscience.figshare.com/articles/report/The_State_of_Open_Data_2020/13227875)
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="js/macros.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

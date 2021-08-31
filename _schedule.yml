@@ -122,6 +122,7 @@ schedule:
     - start_time:
       end_time:
       topic: Reproducibility in data science
+      url: lectures/11_reproducibility_in_data_science.html
       details: |
         - Why is reproducibility important?
           - Reproducibility crisis
@@ -182,18 +183,21 @@ schedule:
     - start_time:
       end_time:
       topic: More on reproducibility
+      url: lectures/16_more_on_reproducibility.html
       details: |
         - Transparency
         - Preprints
     - start_time:
       end_time:
       topic: "Code sharing: RMarkdown"
+      url: lectures/17_code_sharing_rmarkdown.html
       details: |
         - What is (R)markdown?
         - Example of how to create a self-documenting analysis
     - start_time:
       end_time:
       topic: "Data sharing"
+      url: lectures/18_data_sharing.html
       details: |
         - Becoming more and more of a requirement by journals
         - Zenodo
