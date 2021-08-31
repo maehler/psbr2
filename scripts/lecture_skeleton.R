@@ -16,7 +16,7 @@ source(here("scripts/date_functions.R"))
 
 "Create lecture skeletons
 
-Create skeletons for all lectures based on -schedule.yml.
+Create skeletons for all lectures based on _schedule.yml.
 All relative paths will be resolved in relation to the
 RStudio project root directory.
 
