@@ -8,3 +8,5 @@ xaringan::moon_reader:
     highlightLines: true
     countIncrementalSlides: false
     titleSlideClass: [left, middle, inverse]
+    navigation:
+      scroll: false
