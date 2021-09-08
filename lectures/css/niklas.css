@@ -65,6 +65,7 @@
 /* Held figures/tables */
 .held {
   display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
   margin: 1em auto;
@@ -73,6 +74,11 @@
   .held table, .held div, .held pre {
     margin: 0 1em;
   }
+
+/* Some useful flexbox classes */
+.space-around {
+  justify-content: space-around;
+}
 
 figure {
   display: inline-block;
@@ -151,3 +157,8 @@ iframe {
     border: 1px solid gray;
     margin: 0;
   }
+
+/* Only clear last pull-right */
+.pull-right:not(div:last-of-type) {
+  clear: none;
+}

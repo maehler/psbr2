@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Advanced plotting: The grammar of graphics</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Niklas Mähler" />
+    <meta name="date" content="2021-10-08" />
+    <script src="libs/header-attrs-2.8/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/niklas.css" type="text/css" />
+    <link rel="stylesheet" href="css/niklas-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: left, middle, inverse, title-slide
+
+# Advanced plotting: The grammar of graphics
+## Practical Skills for Biology Research II
+### Niklas Mähler
+### Umeå University
+### 2021-10-08
+
+---
+
+
+
+
+# The Grammar of Graphics
+
+.pull-left[
+- A set of rules that define the components of a language
+- Allows us to describe the components of any graphic
+- First proposed by Leland Wilkinson in 1999
+- Built upon by [Hadley Wickham: The Layered Grammar of Graphics](https://vita.had.co.nz/papers/layered-grammar.html)
+- Implemented in ggplot2
+]
+
+.pull-right[
+![Leland Wilkinson, The Grammar of Graphics](https://media.springernature.com/w153/springer-static/cover/book/9780387286952.jpg)
+]
+
+???
+
+We've already talked a little bit about the grammar of graphics, but today we will dive a little bit deeper into these concepts.
+The goal of this lecture is to give you a bit of a deeper dive into the grammar of graphics.
+My hope is that you will go away feeling like you understand what happens behind the scenes in ggplot2.
+I don't expect you to know exactly how to produce every single figure that I will show you, but I hope that you will know where to look for help when you want to create a certain figure in the future.
+
+---
+
+# Components of ggplot2
+
+.pull-left[
+## Basic components
+
+- Data
+- Aesthetic mappings
+- Scales
+- Geometric objects
+- Statistical transformations
+- Facets
+- Coordinate system
+]
+
+???
+
+- The base is always the data. Without data, there is nothing to visualise.
+- Second, we have to decide how certain aspects of our data should be represented in the graphic.
+- Scales map values in the data space to values in the aesthetic space, including colour, shape, and size.
+- What type of geometric object, or geom, should represent our data? Bars? Points? Boxplots?
+- Statistical transformations can be used to show tendencies of the data, like means, variance, etc.
+- Facets can be used to split our graphics into small multiples, something we've talked a bit about already.
+- Finally, we have the coordinate system. Is it cartesian coordinates? Polar coordinates? Are we representing a map?
+
+--
+
+.pull-right[
+## Layers
+
+1. Data
+2. Aesthetic mappings
+3. A statistical transformation
+4. A geometric object
+5. A position adjustment
+]
+
+???
+
+Some of these parts can further be organised in **layers**.
+
+--
+
+.pull-right[
+## Themes
+
+Fine control of the appearance of the plot.
+]
+
+???
+
+There are a bunch of built-in themes, plenty to find online, and it's quite easy to create a theme of your own.
+Note that creating a theme that is effective and at the same time pretty to look at is very time consuming and difficult.
+At least for me.
+
+---
+
+# What the grammar doesn't do
+
+- It doesn't suggest which graphic to use. This is something you have to figure out yourself. The focus is on producing the plots you want, but you have to decide *what* you want.
+- It doesn't necessarily produce that make sense. Just as with written language, grammar helps us form sentences that are correct, but they don't necessarily have to make sense.
+&gt; The angry table climbs the boiling ocean.
+
+???
+
+This sentence is grammatically correct, but it doesn't make any sense.
+The same is true for figures: we can create something that makes no sense at all.
+
+--
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_nonsense_plot-1.png" width="432" style="display: block; margin: auto;" /&gt;
+
+???
+
+Here's an example of just that.
+The code that created this figure follows the grammar of graphics, but due to the underlying data, it doesn't really make any sense.
+Most often when we get figures that doesn't make sense, it's usually due to a mistake.
+We'll go through some common examples of these later today.
+
+---
+
+# The basics
+
+.pull-left[
+
+```r
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point()
+```
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_first_scatter-1.png" width="432" /&gt;
+
+- Data: the `mpg` tibble
+- Aesthetic mapping: engine size mapped to x position, fuel efficiency to y position.
+- Layer: points
+]
+
+--
+
+.pull-right[
+The call to `ggplot` sets up the base of the plot.
+It defines the **data** that it will work on, as well as what variables in the data should be represented in the plot, through the **aesthetic mapping**.
+]
+
+--
+
+.pull-right[
+`geom_point` constitutes a **layer**.
+Layers are added to the plot with `+`.
+]
+
+???
+
+The line break after the plus is not something that is strictly needed, but I think that it improves readability.
+
+--
+
+.pull-right[
+Almost all plots that you make will map values to x and/or y position, so the first two unnamed arguments to `aes` will be mapped to `x` and `y`.
+
+
+```r
+ggplot(mpg, aes(displ, hwy)) +
+  geom_point()
+```
+]
+
+---
+
+# Geometric objects
+
+Geometric objects usually have one of three purposes:
+
+--
+
+## 1. Display the data
+
+This is mainly what we've been looking at so far, where each data point is represented in the graphic.
+
+--
+
+## 2. Summarise the data
+
+Often it is useful to display a statistical summary of the data.
+Many times it is useful to plot these on top of the actual data.
+
+--
+
+## 3. Display metadata
+
+These are layers that give context to the raw data.
+For spatial data, this could be a map that is put in the background.
+If we instead have text annotations we might want to make them pop in order to catch the attention of the viewer.
+In that case, it should be the last layer that we add.
+
+---
+
+# Geometric objects
+
+The geometric objects (or **geoms**) to a large extent decides what the plot will contain, and is usually the first thing we think about when deciding how we want to represent the data.
+
+
+|Chart        |Geom             |Notes                           |
+|:------------|:----------------|:-------------------------------|
+|Scatterplot  |`geom_point`     |                                |
+|Bubble chart |`geom_point`     |point size mapped to a variable |
+|Line chart   |`geom_line`      |                                |
+|Barchart     |`geom_bar`       |                                |
+|Boxplot      |`geom_boxplot`   |                                |
+|Density      |`geom_density`   |                                |
+|Histogram    |`geom_histogram` |                                |
+|Histogram    |`geom_bar`       |stat set to `"bin"`             |
+
+--
+
+Once we start to combine different geoms in the same plot, they don't really have a name.
+As you get more comfortable with the grammar of graphics, you will see that most of your plots likely will fall into this category.
+
+???
+
+In this table we also see that a histogram can be represented in two ways: either by the histogram geometric object, or by the bar geometric object.
+The difference between these two is what **statistical transformation** is being used.
+
+---
+
+# Common geoms
+
+.held.center[
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_common_geoms-1.png" width="216" /&gt;&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_common_geoms-2.png" width="216" /&gt;&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_common_geoms-3.png" width="216" /&gt;&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_common_geoms-4.png" width="216" /&gt;&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_common_geoms-5.png" width="216" /&gt;&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_common_geoms-6.png" width="216" /&gt;&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_common_geoms-7.png" width="216" /&gt;&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_common_geoms-8.png" width="216" /&gt;
+]
+
+---
+
+# Collective geoms
+
+Collective geoms are those that represent multiple observations in a single graphical object.
+Lines and paths could be considered collective geoms, but the individual segments of a line connects two observations.
+We can control the way that observations are connected in the graphics using the **group** aesthetic.
+
+--
+
+
+```r
+data(Oxboys, package = "nlme")
+head(Oxboys)
+```
+
+```
+##   Subject     age height Occasion
+## 1       1 -1.0000  140.5        1
+## 2       1 -0.7479  143.4        2
+## 3       1 -0.4630  144.8        3
+## 4       1 -0.1643  147.1        4
+## 5       1 -0.0027  147.7        5
+## 6       1  0.2466  150.2        6
+```
+
+???
+
+For these examples I will use the dataset `Oxboys` from the nlme package.
+It contains the heights and centered ages of 26 boys that's been measured on nine occasions.
+
+---
+
+# No grouping variable
+
+
+```r
+ggplot(Oxboys, aes(age, height)) +
+  geom_line() +
+  geom_point()
+```
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_line_wo_group-1.png" width="432" /&gt;
+
+???
+
+Here's an example where we don't have a discrete variable in the plot, and if we don't specify a grouping, then lines will be drawn between all observations.
+In this case, since we're using `geom_line`, they will be drawn from left to right.
+
+---
+
+# With a grouping variable
+
+
+```r
+ggplot(Oxboys, aes(age, height, group = Subject)) +
+  geom_line() +
+  geom_point()
+```
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_line_w_group-1.png" width="432" /&gt;
+
+???
+
+Here, we instead explicitly specify the grouping variable to be the `Subject`.
+Then there will be a single line for each level of that discrete variable.
+
+---
+
+# Overriding grouping
+
+
+```r
+ggplot(Oxboys, aes(Occasion, height)) +
+  geom_boxplot()
+```
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_oxboys_boxplot-1.png" width="432" /&gt;
+
+???
+
+Let's say that we would like to plot lines for the individual subjects on top of this.
+
+---
+
+# Overriding grouping
+
+
+```r
+ggplot(Oxboys, aes(Occasion, height)) +
+  geom_boxplot() +
+  geom_line(colour = "firebrick", alpha = 0.5)
+```
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_oxboys_line_wrong_grouping-1.png" width="432" /&gt;
+
+???
+
+Ok, so this didn't really work.
+The grouping is correct for the boxplots, but not for the lines.
+There we would like the grouping to be by `Subject` instead.
+
+---
+
+# Overriding grouping
+
+
+```r
+ggplot(Oxboys, aes(Occasion, height)) +
+  geom_boxplot() +
+  geom_line(aes(group = Subject), colour = "firebrick", alpha = 0.5)
+```
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_oxboys_line_correct_grouping-1.png" width="432" /&gt;
+
+???
+
+Here we set the grouping explicitly for the line layer, and then we get the plot we wanted.
+
+---
+
+# Aesthetics for collective geoms
+
+What if we have a collective geom where we want to map a certain variable to an aesthetic, which observation is then chosen?
+
+
+```r
+ggplot(geom_df, aes(x, y, colour = label)) +
+  geom_path(aes(group = 1), size = 5) +
+  geom_point(size = 10)
+```
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_line_aesthetics-1.png" width="432" /&gt;
+
+???
+
+So, for a line or path, the first observation in each pair determines the aesthetic.
+In this particular example, you see that the first line segment has the same colour as the first point, and the second segment the same colour as the second point.
+Since there is no third segment, this then doesn't have any colour.
+The point is still coloured though.
+
+For more complex geoms, such as `geom_area` or `geom_polygon`, it is not obvious how this would work.
+
+---
+
+class: title
+
+# Summarising geoms
+
+???
+
+So, the geoms that we've looked at so far represent the raw data in a graphical form.
+Now we will look at geoms that summarise data in one way or another.
+
+---
+
+# Different types of summarise
+
+We have a number of different types of summarise that we can use, depending on our data:
+
+- Discrete x, range: `geom_errorbar`, `geom_linerange`
+- Discrete x, range &amp; center: `geom_crossbar`, `geom_pointrange`
+- Continuous x, range: `geom_ribbon`
+- Continuous x, range &amp; center: `geom_smooth`
+
+
+```r
+set.seed(12345)
+summary_df &lt;- tibble(
+  x = rep(1:3, each = 10),
+  y = map2(c(3, 10, 7), c(1.2, 0.5, 1.0), ~ rnorm(10, mean = .x, sd = .y)) %&gt;% flatten_dbl()
+)
+
+summary_plot &lt;- ggplot(summary_df, aes(x, y)) + labs(x = NULL, y = NULL)
+```
+
+---
+
+# Summarising geoms
+
+.held.center[
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_summarising_plots-1.png" width="216" /&gt;&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_summarising_plots-2.png" width="216" /&gt;&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_summarising_plots-3.png" width="216" /&gt;&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_summarising_plots-4.png" width="216" /&gt;&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_summarising_plots-5.png" width="216" /&gt;&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_summarising_plots-6.png" width="216" /&gt;
+]
+
+---
+
+# Adding a trend to heights
+
+In order to get a summary across all our observations, we have to remove the grouping for `geom_smooth`.
+
+
+```r
+ggplot(Oxboys, aes(age, height, group = Subject)) +
+  geom_line(alpha = 0.3) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(group = 1)
+```
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_oxboys_smooth, heights_trend-1.png" width="432" /&gt;
+
+---
+
+# Adding a trend to heights
+
+This could also be accomplished by only grouping `geom_line`:
+
+
+```r
+ggplot(Oxboys, aes(age, height)) + 
+  geom_line(aes(group = Subject), alpha = 0.3) +
+  geom_point(alpha = 0.3) +
+  geom_smooth()
+```
+
+![:scale 41%](figures/advanced_plotting_the_grammar_of_graphics_heights_trend-1.png)
+
+---
+
+# Statistical transformations
+
+We saw earlier that a histogram can be produced either with `geom_histogram` or with `geom_bar`.
+A bar chart can also be produced with either of these geoms.
+The main difference between these is what the default statistical transformation (or **stat**) is.
+
+.pull-left[
+
+```r
+ggplot(diamonds, aes(depth)) +
+  geom_histogram(stat = "count") +
+  ggtitle("geom_histogram with stat_count")
+```
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_diamond_depth_bar-1.png" width="432" /&gt;
+]
+
+.pull-right[
+
+```r
+ggplot(diamonds, aes(depth)) +
+  geom_bar(stat = "bin") +
+  ggtitle("geom_bar with stat_bin")
+```
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_diamond_depth_hist-1.png" width="432" /&gt;
+]
+
+???
+
+One could argue that from a semantical perspective, only one of these should be used for either of these plot types, though.
+This is mostly to demonstrate the flexibility of the grammar.
+
+The default stat for `geom_histogram` is `stat_bin`.
+What that does is that it cuts up the x variable (`depth` in this case) into a bunch of intervals, and then it counts the number of observations that fall within that bin.
+
+The default stat for `geom_bar` is `stat_count`.
+This simply counts the number of occurences for each individual value of the x variable, without any binning.
+If we change the stat in `geom_bar` to `"bin"`, then we will get a histogram.
+Similarly, if we change the stat for `geom_histogram` to `"count"`, then we get a bar chart.
+
+---
+
+# Summaries and stats
+
+.left-column[
+## Input data
+]
+
+.right-column[
+The summarising geoms can work on two different types of datasets:
+
+1. Datasets where you have all observations.
+2. Datasets that are summaries of all observations.
+
+.pull-left[
+
+```
+## # A tibble: 30 x 2
+##        x     y
+##    &lt;int&gt; &lt;dbl&gt;
+##  1     1 3.70 
+##  2     1 3.85 
+##  3     1 2.87 
+##  4     1 2.46 
+##  5     1 3.73 
+##  6     1 0.818
+##  7     1 3.76 
+##  8     1 2.67 
+##  9     1 2.66 
+## 10     1 1.90 
+## # … with 20 more rows
+```
+]
+
+.pull-right[
+
+```
+## # A tibble: 3 x 3
+##       x     y    sd
+##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     1  2.84 0.976
+## 2     2 10.1  0.421
+## 3     3  7.08 1.17
+```
+]
+]
+
+???
+
+These two tables represent the same data, but the left one has all observations, while the right one is a summary where, for each value of `x`, y has been boiled down to the mean value and the standard deviation.
+
+I *always* prefer to work with datasets where I have all observations, and I will demonstrate why on the next slide.
+
+---
+
+# Summaries and stats
+
+.left-column[
+## Input data
+## `stat_identity`
+]
+
+.right-column[
+The summarising geoms that represent intervals (`geom_crossbar`, `geom_errorbar`, `geom_linerange`, `geom_pointrange`) have `stat_identity` as the default stat.
+The purpose of this stat is to take the values from the aesthetic mappings as they are, and not process them further.
+This means that the data has to contain the actual values that represent the range, i.e. already summarised observations.
+
+
+```r
+ggplot(summarised_df) +
+  geom_crossbar(aes(x, y,
+                    ymin = y - sd,
+                    ymax = y + sd))
+```
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_summary_stat_identity-1.png" width="432" /&gt;
+]
+
+---
+
+# Summaries and stats
+
+.left-column[
+## Input data
+## `stat_identity`
+## `stat_summary`
+]
+
+.right-column[
+If we want to use data where we have all observations available, we have to summarise it somehow.
+This can either be done manually (as shown earlier), or we can use `stat_summary`.
+What this does is to take the input data and summarising it, creating the variables that we need: `y`, `ymin`, and `ymax`.
+
+
+```r
+ggplot(summary_df) +
+  geom_crossbar(aes(x, y), stat = "summary")
+```
+
+```
+## No summary function supplied, defaulting to `mean_se()`
+```
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_summary_mean_se-1.png" width="432" /&gt;
+]
+
+???
+
+Here we get a message saying that we haven't defined the function that should be used for summarising the data, and that it defaults to `mean_se`.
+This function will then return a tibble with `y` being the mean value of `y`, `ymin` being `y - se(y)`, and `ymax` being `y + se(y)`.
+
+---
+
+# Summaries and stats
+
+.left-column[
+## Input data
+## `stat_identity`
+## `stat_summary`
+## Summary function
+]
+
+We can specify our own summary function using the `fun.data` argument.
+In this example we use `mean_sdl`, which by default calculates the mean &amp;pm; 2 standard deviations.
+
+.right-column[
+
+```r
+ggplot(summary_df) +
+  geom_crossbar(aes(x, y), stat = "summary", fun.data = mean_sdl)
+```
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_summary_mean_sdl-1.png" width="432" /&gt;
+]
+
+---
+
+# The Anscombe quartet
+
+A classic dataset that demonstrates the potential pitfalls with summarising data is [the Anscombe Quartet](https://en.wikipedia.org/wiki/Anscombe%27s_quartet).
+
+
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_anscombe_scatter-1.png" width="100%" /&gt;
+
+???
+
+The data behind the Anscombe Quartet is available in R.
+
+Summarising the data is not a problem in itself, as long as you show what the underlying raw data looks like.
+In the next lecture on dos and dont's of data visualisation, I will go through some more examples of this.
+
+---
+
+# Datasaurus
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_datasaurus-1.gif" style="display: block; margin: auto;" /&gt;
+
+[Same Stats, Different Graphs](https://www.autodesk.com/research/publications/same-stats-different-graphs)
+
+???
+
+This is another set of datasets that look vastly different, but their summary statistics are nearly identical.
+The mean x and y, their standard deviation, and their Pearson correlation are all the same.
+If you would have been handed these in a summarised form, e.g. mean and standard deviation, and been asked to compare them, the would look identical.
+This is however pretty far from the truth.
+
+---
+
+# Summarising distributions
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_datasaurus_boxplot-1.gif" width="100%" /&gt;
+
+[Same Stats, Different Graphs](https://www.autodesk.com/research/publications/same-stats-different-graphs)
+
+???
+
+This is a similar example of one-dimensional data where we represent the data as points and as a boxplot.
+As you can see the, points in many of these cases have a clear structure, but this is something that the boxplot doesn't pick up.
+
+---
+
+class: title
+
+# Stepping through a ggplot
+
+---
+
+# Final result
+
+
+```r
+ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
+  geom_point()
+```
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_walkthrough_final_plot-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Aesthetic mappings
+
+When mapping variables in our data to aesthetics of the plot, what happens is that a new tibble is being created in the background.
+
+
+```r
+ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
+  geom_point()
+```
+
+We map `displ` to `x`, `hwy` to `y`, and `cyl` (converted to a factor) to colour.
+This would be like going from the table on the left to the table on the right below.
+
+.held.space-around.smaller[
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; manufacturer &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; model &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; displ &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; year &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; cyl &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; trans &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; drv &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; cty &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; hwy &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; fl &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; class &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; audi &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; a4 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 1.8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1999 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; auto(l5) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; f &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #C7FFB2 !important;"&gt; 29 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; p &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; compact &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; audi &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; a4 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 1.8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1999 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; manual(m5) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; f &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 21 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #C7FFB2 !important;"&gt; 29 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; p &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; compact &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; audi &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; a4 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 2.0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2008 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; manual(m6) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; f &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #C7FFB2 !important;"&gt; 31 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; p &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; compact &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; audi &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; a4 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 2.0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2008 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; auto(av) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; f &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 21 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #C7FFB2 !important;"&gt; 30 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; p &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; compact &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; audi &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; a4 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 2.8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1999 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; auto(l5) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; f &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 16 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #C7FFB2 !important;"&gt; 26 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; p &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; compact &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; audi &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; a4 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 2.8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1999 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; manual(m5) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; f &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #C7FFB2 !important;"&gt; 26 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; p &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; compact &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; audi &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; a4 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 3.1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2008 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; auto(av) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; f &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #C7FFB2 !important;"&gt; 27 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; p &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; compact &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; audi &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; a4 quattro &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 1.8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1999 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; manual(m5) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #C7FFB2 !important;"&gt; 26 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; p &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; compact &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; audi &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; a4 quattro &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 1.8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1999 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; auto(l5) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 16 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #C7FFB2 !important;"&gt; 25 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; p &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; compact &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; audi &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; a4 quattro &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 2.0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2008 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; manual(m6) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #C7FFB2 !important;"&gt; 28 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; p &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; compact &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; audi &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; a4 quattro &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 2.0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2008 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; auto(s6) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #C7FFB2 !important;"&gt; 27 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; p &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; compact &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; audi &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; a4 quattro &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 2.8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1999 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; auto(l5) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #C7FFB2 !important;"&gt; 25 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; p &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; compact &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; audi &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; a4 quattro &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 2.8 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1999 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; manual(m5) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #C7FFB2 !important;"&gt; 25 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; p &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; compact &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; audi &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; a4 quattro &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 3.1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2008 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; auto(s6) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 17 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #C7FFB2 !important;"&gt; 25 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; p &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; compact &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; audi &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; a4 quattro &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 3.1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2008 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; manual(m6) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #C7FFB2 !important;"&gt; 25 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; p &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; compact &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; x &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; y &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; colour &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 1.8 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 29 &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: #C7FFB2 !important;"&gt; 4 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 1.8 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 29 &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: #C7FFB2 !important;"&gt; 4 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 2.0 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 31 &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: #C7FFB2 !important;"&gt; 4 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 2.0 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 30 &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: #C7FFB2 !important;"&gt; 4 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 2.8 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 26 &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: #C7FFB2 !important;"&gt; 6 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 2.8 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 26 &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: #C7FFB2 !important;"&gt; 6 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 3.1 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 27 &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: #C7FFB2 !important;"&gt; 6 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 1.8 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 26 &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: #C7FFB2 !important;"&gt; 4 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 1.8 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 25 &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: #C7FFB2 !important;"&gt; 4 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 2.0 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 28 &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: #C7FFB2 !important;"&gt; 4 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 2.0 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 27 &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: #C7FFB2 !important;"&gt; 4 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 2.8 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 25 &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: #C7FFB2 !important;"&gt; 6 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 2.8 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 25 &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: #C7FFB2 !important;"&gt; 6 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 3.1 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 25 &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: #C7FFB2 !important;"&gt; 6 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;background-color: #FED294 !important;"&gt; 3.1 &lt;/td&gt;
+   &lt;td style="text-align:right;background-color: #B9B3FF !important;"&gt; 25 &lt;/td&gt;
+   &lt;td style="text-align:left;background-color: #C7FFB2 !important;"&gt; 6 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+???
+
+However, this is a somewhat simplified view of things.
+Conveniently, we don't have to refer to the variables as `x`, `y`, and `colour`, but we can still refer to their original names `displ`, `hwy`, and `cyl`.
+
+---
+
+# Scales
+
+Now that we have the data, we need to translate the values into something that the computer can represent graphically, so pixel positions and actual colour values, and this is done through the process of **scaling**.
+The horizontal position, vertical position, and colour will have to be scaled in this example.
+
+Scaling `x` and `y` is easy in this case, since just a linear scaling.
+We want to convert the values of `x` and `y` to fit in the range `\([0, 1]\)`.
+The reason that pixel positions are not calculated here is that this is done later in the process by the drawing system together with the coordinate system (or **coord**) that we decide to use.
+
+--
+
+.tile.spaced[
+Colours are a bit more complicated, and there are a number of ways of doing it.
+If you imagine a three-dimensional space of colours, the values mapped to `colour` in our data are then mapped to points in this space, determining the actual colour.
+The mapping can be done in a number of ways though.
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_cyl_colour_wheel-1.png" width="216" /&gt;
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_cyl_colour_example-1.png" width="288" /&gt;
+]
+
+???
+
+The default colour palette for discrete variables is based on the colour wheel that you see here.
+In this case, we have four levels of our variable (4, 5, 6, or 8 cylinders), and the colours are then choosen by placing four points evenly spaced around the edge.
+
+---
+
+# Plot data so far
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; x &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; y &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; colour &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.037 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.531 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #F8766D &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.037 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.531 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #F8766D &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.074 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.594 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #F8766D &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.074 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.562 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #F8766D &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.222 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.438 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #00BFC4 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.222 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.438 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #00BFC4 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.278 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.469 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #00BFC4 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.037 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.438 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #F8766D &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.037 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.406 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #F8766D &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.074 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.500 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #F8766D &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.074 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.469 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #F8766D &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.222 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.406 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #00BFC4 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.222 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.406 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #00BFC4 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.278 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.406 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #00BFC4 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.278 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.406 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #00BFC4 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.222 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.375 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #00BFC4 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.278 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.406 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #00BFC4 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.481 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.344 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #C77CFF &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.685 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.250 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #C77CFF &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.685 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.094 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #C77CFF &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+
+# Geometric objects
+
+Different geometric objects have different parameters that have to be set.
+Some are required to be supplied, while others have default values.
+
+.pull-left[
+From the help page of `geom_point`:
+
+&gt; `geom_point()` understands the following aesthetics (required aesthetics are in bold):
+&gt; - **`x`**
+&gt; - **`y`**
+&gt; - `alpha`
+&gt; - `colour`
+&gt; - `fill`
+&gt; - ...
+
+On the right we add a couple of aesthetics that are constant across the dataset.
+For `geom_point` the default shape of the points will be 19, which is a solid circle.
+The default size is 1 mm, and the alpha (opacity) is 1.
+]
+
+.pull-right[
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; x &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; y &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; colour &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; shape &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; size &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; alpha &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.037 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.531 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #F8766D &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.037 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.531 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #F8766D &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.074 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.594 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #F8766D &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.074 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.562 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #F8766D &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.222 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.438 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #00BFC4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.222 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.438 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #00BFC4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.278 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.469 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #00BFC4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.037 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.438 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #F8766D &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.037 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.406 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #F8766D &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.074 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.500 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #F8766D &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.074 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.469 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #F8766D &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.222 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.406 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #00BFC4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.222 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.406 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #00BFC4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.278 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.406 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #00BFC4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.278 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.406 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #00BFC4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.222 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.375 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #00BFC4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.278 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.406 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #00BFC4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.481 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.344 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #C77CFF &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.685 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.250 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #C77CFF &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 0.685 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.094 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; #C77CFF &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+
+---
+
+class: title
+
+# Some common things we want to do
+
+???
+
+So now we've talked about the components that go into a ggplot, and also gone through a simplified process of how a ggplot is created.
+But what if we want to change these defaults?
+What if we don't like the default colour scheme, or the figure legend has horrible labels?
+Or what if the journal we want to publish in has a weird font requirement for the figures?
+
+[Should this paragraph be a slide of its own?]
+What I've seen many times throughout my academic career is that I would go about to produce a figure that is almost there, and then someone else would proceed to import it into something like Adobe Illustrator or Inkscape and modify things as needed.
+The drawback of doing that is that if something changes about the base figure, all these manual changes are lost, and you have to go through this, likely undocumented, process again.
+
+---
+
+# Suggested reading
+
+## If you're interested in data visualisation
+
+- [Flowing Data: a blog on data visualisation by Nathan Yau](https://flowingdata.com)
+- [Information is Beautiful](https://informationisbeautiful.net/)
+
+???
+
+- Nathan Yau is a statistician specialising in data visualisation.
+He has also written a couple of books on the topic that I haven't had time to read yet.
+
+- Information is Beautiful is a website with inspiring visualisations, often treating current topics.
+Founded by David McCandless, a writer and designer, who has also written two books on the topic.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="js/macros.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"navigation": {
+"scroll": false
+}
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

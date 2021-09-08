@@ -137,6 +137,7 @@ schedule:
     - start_time:
       end_time:
       topic: "Advanced plotting: The grammar of graphics"
+      url: lectures/12_advanced_plotting_the_grammar_of_graphics.html
       details: |
         - The grammar helps us make *correct* plots
         - How does it help us make *good* plots?
