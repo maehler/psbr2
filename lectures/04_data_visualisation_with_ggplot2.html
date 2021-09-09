@@ -1061,7 +1061,7 @@ Is one combination of values more common than others, or are they evenly spread 
 
 .right-column[
 Adding jitter to the plot will add some noise to each point, and this will help avoid overplotting.
-A consequence of this, however, is that the points then don't exaclty represent the underlying data.
+A consequence of this, however, is that the points then don't exactly represent the underlying data.
 
 
 ```r
@@ -1076,6 +1076,37 @@ ggplot(data = mpg) +
 ???
 
 While being inaccurate at small scales, it really improves the bigger picture.
+
+---
+
+# Positions
+
+.left-column[
+## The bar chart again
+## The position argument
+### `"identity"`
+### `"dodge"`
+### `"fill"`
+### `"jitter`"
+]
+
+.right-column[
+Jitter thus works best when applied to categorical variables.
+
+
+```r
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = factor(cyl), y = hwy),
+             position = position_jitter(height = 0, width = 0.25))
+```
+
+&lt;img src="./figures/data_visualisation_with_ggplot2_geom_point_jitter_categorical-1.png" width="432" /&gt;
+]
+
+???
+
+Here we only apply jitter in the horizontal direction, thus only affecting the categorical variable on the x-axis.
+The values on the y-axis are still accurately represented, but there is no confusion where the points belong on the x axis.
 
 ---
 
