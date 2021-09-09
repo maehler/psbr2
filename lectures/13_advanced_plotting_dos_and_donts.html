@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Advanced plotting: Dos and don’ts</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Niklas Mähler" />
+    <meta name="date" content="2021-10-08" />
+    <script src="libs/header-attrs-2.8/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/niklas.css" type="text/css" />
+    <link rel="stylesheet" href="css/niklas-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: left, middle, inverse, title-slide
+
+# Advanced plotting: Dos and don’ts
+## Practical Skills for Biology Research II
+### Niklas Mähler
+### Umeå University
+### 2021-10-08
+
+---
+
+
+
+
+# Don't use dynamite plots
+
+
+```r
+ggplot(diamonds, aes(cut, carat)) +
+  geom_errorbar(stat = "summary", width = 0.25, fun.data = mean_sdl, fun.args = list(mult = 1)) +
+  geom_bar(stat = "summary", fun = mean)
+```
+
+&lt;img src="./figures/advanced_plotting_dos_and_donts_dynamite-1.png" width="432" style="display: block; margin: auto;" /&gt;
+
+???
+
+This is a type of plot that you probably have produced at one point already, and one that you frequently see in publications, and it's one of my favourite things to whine about.
+
+Dynamite plots are bar plots with error bars, and they look like dynamites with a fuse.
+I wish they would just blow up and stop existing.
+Bar plots are for count data, not for summarising multiple observations.
+
+---
+
+# Do use boxplots
+
+
+```r
+ggplot(diamonds, aes(cut, carat)) +
+  geom_boxplot()
+```
+
+&lt;img src="./figures/advanced_plotting_dos_and_donts_boxplot-1.png" width="432" style="display: block; margin: auto;" /&gt;
+
+???
+
+Boxplots give you more information about the underlying data.
+It tells you then median of the data, as well as the spread both above and below the median, as well if there are any potential outliers.
+
+---
+
+# Do use violin plots
+
+
+```r
+ggplot(diamonds, aes(cut, carat)) +
+  geom_violin()
+```
+
+&lt;img src="./figures/advanced_plotting_dos_and_donts_violin_plot-1.png" width="432" style="display: block; margin: auto;" /&gt;
+
+???
+
+Violin plots give you even more information.
+Here we can see that the distributions of the data are not very uniform, and that there might be factors we should take into account, but we haven't.
+
+---
+
+# Do show all the data
+
+
+```r
+ggplot(diamonds, aes(cut, carat)) +
+  geom_point(alpha = 1/20, position = position_jitter(width = 0.25)) +
+  geom_violin(colour = "firebrick", alpha = 0.5)
+```
+
+&lt;img src="./figures/advanced_plotting_dos_and_donts_all_data-1.png" width="432" style="display: block; margin: auto;" /&gt;
+
+???
+
+Here we add all the points underneath the violin plots, and we can see that the reason for the bumpy distributions is likely due to preferential sizing of the diamonds.
+
+---
+
+# Don't use pie charts
+
+
+```r
+ggplot(diamonds, aes(x = factor(1), fill = cut)) +
+  geom_bar(position = "fill", width = 1) +
+  coord_polar(theta = "y")
+```
+
+&lt;img src="./figures/advanced_plotting_dos_and_donts_pie_chart-1.png" width="432" style="display: block; margin: auto;" /&gt;
+
+???
+
+Pie charts are difficult to produce in ggplot, for a reason: they're often not the best choice.
+It is very hard to compare the sizes of the sectors in the chart. For example, which of "Very Good" and "Premium" is the biggest?
+
+---
+
+# Do use bar charts
+
+
+```r
+ggplot(diamonds, aes(cut, fill = cut)) +
+  geom_bar()
+```
+
+&lt;img src="./figures/advanced_plotting_dos_and_donts_barchart-1.png" width="432" style="display: block; margin: auto;" /&gt;
+
+???
+
+This is a case where a bar chart is much simpler, and also easier to read.
+Here it is very obvious that there are more "Premium" cuts than "Very Good" cuts.
+
+---
+
+# Do describe plotting parameters in figure captions
+
+.center[
+![:scale 50%, A boxplot of diamond carat grouped by cut quality.](figures/advanced_plotting_dos_and_donts_boxplot-1.png)
+]
+
+&gt; The hinges of the box represent the first and third quartile around the median (the line).
+&gt; The whiskers stretch to the last value within 1.5 IQR from the upper and lower hinge, respectively.
+&gt; Obeservations outside this range are considered outliers, and are plotted as points.
+
+???
+
+This is especially important if we are talking about any type of graphical representation that summarises the underlying data.
+Also, if you add something like jitter or decrease the opacity of points in order to avoid overplotting, then also make this clear.
+
+For example, there are many ways you could make a boxplot in terms of what range of the data the box itself defines, as well as what the whiskers define.
+It can be a bit dangerous relying on defaults, since you will produce the figures routinely, but only roughly know what the different parts of the plot represent.
+Be sure to consult the help pages for the different geoms and stats that you use in order to figure out what exactly is going on.
+
+---
+
+# Do make your figures accessible
+
+.left-column[
+## Colours
+]
+
+.right-column[
+- Use colours that are colour blind friendly, for example, don't use red and green as contrasting colours.
+  - [Run your figures through a colour blind simulator](http://hclwizard.org:3000/cvdemulator/), or check out the [colorblindr R package](https://github.com/clauswilke/colorblindr).
+- Use a sequential colour scale for continuous data.
+- Use a diverging colour scale when zero is included.
+- Use a qualitative colour scale for categorical data.
+- [colorspace package](http://colorspace.r-forge.r-project.org/index.html)
+- [RColorBrewer](https://www.r-graph-gallery.com/38-rcolorbrewers-palettes.html)
+]
+
+???
+
+Accessibility could be a course on its own, but here are some things that we can keep in mind when creating graphics, especially if we intend to share them with others.
+
+---
+
+# colorspace palettes
+
+.left-column[
+## Colours
+]
+
+.right-column[
+### Palettes from the colorspace package
+
+&lt;img src="./figures/advanced_plotting_dos_and_donts_colorspace_palettes-1.png" width="1008" style="display: block; margin: auto;" /&gt;
+]
+
+---
+
+# Do make your figures accessible
+
+.left-column[
+## Colours
+]
+
+.right-column[
+
+```r
+p &lt;- ggplot(iris, aes(Sepal.Length, fill = Species)) +
+  geom_area(stat = "density", position = "fill")
+p
+```
+
+&lt;img src="./figures/advanced_plotting_dos_and_donts_iris_sepal_length-1.png" width="432" style="display: block; margin: auto;" /&gt;
+]
+
+---
+
+# Do make your figures accessible
+
+.left-column[
+## Colours
+]
+
+.right-column[
+
+```r
+colorblindr::cvd_grid(p)
+```
+
+&lt;img src="./figures/advanced_plotting_dos_and_donts_iris_sepal_length_colorblindr-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+???
+
+This is an example of how things can look for someone that has problems with percieving colours.
+
+---
+
+# Do make your figures accessible
+
+.left-column[
+## Colours
+## Font sizes
+]
+
+.right-column[
+- Make sure fonts are sized appropriately depending on figure size and where it will be presented.
+- Can be controlled by `theme`.
+
+
+```r
+ggplot(iris, aes(Sepal.Length, fill = Species)) +
+  geom_area(stat = "density", position = "fill") +
+  theme(text = element_text(size = 24))
+```
+
+&lt;img src="./figures/advanced_plotting_dos_and_donts_sepal_length_text_size-1.png" width="432" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Do make your figures accessible
+
+.left-column[
+## Colours
+## Font sizes
+## Redundant coding
+]
+
+.right-column[
+Redundant coding is when we map a single variable to multiple aesthetics in a plot.
+It could for example be mapping a categorical variable to colour *and* shape in a scatter plot.
+
+
+```r
+ggplot(mpg, aes(displ, hwy, colour = drv, shape = drv)) +
+  geom_point(size = 3)
+```
+
+&lt;img src="./figures/advanced_plotting_dos_and_donts_redundant_coding-1.png" width="432" style="display: block; margin: auto;" /&gt;
+]
+
+???
+
+By having redundancy in the presentation, we will enable more people to access the material.
+It could be that some have difficulties distinguishing between different colours, or they might print your figure in black and white.
+
+---
+
+# Do label your axes
+
+.pull-left[
+
+```r
+ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
+  geom_point()
+```
+
+&lt;img src="./figures/advanced_plotting_dos_and_donts_no_labels_example-1.png" width="432" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+
+```r
+ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
+  geom_point() +
+  scale_colour_discrete(name = "Cylinders") +
+  labs(x = "Engine displacement (litres)",
+       y = "Highway fuel economy (miles/gallon)")
+```
+
+&lt;img src="./figures/advanced_plotting_dos_and_donts_with_labels_example-1.png" width="432" style="display: block; margin: auto;" /&gt;
+]
+
+???
+
+I know that I have been sloppy with this in my slides, and part of the reason is to keep the code short and concise.
+You should always put meaningful labels on your plots, especially if you are sharing your work with others.
+This includes proper axis labels, including units, that are easy to understand.
+Also make sure that legends are labelled appropriately.
+
+Which of these plots is more understandable?
+
+---
+
+# Don't make 3D plots
+
+.center[
+![:scale 75%](../img/3d_bars.png)
+]
+
+???
+
+The majority of any figures that you make will be represented in two dimensions, either on paper or on a computer screen.
+Then don't try to introduce a third dimension to this.
+Since a piece of paper doesn't have any depth, trying to compare two points becomes really hard, not to say impossible, most of the time.
+
+---
+
+.center[
+![:scale 50%, Animation of Homer Simpson pouring bleech into his eyes](https://media.giphy.com/media/lIU7yoG72gyhq/giphy.gif?cid=ecf05e47xtdiks74pesqx0tzm4tito1fhf0d0479jhf54lug&amp;rid=giphy.gif)
+]
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="js/macros.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"navigation": {
+"scroll": false
+}
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

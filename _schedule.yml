@@ -144,6 +144,7 @@ schedule:
     - start_time:
       end_time:
       topic: "Advanced plotting: Dos and don'ts"
+      url: lectures/13_advanced_plotting_dos_and_donts.html
       details: |
         - Use of colour
           - What colour scales to use when
