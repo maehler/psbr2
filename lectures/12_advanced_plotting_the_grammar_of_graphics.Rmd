@@ -25,6 +25,7 @@ setup_presentation("advanced_plotting_the_grammar_of_graphics")
 
 .pull-right[
 ![Leland Wilkinson, The Grammar of Graphics](https://media.springernature.com/w153/springer-static/cover/book/9780387286952.jpg)
+[![:scale 30%](https://ggplot2-book.org/cover.jpg)](https://ggplot2-book.org)
 ]
 
 ???
@@ -841,6 +842,78 @@ Or what if the journal we want to publish in has a weird font requirement for th
 [Should this paragraph be a slide of its own?]
 What I've seen many times throughout my academic career is that I would go about to produce a figure that is almost there, and then someone else would proceed to import it into something like Adobe Illustrator or Inkscape and modify things as needed.
 The drawback of doing that is that if something changes about the base figure, all these manual changes are lost, and you have to go through this, likely undocumented, process again.
+
+---
+
+# Set colours manually
+
+.pull-left.small[
+We can set colours fully manually...
+
+```{r manual_colour1}
+ggplot(iris, aes(Sepal.Length, Sepal.Width, colour = Species)) +
+  geom_point(size = 2) +
+  scale_colour_manual(
+    values = c(virginica = "red",
+               versicolor = "green",
+               setosa = "blue")
+  )
+```
+]
+
+???
+
+It really helps to have a good understanding of the grammar of graphics when wanting to do things like this.
+
+First we need to know what scale it is that we want to change.
+Is it `colour`, or is it `fill`?
+Is it continuous or discrete?
+
+--
+
+.pull-right.small[
+... or we can use some of the palettes that are available.
+
+```{r manual_colour2}
+ggplot(iris, aes(Sepal.Length, Sepal.Width, colour = Species)) +
+  geom_point(size = 2) +
+  scale_colour_manual(
+    values = colorspace::qualitative_hcl(3, palette = "Dark 3")
+  )
+```
+]
+
+---
+
+# Setting legend labels
+
+.pull-left.small[
+```{r legend_labels1}
+iris %>%
+  mutate(Species = str_c("Iris ", Species)) %>%
+  ggplot(aes(Sepal.Length, Sepal.Width, colour = Species)) +
+  geom_point(size = 2)
+```
+]
+
+???
+
+There are multiple ways we could achieve this (as with many other things in R).
+We can either change the underlying variable
+
+--
+
+.pull-right.small[
+```{r legend_labels2, eval = FALSE}
+ggplot(iris, aes(Sepal.Length, Sepal.Width, colour = Species)) +
+  geom_point(size = 2) +
+  scale_colour_discrete(
+    labels = c(setosa = "Iris setosa",
+               virginica = "Iris virginica",
+               versicolor = "Iris versicolor")
+  )
+```
+]
 
 ---
 

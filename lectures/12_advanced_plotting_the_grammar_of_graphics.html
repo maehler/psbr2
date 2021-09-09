@@ -1384,6 +1384,88 @@ The drawback of doing that is that if something changes about the base figure, a
 
 ---
 
+# Set colours manually
+
+.pull-left.small[
+We can set colours fully manually...
+
+
+```r
+ggplot(iris, aes(Sepal.Length, Sepal.Width, colour = Species)) +
+  geom_point(size = 2) +
+  scale_colour_manual(
+    values = c(virginica = "red",
+               versicolor = "green",
+               setosa = "blue")
+  )
+```
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_manual_colour1-1.png" width="432" /&gt;
+]
+
+???
+
+It really helps to have a good understanding of the grammar of graphics when wanting to do things like this.
+
+First we need to know what scale it is that we want to change.
+Is it `colour`, or is it `fill`?
+Is it continuous or discrete?
+
+--
+
+.pull-right.small[
+... or we can use some of the palettes that are available.
+
+
+```r
+ggplot(iris, aes(Sepal.Length, Sepal.Width, colour = Species)) +
+  geom_point(size = 2) +
+  scale_colour_manual(
+    values = colorspace::qualitative_hcl(3, palette = "Dark 3")
+  )
+```
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_manual_colour2-1.png" width="432" /&gt;
+]
+
+---
+
+# Setting legend labels
+
+.pull-left.small[
+
+```r
+iris %&gt;%
+  mutate(Species = str_c("Iris ", Species)) %&gt;%
+  ggplot(aes(Sepal.Length, Sepal.Width, colour = Species)) +
+  geom_point(size = 2)
+```
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_legend_labels1-1.png" width="432" /&gt;
+]
+
+???
+
+There are multiple ways we could achieve this (as with many other things in R).
+We can either change the underlying variable
+
+--
+
+.pull-right.small[
+
+```r
+ggplot(iris, aes(Sepal.Length, Sepal.Width, colour = Species)) +
+  geom_point(size = 2) +
+  scale_colour_discrete(
+    labels = c(setosa = "Iris setosa",
+               virginica = "Iris virginica",
+               versicolor = "Iris versicolor")
+  )
+```
+]
+
+---
+
 # Combining multiple figures
 
 [The cowplot package](https://wilkelab.org/cowplot/index.html) is very useful for combining multiple ggplots.
