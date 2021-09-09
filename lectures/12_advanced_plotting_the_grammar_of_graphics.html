@@ -1384,6 +1384,34 @@ The drawback of doing that is that if something changes about the base figure, a
 
 ---
 
+# Combining multiple figures
+
+[The cowplot package](https://wilkelab.org/cowplot/index.html) is very useful for combining multiple ggplots.
+
+
+```r
+library(cowplot)
+
+plot1 &lt;- ggplot(mpg, aes(displ, hwy)) +
+  geom_point()
+plot2 &lt;- ggplot(mpg, aes(factor(cyl), displ)) +
+  geom_boxplot() +
+  geom_point(position = position_jitter(height = 0, width = 0.25),
+             alpha = 1/5)
+
+plot_grid(plot1, plot2, labels = c("A", "B"))
+```
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_cowplot_demo-1.png" width="432" /&gt;
+
+???
+
+We've already looked at faceting, or small multiples, but this only works well if the variables are common across all facets.
+If we want to combine plots that are related, but don't share variables, we need a different approach.
+The same generally applies if you want to combine different types of plots.
+
+---
+
 # Suggested reading
 
 ## If you're interested in data visualisation
