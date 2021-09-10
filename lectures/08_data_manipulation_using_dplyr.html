@@ -2026,6 +2026,202 @@ anti_join(x, y, by = "key")
 
 ---
 
+# Piping
+
+.left-column[
+## Until now
+]
+
+.right-column[
+Up until now, we've been executing all these functions one by one, potentially saving the intermediate result into a new variable:
+
+
+```r
+hnl_flights_1 &lt;- filter(flights, dest == "HNL")
+hnl_flights_2 &lt;- mutate(hnl_flights_1,
+                        avg_speed = (distance * 1.61) / (air_time / 60))
+hnl_flights_3 &lt;- select(hnl_flights_2, tailnum, avg_speed)
+hnl_flights_4 &lt;- arrange(hnl_flights_3, desc(avg_speed))
+hnl_flights_4
+```
+
+```
+## # A tibble: 707 × 2
+##    tailnum avg_speed
+##    &lt;chr&gt;       &lt;dbl&gt;
+##  1 N66057       853.
+##  2 N78060       850.
+##  3 N67058       849.
+##  4 N76065       847.
+##  5 N69063       844.
+##  6 N77066       843.
+##  7 N66057       843.
+##  8 N76055       837.
+##  9 N76054       837.
+## 10 N76054       834.
+## # … with 697 more rows
+```
+]
+
+???
+
+Let's say we want to find the speed of the fastest flight to Honolulu.
+
+This is kind of tedious, and it is also very easy to get the numbers wrong at some point, potentially resulting in long debugging sessions.
+
+---
+
+# Piping
+
+.left-column[
+## Until now
+## Nesting function calls
+]
+
+.right-column[
+
+```r
+arrange(
+  select(
+    mutate(
+      filter(flights, dest == "HNL"),
+      avg_speed = (distance * 1.61) / (air_time / 60)
+    ),
+    tailnum, avg_speed
+  ),
+  desc(avg_speed)
+)
+```
+
+```
+## # A tibble: 707 × 2
+##    tailnum avg_speed
+##    &lt;chr&gt;       &lt;dbl&gt;
+##  1 N66057       853.
+##  2 N78060       850.
+##  3 N67058       849.
+##  4 N76065       847.
+##  5 N69063       844.
+##  6 N77066       843.
+##  7 N66057       843.
+##  8 N76055       837.
+##  9 N76054       837.
+## 10 N76054       834.
+## # … with 697 more rows
+```
+]
+
+???
+
+The downside of doing it this way is that it is hard to write, and to read.
+The first function call is the innermost one, and the last function call to execute is the outermost one.
+
+---
+
+# Piping
+
+.left-column[
+## Until now
+## Nesting function calls
+## The pipe `%&gt;%`
+]
+
+.right-column[
+The pipe `%&gt;%` is a function from the magrittr package, but it is imported by dplyr and available if you have loaded the dplyr package, or the tidyverse package.
+It takes the result from the left side and passes that as the first variable to the function on the right side.
+
+
+```r
+mean(1:15)
+```
+
+```
+## [1] 8
+```
+
+```r
+1:15 %&gt;% mean()
+```
+
+```
+## [1] 8
+```
+]
+
+--
+
+.right-column[
+
+```r
+1:15 %&gt;% mean() %&gt;% rep(4)
+```
+
+```
+## [1] 8 8 8 8
+```
+]
+
+???
+
+And we can continue with the pipe for as long as we like
+
+--
+
+.right-column[
+
+```r
+1:15 %&gt;% mean() %&gt;% rep(4) %&gt;% length()
+```
+
+```
+## [1] 4
+```
+]
+
+---
+
+# Piping
+
+.left-column[
+## Until now
+## Nesting function calls
+## The pipe `%&gt;%`
+]
+
+.right-column[
+
+```r
+filter(flights, dest == "HNL") %&gt;%
+  mutate(avg_speed = (distance * 1.61) / (air_time / 60)) %&gt;%
+  select(tailnum, avg_speed) %&gt;%
+  arrange(desc(avg_speed))
+```
+
+```
+## # A tibble: 707 × 2
+##    tailnum avg_speed
+##    &lt;chr&gt;       &lt;dbl&gt;
+##  1 N66057       853.
+##  2 N78060       850.
+##  3 N67058       849.
+##  4 N76065       847.
+##  5 N69063       844.
+##  6 N77066       843.
+##  7 N66057       843.
+##  8 N76055       837.
+##  9 N76054       837.
+## 10 N76054       834.
+## # … with 697 more rows
+```
+]
+
+???
+
+- No intermediate variables
+- Clear to read
+
+---
+
 # A visual example
 
 &lt;img src="./figures/data_manipulation_using_dplyr_flights_map-1.png" width="936" style="display: block; margin: auto;" /&gt;

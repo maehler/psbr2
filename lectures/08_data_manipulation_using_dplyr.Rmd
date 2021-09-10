@@ -1052,6 +1052,126 @@ x %>%
 
 ---
 
+# Piping
+
+.left-column[
+## Until now
+]
+
+.right-column[
+Up until now, we've been executing all these functions one by one, potentially saving the intermediate result into a new variable:
+
+```{r}
+hnl_flights_1 <- filter(flights, dest == "HNL")
+hnl_flights_2 <- mutate(hnl_flights_1,
+                        avg_speed = (distance * 1.61) / (air_time / 60))
+hnl_flights_3 <- select(hnl_flights_2, tailnum, avg_speed)
+hnl_flights_4 <- arrange(hnl_flights_3, desc(avg_speed))
+hnl_flights_4
+```
+]
+
+???
+
+Let's say we want to find the speed of the fastest flight to Honolulu.
+
+This is kind of tedious, and it is also very easy to get the numbers wrong at some point, potentially resulting in long debugging sessions.
+
+---
+
+# Piping
+
+.left-column[
+## Until now
+## Nesting function calls
+]
+
+.right-column[
+```{r}
+arrange(
+  select(
+    mutate(
+      filter(flights, dest == "HNL"),
+      avg_speed = (distance * 1.61) / (air_time / 60)
+    ),
+    tailnum, avg_speed
+  ),
+  desc(avg_speed)
+)
+```
+]
+
+???
+
+The downside of doing it this way is that it is hard to write, and to read.
+The first function call is the innermost one, and the last function call to execute is the outermost one.
+
+---
+
+# Piping
+
+.left-column[
+## Until now
+## Nesting function calls
+## The pipe `%>%`
+]
+
+.right-column[
+The pipe `%>%` is a function from the magrittr package, but it is imported by dplyr and available if you have loaded the dplyr package, or the tidyverse package.
+It takes the result from the left side and passes that as the first variable to the function on the right side.
+
+```{r}
+mean(1:15)
+1:15 %>% mean()
+```
+]
+
+--
+
+.right-column[
+```{r}
+1:15 %>% mean() %>% rep(4)
+```
+]
+
+???
+
+And we can continue with the pipe for as long as we like
+
+--
+
+.right-column[
+```{r}
+1:15 %>% mean() %>% rep(4) %>% length()
+```
+]
+
+---
+
+# Piping
+
+.left-column[
+## Until now
+## Nesting function calls
+## The pipe `%>%`
+]
+
+.right-column[
+```{r}
+filter(flights, dest == "HNL") %>%
+  mutate(avg_speed = (distance * 1.61) / (air_time / 60)) %>%
+  select(tailnum, avg_speed) %>%
+  arrange(desc(avg_speed))
+```
+]
+
+???
+
+- No intermediate variables
+- Clear to read
+
+---
+
 # A visual example
 
 ```{r flights_map, echo = FALSE, fig.width = 13, fig.height = 8, fig.align = "center"}
