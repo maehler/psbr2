@@ -87,6 +87,21 @@ In order to see what a variable contains, we can simply enter it into the consol
 y
 ```
 
+---
+
+# The environment pane
+
+You will also be able to see any variables that you have defined in the environment pane.
+
+![:scale 60%](../img/rstudio_default.png)
+
+???
+
+Live demonstration.
+
+- Declare variables.
+- Show how they look in the environment pane.
+- Show how you can view a tibble, and what code this corresponds to in the console.
 
 ---
 
