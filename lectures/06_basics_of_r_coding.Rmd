@@ -354,25 +354,6 @@ typeof(5L)
 .left-column[
 ## Double
 ## Integer
-## Logical
-]
-
-.right-column[
-Boolean values, either `TRUE` or `FALSE`.
-
-```{r, eval = FALSE}
-5 < 7
-```
-]
-
----
-
-# Atomic data types
-
-.left-column[
-## Double
-## Integer
-## Logical
 ## Character
 ]
 
@@ -400,6 +381,27 @@ I will not explain the exceptions to this here and now though, just assume that 
 
 ---
 
+# Atomic data types
+
+.left-column[
+## Double
+## Integer
+## Character
+## Logical
+]
+
+.right-column[
+Boolean values, either `TRUE` or `FALSE`.
+
+```{r}
+5 < 7
+"R" == "Python"
+```
+]
+
+---
+
+
 # Vectors
 
 Everything we've done so far has been using vectors, and this is the default data structure in R.
@@ -421,7 +423,7 @@ length(x)
 
 --
 
-There is also a short-hand way of creating number vectors as the one above.
+There is also a short-hand way of creating numerical vectors as the one above.
 
 ```{r}
 x <- 1:5

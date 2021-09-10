@@ -453,26 +453,6 @@ typeof(5L)
 .left-column[
 ## Double
 ## Integer
-## Logical
-]
-
-.right-column[
-Boolean values, either `TRUE` or `FALSE`.
-
-
-```r
-5 &lt; 7
-```
-]
-
----
-
-# Atomic data types
-
-.left-column[
-## Double
-## Integer
-## Logical
 ## Character
 ]
 
@@ -501,6 +481,39 @@ If we don't use quotes, this is something called a "bare name", and R will in mo
 I will not explain the exceptions to this here and now though, just assume that if you see a word without quotes, it is either referring to a reserved keyword in R, or an object.
 
 ---
+
+# Atomic data types
+
+.left-column[
+## Double
+## Integer
+## Character
+## Logical
+]
+
+.right-column[
+Boolean values, either `TRUE` or `FALSE`.
+
+
+```r
+5 &lt; 7
+```
+
+```
+## [1] TRUE
+```
+
+```r
+"R" == "Python"
+```
+
+```
+## [1] FALSE
+```
+]
+
+---
+
 
 # Vectors
 
@@ -533,7 +546,7 @@ length(x)
 
 --
 
-There is also a short-hand way of creating number vectors as the one above.
+There is also a short-hand way of creating numerical vectors as the one above.
 
 
 ```r
