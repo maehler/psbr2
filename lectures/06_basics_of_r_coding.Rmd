@@ -938,3 +938,72 @@ as.data.frame(mpg)
 
 Not only does tibbles print better, but they also have functionality that can help us easier make sense of our data.
 We will go into these things later this week.
+
+---
+
+# Scripts
+
+So far, we've been using the console to write our code.
+This becomes impractical very quickly.
+To make life easier, we can use the script editor for typing, and saving our code.
+
+.center[
+![:scale 50%](../img/rstudio_screenshot2.png)
+]
+
+???
+
+I recommend that you create scripts for future exercises, and whenever you play around with your own data.
+That way, you can build your own library of useful R commands as you go, and you can look at your own notes related to them.
+
+---
+
+# Commenting your code
+
+When scripting, it is very useful to comment your code.
+Comments in R start with a hash (`#`), and anything following that on the same line is ignored when running the code.
+
+```{r}
+# This is a comment
+x <- 1:15 # And this is another comment
+```
+
+Don't comment what the code is doing—the code already tells you that.
+Instead comment on intention—*why* did you write that code?
+
+???
+
+Comments should help you understand why you wrote a certain piece of code.
+Imagine that you are writing to the future self.
+Without comments, you are bound to forget what you were thinking at the time.
+Trust me, I do this all the time.
+
+--
+
+### Bad comment
+
+```{r, eval = FALSE}
+# Calculate the mean of x
+x_mean <- mean(x)
+```
+
+???
+
+Imagine that this is part of larger script where you later want to do something to the mean value of `x`.
+
+You don't say!
+The code already tells us this.
+
+--
+
+### Good comment
+
+```{r, eval = FALSE}
+# Pre-calculate the mean so that we don't do it every iteration
+x_mean <- mean(x)
+```
+
+???
+
+Imagine that we have code following this statement that would use this mean a thousand times in some type of calculation.
+Instead of calculating the mean a thousand times, we pre-calculate it in order to save some computing resources.
