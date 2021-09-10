@@ -52,14 +52,14 @@ Go to <https://www.rstudio.com/products/rstudio/download/#download> and download
 
 # Interface
 
-.center[![:scale 75%](../img/rstudio_default.png)]
+.center[![:scale 60%](../img/rstudio_default.png)]
 
 ---
 
 # Interface
 
 .overlay-container.center[
-![:scale 75%](../img/rstudio_default.png)
+![:scale 60%](../img/rstudio_default.png)
 
 <!-- <svg class="overlay" viewBox="-1 -1 162 92"> -->
 <!-- <rect y="6" width="85" height="83" fill="transparent" stroke="red"> -->
@@ -74,7 +74,7 @@ Go to <https://www.rstudio.com/products/rstudio/download/#download> and download
 # Interface
 
 .overlay-container.center[
-![:scale 75%](../img/rstudio_default.png)
+![:scale 60%](../img/rstudio_default.png)
 
 <!-- <svg class="overlay" viewBox="-1 -1 162 92"> -->
 <!-- <rect x="87" y="6" width="73" height="27" fill="transparent" stroke="red"> -->
@@ -89,7 +89,7 @@ Go to <https://www.rstudio.com/products/rstudio/download/#download> and download
 # Interface
 
 .overlay-container.center[
-![:scale 75%](../img/rstudio_default.png)
+![:scale 60%](../img/rstudio_default.png)
 
 <!-- <svg class="overlay" viewBox="-1 -1 162 92"> -->
 <!-- <rect x="87" y="34" width="73" height="55" fill="transparent" stroke="red"> -->
@@ -98,6 +98,10 @@ Go to <https://www.rstudio.com/products/rstudio/download/#download> and download
 
 .center[Files]
 .small.center[File system navigator]
+
+???
+
+There are many more panes in RStudio, and we'll talk about these as we get to them in the coming weeks.
 
 ---
 
