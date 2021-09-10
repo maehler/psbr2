@@ -416,6 +416,49 @@ Boolean values, either `TRUE` or `FALSE`.
 
 ---
 
+# Logical operators
+
+We can also do arithmetic using boolean values.
+
+```{r, echo = FALSE}
+tribble(
+  ~Operator, ~Meaning,
+  "&", "And",
+  "|", "Or",
+  "xor", "Exclusive or"
+) %>%
+  knitr::kable() %>%
+  kableExtra::column_spec(1, monospace = TRUE)
+```
+
+.center[
+![:scale 50%](https://d33wubrfki0l68.cloudfront.net/01f4b6d39d2be8269740a3ad7946faa79f7243cf/8369a/diagrams/transform-logical.png)
+]
+
+---
+
+# Logical operators
+
+.pull-left[
+```{r}
+TRUE & TRUE
+TRUE & FALSE
+FALSE & FALSE
+TRUE | TRUE
+TRUE | FALSE
+```
+]
+
+.pull-right[
+```{r}
+FALSE | FALSE
+xor(TRUE, TRUE)
+xor(TRUE, FALSE)
+xor(FALSE, FALSE)
+```
+]
+
+---
 
 # Vectors
 

@@ -7,6 +7,8 @@
     <meta name="date" content="2021-10-04" />
     <script src="libs/header-attrs-2.8/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <script src="libs/kePrint-0.0.1/kePrint.js"></script>
+    <link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/niklas.css" type="text/css" />
     <link rel="stylesheet" href="css/niklas-fonts.css" type="text/css" />
   </head>
@@ -529,6 +531,120 @@ Boolean values, either `TRUE` or `FALSE`.
 
 ---
 
+# Logical operators
+
+We can also do arithmetic using boolean values.
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Operator &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Meaning &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-family: monospace;"&gt; &amp;amp; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; And &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-family: monospace;"&gt; | &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Or &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;font-family: monospace;"&gt; xor &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Exclusive or &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+.center[
+![:scale 50%](https://d33wubrfki0l68.cloudfront.net/01f4b6d39d2be8269740a3ad7946faa79f7243cf/8369a/diagrams/transform-logical.png)
+]
+
+---
+
+# Logical operators
+
+.pull-left[
+
+```r
+TRUE &amp; TRUE
+```
+
+```
+## [1] TRUE
+```
+
+```r
+TRUE &amp; FALSE
+```
+
+```
+## [1] FALSE
+```
+
+```r
+FALSE &amp; FALSE
+```
+
+```
+## [1] FALSE
+```
+
+```r
+TRUE | TRUE
+```
+
+```
+## [1] TRUE
+```
+
+```r
+TRUE | FALSE
+```
+
+```
+## [1] TRUE
+```
+]
+
+.pull-right[
+
+```r
+FALSE | FALSE
+```
+
+```
+## [1] FALSE
+```
+
+```r
+xor(TRUE, TRUE)
+```
+
+```
+## [1] FALSE
+```
+
+```r
+xor(TRUE, FALSE)
+```
+
+```
+## [1] TRUE
+```
+
+```r
+xor(FALSE, FALSE)
+```
+
+```
+## [1] FALSE
+```
+]
+
+---
 
 # Vectors
 
