@@ -752,6 +752,70 @@ x[c("first", "third")]
 
 ---
 
+# Missing values
+
+Sometimes you want to be able to represent missing values.
+It could be that a particular experiment failed, or that a measurement was outside of the detection range of your instrument.
+
+These values can be represented with `NA`.
+
+
+```r
+x &lt;- c(1, 2, 3, NA, 5)
+```
+
+???
+
+It is an important distinction between a missing value, and just setting a value to a particular value, e.g. zero.
+Was the value of the measurement really zero, or is that data point simply missing?
+
+---
+
+# Missing values
+
+
+```r
+x &lt;- c(1, 2, 3, NA, 5)
+mean(x)
+```
+
+```
+## [1] NA
+```
+
+```r
+mean(x, na.rm = TRUE)
+```
+
+```
+## [1] 2.75
+```
+
+```r
+(x[is.na(x)] &lt;- 0)
+```
+
+```
+## [1] 0
+```
+
+```r
+mean(x)
+```
+
+```
+## [1] 2.2
+```
+
+???
+
+Many functions take missing values into consideration, and then it is also important to think about how these should be handled.
+Oftentimes, if you try to calculate something on a vector containing missing values, you will get a missing value as the result.
+You then have the option of excluding those values.
+Note that this is not equivalent of setting the missing value to a fixed value.
+
+---
+
 # Composite data types
 
 .left-column[
