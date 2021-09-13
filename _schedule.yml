@@ -64,6 +64,7 @@ schedule:
           - Lists
           - Data frames
         - Live demonstrations and practice using learnr (?)
+        - Writing scripts
     - start_time:
       end_time:
       topic: R packages
@@ -163,6 +164,8 @@ schedule:
       details: |
         - Make available in the morning, deadline at midnight
         - Plotting of built-in datasets
+        - Tidy up a dirty dataset and import into R
+        - Reproduce a figure from a publication given the input data
       lecture: false
   - day:
     - start_time:
