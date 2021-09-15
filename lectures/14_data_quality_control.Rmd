@@ -191,7 +191,7 @@ ggplot(world) +
 .right-column[
 Everything has a distribution.
 
-```{r height_distribution, echo = FALSE, fig.width = 8, fig.height = 5, out.width = "100%"}
+```{r height_distribution, echo = FALSE, fig.width = 8, fig.height = 4, out.width = "100%"}
 height_df <- bind_rows(
   tibble(sex = "female",
          height = seq(120, 230, by = 0.5),
@@ -207,6 +207,8 @@ ggplot(height_df) +
        title = "Height of people aged 20+ in the United States",
        subtitle = "Data from the CDC")
 ```
+
+[CDC: Percentile Data Files with LMS Values](https://www.cdc.gov/growthcharts/percentile_data_files.htm)
 ]
 
 ???
@@ -227,7 +229,7 @@ As they get more extreme, we also see that they also get less and less likely to
 .right-column[
 Everything has a distribution.
 
-```{r height_distribution_sex, echo = FALSE, fig.width = 8, fig.height = 5, out.width = "100%"}
+```{r height_distribution_sex, echo = FALSE, fig.width = 8, fig.height = 4, out.width = "100%"}
 ggplot(height_df) +
   geom_polygon(aes(height, p, fill = sex), colour = "black", alpha = 0.5) +
   labs(x = "Height (cm)", y = "Density",
@@ -238,6 +240,8 @@ ggplot(height_df) +
                     labels = str_to_title) +
   theme(legend.title = element_blank())
 ```
+
+[CDC: Percentile Data Files with LMS Values](https://www.cdc.gov/growthcharts/percentile_data_files.htm)
 ]
 
 ???
