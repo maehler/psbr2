@@ -19,9 +19,12 @@ table_head <- tags$thead(
       class = "header",
       tags$th(align = "left", "Date"),
       tags$th(align = "left", "Time"),
-      tags$th(align = "left", "Topic")
+      tags$th(align = "left", "Topic"),
+      tags$th(align = "left", "Room")
     )
 )
+
+defaults <- schedule_data$defaults
 
 table_rows <- map2(schedule_data$schedule, seq_along(schedule_data$schedule), ~ {
   n_items <- length(.$day)
@@ -32,7 +35,14 @@ table_rows <- map2(schedule_data$schedule, seq_along(schedule_data$schedule), ~ 
                           style = "vertical-align: middle;",
                           add_business_day(schedule_data$start_date, .y-1)),
       tags$td(if (!is.null(item$start_time)) paste0(item$start_time, "-", item$end_time), ""),
-      tags$td(if (!is.null(item$url)) tags$a(href = item$url, item$topic) else item$topic)
+      tags$td(if (!is.null(item$url)) tags$a(href = item$url, item$topic) else item$topic),
+      tags$td(if (!is.null(item$room)) {
+        item$room
+      } else if (!is.null(defaults$room)) {
+        defaults$room
+      } else {
+        "TBD"
+      })
     )
   })
 })

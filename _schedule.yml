@@ -1,10 +1,13 @@
 start_date: 2021-09-30
+defaults:
+  room: C4-30-23 Vitis
 schedule:
   - day:
     - start_time:
       end_time:
       topic: Course introduction
       url: lectures/01_course_introduction.html
+      room: B3-46-49 Solanum lycopersicum
       details: |
         - Welcome and overview of learning outcomes
         - What the course is not
@@ -13,6 +16,7 @@ schedule:
       end_time:
       topic: Introduction to R
       url: lectures/02_introduction_to_r.html
+      room: B3-46-49 Solanum lycopersicum
       details: |
         - What is R
         - Short history of R
@@ -20,6 +24,7 @@ schedule:
       end_time:
       topic: RStudio
       url: lectures/03_rstudio.html
+      room: B3-46-49 Solanum lycopersicum
       details: |
         - Introduction to RStudio
         - Walkthrough of download and installation
@@ -29,6 +34,7 @@ schedule:
       end_time:
       topic: Data visualisation with ggplot2
       url: lectures/04_data_visualisation_with_ggplot2.html
+      room: B3-46-49 Solanum lycopersicum
       details: |
         - Basic graphics
         - The structure of a ggplot
@@ -146,6 +152,7 @@ schedule:
       end_time:
       topic: "Advanced plotting: Dos and don'ts"
       url: lectures/13_advanced_plotting_dos_and_donts.html
+      room: B3-46-49 Solanum lycopersicum
       details: |
         - Use of colour
           - What colour scales to use when
@@ -161,6 +168,7 @@ schedule:
     - start_time:
       end_time:
       topic: "Practical assignment 1"
+      room: ""
       details: |
         - Make available in the morning, deadline at midnight
         - Plotting of built-in datasets
@@ -190,6 +198,7 @@ schedule:
       end_time:
       topic: More on reproducibility
       url: lectures/16_more_on_reproducibility.html
+      room: B3-46-49 Solanum lycopersicum
       details: |
         - Transparency
         - Preprints
@@ -197,6 +206,7 @@ schedule:
       end_time:
       topic: "Code sharing: RMarkdown"
       url: lectures/17_code_sharing_rmarkdown.html
+      room: B3-46-49 Solanum lycopersicum
       details: |
         - What is (R)markdown?
         - Example of how to create a self-documenting analysis
@@ -204,6 +214,7 @@ schedule:
       end_time:
       topic: "Data sharing"
       url: lectures/18_data_sharing.html
+      room: B3-46-49 Solanum lycopersicum
       details: |
         - Becoming more and more of a requirement by journals
         - Zenodo
@@ -213,6 +224,7 @@ schedule:
     - start_time:
       end_time:
       topic: Large-scale data
+      room: B3-46-49 Solanum lycopersicum
       details: |
         - How large is large?
         - Examples of large-scale data
@@ -262,6 +274,7 @@ schedule:
     - start_time:
       end_time:
       topic: "Advanced R: Functions"
+      room: B3-46-49 Solanum lycopersicum
       details: |
         - Writing your own functions
           - Get specification on inputs and outputs
@@ -290,6 +303,7 @@ schedule:
     - start_time:
       end_time:
       topic: "Practical assignment 2"
+      room: ""
       details: |
         - Make available in morning
         - Large scale data: ITS data from Andreas
@@ -299,12 +313,14 @@ schedule:
     - start_time:
       end_time:
       topic: "Practical assignment 2"
+      room: ""
       details:
       lecture: false
   - day:
     - start_time:
       end_time:
       topic: "Practical assignment 2"
+      room: ""
       details: |
         - Deadline at midnight
       lecture: false
