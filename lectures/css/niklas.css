@@ -42,6 +42,24 @@
   background-color: #FFFFFF;
 }
 
+/* Quote slide style */
+.remark-slide-content.quote blockquote {
+  display: flex;
+  font-size: 3em;
+}
+
+blockquote {
+  background-color: #EEE;
+  padding-right: 1em;
+  font-style: italic;
+}
+
+blockquote span {
+  display: block;
+  text-align: right;
+  font-size: 0.75em;
+}
+
 /* Column styles */
 .left-column h2, .left-column h3 {
   color: #CCCCCC;
@@ -80,14 +98,19 @@
   justify-content: space-around;
 }
 
+/* Figures and captions */
 figure {
   display: inline-block;
 }
 
-/* Figures and captions */
 figure figcaption {
   width: 100%;
   text-align: left;
+}
+
+/* Framed images */
+.framed img {
+  border: 1px solid gray;
 }
 
 /* Font size control */
@@ -115,6 +138,10 @@ figure figcaption {
 
   .tile-item.width33 {
     max-width: 33%;
+  }
+
+  .tile-item.width50 {
+    max-width: 50%;
   }
 
 .spaced * {
@@ -161,4 +188,36 @@ iframe {
 /* Only clear last pull-right */
 .pull-right:not(div:last-of-type) {
   clear: none;
+}
+
+.pull-right + * {
+    clear: right;
+}
+
+.pull-left, .pull-right {
+  width: 48%;
+}
+
+.pull-left-75, .pull-right-75 {
+  width: 73%;
+}
+
+.pull-left-60, .pull-right-60 {
+  width: 58%;
+}
+
+.pull-left-40, .pull-right-40 {
+  width: 38%;
+}
+
+.pull-left-25, .pull-right-25 {
+  width: 23%;
+}
+
+.pull-left-75, .pull-left-60, .pull-left-40, .pull-left-25 {
+  float: left;
+}
+
+.pull-right-75, .pull-right-60, .pull-right-40, .pull-right-25 {
+  float: right;
 }

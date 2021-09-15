@@ -171,6 +171,7 @@ schedule:
     - start_time:
       end_time:
       topic: Data quality control
+      url: lectures/14_data_quality_control.html
       details: |
         - Always look at your data
   - day:

@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Data quality control</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Niklas Mähler" />
+    <meta name="date" content="2021-10-12" />
+    <script src="libs/header-attrs-2.8/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/niklas.css" type="text/css" />
+    <link rel="stylesheet" href="css/niklas-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: left, middle, inverse, title-slide
+
+# Data quality control
+## Practical Skills for Biology Research II
+### Niklas Mähler
+### Umeå University
+### 2021-10-12
+
+---
+
+
+
+
+# What we'll learn
+
+- How to determine whether your data is of sufficient quality.
+- How to see whether there are factors that haven't been accounted for.
+
+---
+
+# What is good quality data?
+
+- It is readable
+
+???
+
+This is something that we treated talking about tidy data.
+The earlier in the process that the data is tidied, the better.
+
+--
+- It is complete
+
+???
+
+We have enough data for our intents and purposes.
+There might be a couple of missing values, and that's ok, as long as you have enough redundancy so that those missing values don't become a problem.
+
+--
+- It is accurate
+
+???
+
+The data represents what we think it represents.
+
+--
+- The FAIR principles
+
+???
+
+This is somewhat related to data quality as well.
+While it doesn't address the quality of the actual data points, it addresses more general concerns regarding data quality.
+Is the data findable?
+Is it accessible?
+Is it interoperable?
+Is it reproducible?
+
+Many of these things we don't really have to think about while we analyse the data, but rather something that should be thought about when designing the experiment and when finally publishing your results together with your data.
+
+---
+
+# How do we check our data?
+
+- Check that it roughly behaves according to your expectations.
+
+???
+
+If it doesn't, chances are that something has gone wrong.
+If you are the person that have collected the data, or at least is in close collaboration with whomever did it, you likely know the data pretty well, and you should take your gut feeling seriously.
+
+--
+- Identify batch or sampling effects.
+
+???
+
+It might be that sampling has been performed across several days, or measurements have been done using different machines.
+These are metadata that should be part of your dataset, and you have to look at your data taking these variables into account.
+Are the patterns you're seeing in your data real, or are they due to one of these variables.
+
+--
+- Identify any confounding variables.
+
+???
+
+If two variables are confounded, it means that we have two factors in our experimental setup that we cannot separate.
+For example, imagine that we have measured a certain characteristic of our samples using two different machines, and the samples were exposed to two different chemicals.
+Let's say we use one machine to measure the samples that were exposed to the first chemical, and the other machine for the samples exposed to the second chemical.
+If we see a systematic difference between the two batches of measurements, we cannot say whether this is an effect of the chemical (i.e. a biological effect), or if it is an effect of the machine (i.e. a techinal effect).
+
+If we realise that we have confounded variables, there's nothing we can do about it, other than to repeat the experiment.
+Therefore it is *very* important to consider these things when designing your experiments.
+
+--
+- An understanding of where the data comes from and what it is supposed to present is critical in order to assess their quality.
+
+???
+
+If we don't know where the data comes from or what it is supposed to represent, it will be really difficult to assess their quality.
+There are some basic things we can do in order to get a rough idea, but without a proper understanding, any analyses will be difficult to interpret.
+
+---
+
+class: quote
+
+&gt; “There are no routine statistical questions, only questionable statistical routines.”
+&gt; .source[— Sir David Cox]
+
+???
+
+What I mean with this is that there is no one workflow when it comes to data QC that is applicable to everything.
+Every dataset is unique, and every dataset can have its own set of problems.
+Usually, datasets with the same type of data will behave similarly.
+For example, RNA-sequencing datasets will typically have some characteristics in common that would have to be looked into.
+However, a dataset like the one we will look at today might have a different set of issues that we have to consider.
+
+---
+
+# Example dataset: leaf shape
+
+For the remainder of this lecture, I will use a dataset from a paper from our group.
+It is data on leaf shape from aspen trees.
+The three main variables in this dataset are
+
+- **Circularity:** How circular the leaves are, from 0 to 1. Zero is a straight line, and 1 is a perfect circle.
+- **Indent depth:** The median depth in mm of the indents on the leaf margin.
+- **Area:** Leaf area in mm&lt;sup&gt;2&lt;/sup&gt;.
+
+.pull-left-75.small[
+
+```r
+leaves &lt;- read_tsv(here("data/leaves.tsv"),
+                   col_types = cols(
+                     .default = col_number(),
+                     site = col_factor(),
+                     block = col_factor(),
+                     clone = col_factor(),
+                     leaf = col_factor(),
+                     position = col_factor(),
+                     metacol = col_factor(),
+                     metarow = col_factor(),
+                     population = col_factor()
+                   )) %&gt;% 
+  mutate(leaf = fct_inseq(leaf))
+leaves
+```
+
+```
+## # A tibble: 1,593 × 12
+##     year site  block clone leaf  position metacol metarow population circularity
+##    &lt;dbl&gt; &lt;fct&gt; &lt;fct&gt; &lt;fct&gt; &lt;fct&gt; &lt;fct&gt;    &lt;fct&gt;   &lt;fct&gt;   &lt;fct&gt;            &lt;dbl&gt;
+##  1  2008 Ekebo 1     1     5     111      7       14      Simlang          0.853
+##  2  2008 Ekebo 2     1     5.5   173      5       22      Simlang          0.874
+##  3  2008 Ekebo 3     1     5     255      10      2       Simlang          0.930
+##  4  2008 Ekebo 4     1     5     494      19      16      Simlang          0.857
+##  5  2008 Ekebo 1     2     5.5   121      1       16      Simlang          0.892
+##  6  2008 Ekebo 2     2     5.5   136      8       17      Simlang          0.859
+##  7  2008 Ekebo 3     2     4.5   299      9       11      Simlang          0.859
+##  8  2008 Ekebo 4     2     5.5   458      15      12      Simlang          0.880
+##  9  2008 Ekebo 1     3     5.5   118      6       15      Simlang          0.728
+## 10  2008 Ekebo 2     3     5.5   137      1       18      Simlang          0.784
+## # … with 1,583 more rows, and 2 more variables: indent_depth &lt;dbl&gt;, area &lt;dbl&gt;
+```
+]
+
+.pull-right-25.framed[
+[![](../img/leaf_paper_screenshot.png)](https://doi.org/10.1002/ece3.6691)
+]
+
+---
+
+# Example dataset: leaf shape
+
+.pull-left[
+The trees were collected from all over Sweden and then grown in two common gardens: one in Ekebo and one in Sävar.
+Leaves were collected from these common gardens in two different years: 2008 and 2011.
+
+The sites and the sampling years are also represented by the variables `site` and `year`.
+]
+
+.pull-right[
+&lt;img src="./figures/data_quality_control_common_garden_map-1.png" width="100%" /&gt;
+]
+
+---
+
+# Exploring the data
+
+.left-column[
+## Distributions
+]
+
+.right-column[
+Everything has a distribution.
+
+&lt;img src="./figures/data_quality_control_height_distribution-1.png" width="100%" /&gt;
+]
+
+???
+
+This is an example using the height of adults in the United States.
+The x-axis is the height in centimetres, and the y-axis represents the frequency.
+It's more likely to find a person of average height, and the further out towards the edges we get, the heights get more extreme.
+As they get more extreme, we also see that they also get less and less likely to observe.
+
+---
+
+# Exploring the data
+
+.left-column[
+## Distributions
+]
+
+.right-column[
+Everything has a distribution.
+
+&lt;img src="./figures/data_quality_control_height_distribution_sex-1.png" width="100%" /&gt;
+]
+
+???
+
+If you looked closely at the previous figure, you would have seen that it wasn't perfectly symmetrical.
+This was due to it consisting of two separate distributions: the heights of females and the height of males.
+
+Now, these figures are not based on all the measurements that were made, only on the mean and standard deviation of the actual measurements.
+
+---
+
+# Exploring the data
+
+.left-column[
+## Distributions
+]
+
+.right-column[
+.pull-left[
+
+```r
+ggplot(leaves, aes(area)) +
+  geom_histogram()
+```
+
+&lt;img src="./figures/data_quality_control_area_histogram-1.png" width="432" /&gt;
+]
+
+.pull-right[
+
+```r
+ggplot(leaves, aes(area)) +
+  geom_density()
+```
+
+&lt;img src="./figures/data_quality_control_area_density-1.png" width="432" /&gt;
+]
+]
+
+???
+
+Visualising your data is probably the first step we should take when assessing the quality.
+What types of plots are useful depends on our data.
+
+For histograms, you always get a message saying: `stat_bin()` using `bins = 30` . Pick better value with `binwidth`.
+
+--
+
+.right-column[
+Look for the unexpected:
+
+- What are the most common values?
+- What are the least common values?
+- Are there clusters of values?
+]
+
+???
+
+Sometimes things can hide in a distribution like this, so you have to look for the unexpected.
+In this example it looks like we have a little bump on the side of the main peak.
+This could be due to random chance, or it could possibly be explained by something in our data.
+
+---
+
+# Exploring the data
+
+.left-column[
+## Distributions
+## Grouping
+]
+
+.right-column[
+
+```r
+ggplot(leaves, aes(area, fill = site)) + 
+  geom_histogram(alpha = 0.7, position = "identity")
+```
+
+&lt;img src="./figures/data_quality_control_area_histogram_site-1.png" width="432" /&gt;
+]
+
+???
+
+Histograms on top of eachother can be hard to read, especially if we have more than two distributions.
+
+---
+
+# Exploring the data
+
+.left-column[
+## Distributions
+## Grouping
+]
+
+.right-column[
+
+```r
+ggplot(leaves, aes(area, colour = site)) + 
+  geom_freqpoly()
+```
+
+&lt;img src="./figures/data_quality_control_area_freqpoly_site-1.png" width="432" /&gt;
+]
+
+???
+
+This is much easier to read, but again, with more than two it still becomes a bit hard.
+
+---
+
+# Exploring the data
+
+.left-column[
+## Distributions
+## Grouping
+]
+
+.right-column[
+
+```r
+ggplot(leaves, aes(area, colour = site)) + 
+  facet_grid(rows = vars(site, year)) +
+  geom_freqpoly()
+```
+
+&lt;img src="./figures/data_quality_control_area_freqpoly_facet-1.png" width="432" /&gt;
+]
+
+???
+
+Enter small multiples.
+
+Here it becomes really clear that the distribution of leaf area in each garden is bimodal, i.e. it really consists of two different distributions.
+The variance looks to be roughly similar, but especially for the Ekebo garden, we see that the mean areas are different.
+
+---
+
+# Exploring the data
+
+.left-column[
+## Distributions
+## Grouping
+]
+
+.right-column.small[
+.pull-left-60[
+
+```r
+ggplot(leaves, aes(area, colour = site)) + 
+  facet_grid(rows = vars(site, year)) +
+  geom_freqpoly() +
+  geom_vline(data = leaves %&gt;%
+               group_by(site, year) %&gt;%
+               summarise(mean_area = mean(area)),
+             aes(xintercept = mean_area),
+             linetype = "dashed", alpha = 0.5, size = 1)
+```
+
+&lt;img src="./figures/data_quality_control_area_freqpoly_facet_means-1.png" width="432" /&gt;
+]
+
+.pull-right-40[
+
+```r
+leaves %&gt;%
+  group_by(site, year) %&gt;% 
+  summarise(mean_area = mean(area),
+            sd_area = sd(area),
+            n = n())
+```
+
+```
+## # A tibble: 4 × 5
+## # Groups:   site [2]
+##   site   year mean_area sd_area     n
+##   &lt;fct&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt;
+## 1 Ekebo  2008      704.    203.   430
+## 2 Ekebo  2011     1262.    264.   444
+## 3 Sävar  2008      745.    254.   326
+## 4 Sävar  2011      927.    258.   393
+```
+]
+]
+
+???
+
+We can further illustrate this by adding the mean value to these figures.
+
+Now that we have seen that there is a difference in leaf area between these gardens and sampling years, is this something that we would expect, and can we find a reasonable explanation for it?
+
+Part of the explanation could then be the trees have grown during the two years (we would hope so), and thus produced larger leaves.
+This would be supported by the fact that the mean leaf area has increased for both populations.
+Furthermore, in this particular case, Ekebo is located in the south of Sweden, while Sävar is just outside of Umeå.
+The southern population would have had a longer growing period, meaning that in theory, these trees should have been larger than the northern population in 2011, possibly accounting for the difference between the two populations.
+
+The trees were planted in 2004, so the difference in size cannot be the whole story.
+If that would have been the case, then we should have seen larger leaves in the southern population in 2008, but this is not the case.
+
+Anyway, there is not really anything very strange going on, but we will have to keep in mind that the variance in this dataset is actually smaller than it seems, and that garden and year are important factors we have to consider in any downstream analysis.
+We learned something about our data!
+
+---
+
+# Exploring the data
+
+.left-column[
+## Distributions
+## Grouping
+]
+
+.right-column.small[
+In these common gardens, the trees were grown in a [block design](https://en.wikipedia.org/wiki/Blocking_%28statistics%29#Randomized_block_design).
+This makes the `block` variable a good candidate to look at in more detail to see whether the position in the field mattered.
+
+
+```r
+library(ggridges)
+ggplot(leaves, aes(y = block, x = area, fill = site)) +
+  facet_grid(rows = vars(site, year)) +
+  geom_density_ridges() +
+  theme(legend.position = "none")
+```
+
+&lt;img src="./figures/data_quality_control_leveas_block_effect-1.png" width="432" /&gt;
+]
+
+???
+
+You could imagine that a block could be closer to a stream so the trees get more water, or that a block is shaded by some surrounding structure part of the day.
+These are things that could affect our experiment.
+
+Note that this is just a visual inspection.
+Sometimes it might be really hard to see small effects, and for this we should use appropriate statistical models.
+This is however not something we will bring up at this time.
+
+From this, it is not obvious that there is any difference between the blocks when it comes to leaf area.
+
+---
+
+# Exploring the data
+
+.left-column[
+## Distributions
+## Grouping
+## Outliers
+]
+
+.right-column[
+
+```r
+ggplot(diamonds, aes(y)) +
+  geom_histogram(binwidth = 0.5)
+```
+
+&lt;img src="./figures/data_quality_control_diamonds_histogram-1.png" width="432" /&gt;
+]
+
+???
+
+An outlier is an observation that falls far away from the majority of all observations.
+
+Here we're looking at the diamonds dataset again.
+We don't really see the outliers themselves due to the size of the dataset, but a giveaway is that the x-axis scale goes way off to the right.
+
+---
+
+# Exploring the data
+
+.left-column[
+## Distributions
+## Grouping
+## Outliers
+]
+
+.right-column[
+
+```r
+ggplot(diamonds, aes(y)) +
+  geom_histogram(binwidth = 0.5) +
+  coord_cartesian(ylim = c(0, 100))
+```
+
+&lt;img src="./figures/data_quality_control_diamonds_histogram_zoom-1.png" width="432" /&gt;
+]
+
+???
+
+Here we've used the `ylim` (so, y limit) parameter in `coord_cartesian` to limit the y-axis to between 0 and 100.
+Then we can see that there are some observations that stand out.
+There are some at 0, some around 30 and some around 60.
+Let's use dplyr to fish these out to see what's going on.
+
+---
+
+# Exploring the data
+
+.left-column[
+## Distributions
+## Grouping
+## Outliers
+]
+
+.right-column[
+
+```r
+filter(diamonds, y &gt; 20 | y &lt; 2) %&gt;% 
+  select(price, carat, x, y, z) %&gt;% 
+  arrange(y)
+```
+
+```
+## # A tibble: 9 × 5
+##   price carat     x     y     z
+##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1  5139  1     0      0    0   
+## 2  6381  1.14  0      0    0   
+## 3 12800  1.56  0      0    0   
+## 4 15686  1.2   0      0    0   
+## 5 18034  2.25  0      0    0   
+## 6  2130  0.71  0      0    0   
+## 7  2130  0.71  0      0    0   
+## 8  2075  0.51  5.15  31.8  5.12
+## 9 12210  2     8.09  58.9  8.06
+```
+]
+
+???
+
+So, y is one of the dimensions of the diamond, in millimeters.
+
+Having a dimension that is zero is not really possible, so these must be measurements that have gone wrong.
+
+If we look at the larger values, these diamonds would be enourmous, and also pretty misshapen.
+Furthermore, the price of these is way too low if they would really be that big.
+This all indicates that we should disregard these values.
+
+In this case it is pretty obvious that these values are wrong, but other times it might not be so obvious.
+Most of the time, outliers are just errors of some kind, but sometimes they can be new science.
+Therefore you shouldn't just exclude outliers routinely.
+Instead, do your analysis with and without the outliers.
+If they don't affect the analysis much, then exclude them.
+If they do, however, you probably want to find out why they are there, and if you exclude them, you should make that very clear when presenting your results.
+
+---
+
+# Exploring the data
+
+.left-column[
+## Distributions
+## Grouping
+## Outliers
+## Other weird values
+]
+
+.right-column[
+
+```r
+ggplot(leaves, aes(x = circularity)) +
+  geom_histogram(binwidth = 0.01) +
+  annotate("rect", xmin = 1, xmax = 1.15, ymin = 0, ymax = 60,
+           colour = "firebrick", fill = NA, size = 1) +
+  annotate("text", x = 1.1, y = 40, label = "??", colour = "firebrick",
+           size = 16, angle = -30)
+```
+
+&lt;img src="./figures/data_quality_control_leaf_circularity_histogram-1.png" width="432" /&gt;
+
+]
+
+???
+
+So, back to our leaf shape data.
+Remember how I said that circularity should be between 0 and 1?
+If that's the case, then what are these values doing here?
+
+These values can't really be considered outliers, but they theoretically they shouldn't be possible.
+In this particular example, I had to talk to my colleagues that worked much closer to this data than what I did.
+
+---
+
+# Exploring the data
+
+.left-column[
+## Distributions
+## Grouping
+## Outliers
+## Other weird values
+]
+
+.right-column[
+.pull-left[
+If the perimeter and area metrics of the leaf match up well, then we might get values that are not 100% correct.
+
+$$
+C = \frac{4\pi{}A}{P^2}
+$$
+
+This seems to be a somewhat common issue in the image analysis community.
+]
+
+.pull-right[
+![](../img/circularity_conversation.png)
+]
+]
+
+???
+
+It turns out that this is probably due to some imperfections in the calculation of the perimeter of the leaf, which then leads to this discrepancy.
+Since the distribution in this case looks ok, we can probably leave these values as they are.
+The main characteristic is still there: the larger the value, the more circular the leaves are.
+Unless we need to be more precise than that, this data is good for us.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="js/macros.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"navigation": {
+"scroll": false
+}
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
