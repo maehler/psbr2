@@ -632,6 +632,56 @@ If you wrote the software yourself, then definitely make it available to others.
 
 ---
 
+# Preprints
+
+.pull-left[
+Get your work out there ahead of peer-review and publication.
+]
+
+.pull-right[
+![:scale 30%, bioRxiv logo](https://www.biorxiv.org/sites/default/files/site_logo/bioRxiv_logo_homepage.png)
+
+![Figshare logo](https://websitev3-p-eu.figstatic.com/assets-v3/206a169dd6997e54b64b06b900d247a8e2ae41e1/static/media/defaultLogo.30adffde.png)
+
+```{r, echo = FALSE}
+div(
+  p("arXiv.org", style = "font-size: 2em; color: white; margin: 0;"),
+  style = "background-color: #A20916; display: inline-block; padding: 0.5em 1em;",
+  class = "tile-item"
+)
+```
+]
+
+???
+
+This might be something you have come across through sites like biorXiv.
+
+---
+
+# Preprints
+
+.pull-left[
+### Pros:
+- You get your results out there quickly. Can be useful if there is competition in the field in order to claim novelty.
+- More eyes on your research; mistakes or possibilities to improve things early on.
+- Don't have to rush through the publication process.
+]
+
+.pull-right[
+### Cons:
+- Since basically anything can be posted as a preprint, you have to be careful to not swallow everything that is posted. The documents are only roughly screened in order to make sure that it's not complete nonsense.
+- In my experience, not much feedback from peers.
+]
+
+???
+
+The papers I've had on bioRxiv haven't gotten too much attention, but they've been tweeted and whatnot.
+With the COVID-19 pandemic, we saw a surge of COVID related papers and preprints, and in many cases valuable research could reach the community much faster thanks to preprints.
+There were a whole bunch of retractions as well, but seemingly not more than for research in general.
+You could however argue that the impact of some of the papers retracted was larger than what is common.
+
+---
+
 # How to ask for help
 
 .left-column[
