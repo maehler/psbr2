@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>Code sharing: RMarkdown</title>
+    <title>Code sharing: R Markdown</title>
     <meta charset="utf-8" />
     <meta name="author" content="Niklas Mähler" />
     <meta name="date" content="2021-10-14" />
@@ -14,7 +14,7 @@
     <textarea id="source">
 class: left, middle, inverse, title-slide
 
-# Code sharing: RMarkdown
+# Code sharing: R Markdown
 ## Practical Skills for Biology Research II
 ### Niklas Mähler
 ### Umeå University
@@ -25,7 +25,286 @@ class: left, middle, inverse, title-slide
 
 
 
+# First: What is Markdown?
+
+The name markdown is a take on the work markup, as in HTML (Hyper-Text Markup Language).
+
+.center[&lt;svg viewBox="0 0 640 512" style="position:relative;display:inline-block;top:.1em;height:10em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M593.8 59.1H46.2C20.7 59.1 0 79.8 0 105.2v301.5c0 25.5 20.7 46.2 46.2 46.2h547.7c25.5 0 46.2-20.7 46.1-46.1V105.2c0-25.4-20.7-46.1-46.2-46.1zM338.5 360.6H277v-120l-61.5 76.9-61.5-76.9v120H92.3V151.4h61.5l61.5 76.9 61.5-76.9h61.5v209.2zm135.3 3.1L381.5 256H443V151.4h61.5V256H566z"&gt;&lt;/path&gt;&lt;/svg&gt;]
+
+It is a mini-language for typesetting documents, making it easy to create headings, paragraphs, inserting images, hyperlinks, etc.
+
+[The Markdown Guide](https://www.markdownguide.org/)
+
+---
+
+# [Markdown syntax](https://www.markdownguide.org/basic-syntax/)
+
+## Headings
+
+.pull-left[
+```md
+# First level
+
+## Second level
+
+### Third level
+
+#### Fourth level
+```
+]
+
+.pull-right[
+# First level
+
+## Second level
+
+### Third level
+
+#### Fourth level
+]
+
+---
+
+# [Markdown syntax](https://www.markdownguide.org/basic-syntax/)
+
+## Emphasis
+
+.pull-left[
+```md
+This is **bold** text.
+
+This is *italic* text.
+
+This is ***bold and italic*** text.
+```
+]
+
+.pull-right[
+This is **bold** text.
+
+This is *italic* text.
+
+This is ***bold and italic*** text.
+]
+
+---
+
+# [Markdown syntax](https://www.markdownguide.org/basic-syntax/)
+
+## Lists
+
+.pull-left[
+```md
+- First  item
+- Second  item
+- Third item
+
+1. First item
+2. Second item
+3. Third item
+```
+]
+.pull-right[
+- First  item
+- Second  item
+- Third item
+
+1. First item
+2. Second item
+3. Third item
+]
+
+---
+
+# Rendering Markdown
+
+The Markdown file format (file extension `.md`) is just a text file format.
+In order to produce a proper document, we have to run it through an interpreter.
+Nowadays, this is something that is often built-in into editors that support Markdown, including RStudio.
+
+.pull-left.small[
+```md
+# This is a heading
+
+ **Lorem** ipsum dolor sit amet, consecteturadipiscing elit.
+Morbi blandit at augue eu accumsan. Nullam pharetra tortor non
+leo sollicitudin, sed efficitur arcu auctor. Nullam quis magna
+dapibus, volutpat libero eu, convallis mi.
+
+- Lorem
+- ipsum
+- dolor
+
+## References
+
+[Lorem ipsum generator](https://www.lipsum.com/)
+```
+]
+
+.pull-right.small[
+# This is a heading
+
+**Lorem** ipsum dolor sit amet, consecteturadipiscing elit.
+Morbi blandit at augue eu accumsan. Nullam pharetra tortor non
+leo sollicitudin, sed efficitur arcu auctor. Nullam quis magna
+dapibus, volutpat libero eu, convallis mi.
+
+- Lorem
+- ipsum
+- dolor
+
+## References
+
+[Lorem ipsum generator](https://www.lipsum.com/)
+]
+
+---
+
+# R Markdown
+
+R Markdown is a flavour of Markdown where we can include R code that can execute as we render the document.
+
+.pull-left[
+````md
+I took a bunch of random numbers
+
+```{r}
+x &lt;- rnorm(10)
+```
+
+And I calculated the mean
+
+```{r}
+mean(x)
+```
+````
+]
+
+.pull-right[
+I took a bunch of random numbers
+
+
+```r
+x &lt;- rnorm(10)
+```
+
+And I calculated the mean
+
+
+```r
+mean(x)
+```
+
+```
+## [1] -0.1329441
+```
+]
+
+???
+
+As you can see here, whatever is produced in one code chunk will be kept in the environment of the document, so to say, while it's being rendered.
+This means that we can use variables that we have defined in a code chunk later in the document.
+
+---
+
+# R Markdown
+
+We can even include graphics.
+
+.pull-left[
+````md
+Here's the distribution of diamond carats:
+
+```{r}
+ggplot(diamonds, aes(carat)) +
+  geom_histogram()
+```
+````
+]
+
+.pull-right[
+Here's the distribution of diamond carats:
+
+
+```r
+ggplot(diamonds, aes(carat)) +
+  geom_histogram()
+```
+
+&lt;img src="./figures/code_sharing_rmarkdown_diamonds_histogram-1.png" width="432" /&gt;
+]
+
+---
+
+# R Markdown in RStudio
+
+Support for R Markdown is built-in to RStudio.
+
+.pull-left[
+![](../img/rstudio_menu_rmarkdown.png)
+]
+
+.pull-right[
+![](../img/rstudio_menu_knitr.png)
+]
+
+---
+
+# R Markdown preamble
+
+When we create a new R Markdown document, we get an example document, and the first thing in the file is something like this:
+
+```yaml
+---
+title: "My first R Markdown document"
+author: "Niklas Mähler"
+date: "9/16/2021"
+output: html_document
+---
+```
+
+This is a **preamble**, and it help out in creating the title for our rendered document.
+It can also be used to control the default format of our rendered document.
+
+---
+
+# Running code chunks
+
+If a document gets big, or it contains long-running calculations, it can take quite some time to render (or **knit**).
+We can run individual code chunks RStudio without knitting the whole document.
+
+.center[
+![:scale 50%](../img/rstudio_menu_run.png)
+]
+
+???
+
+I'm very fond of keyboards, and keyboard shortcuts, so I almost never use the menus.
+
+Now I will do a bit of a live demo of some R Markdown functionality.
+
+---
+
+# R Markdown references
+
+- [RStudio R Markdown](https://rmarkdown.rstudio.com/): Contains the basics to get started.
+- [R Markdown: The Definitive Guide](https://bookdown.org/yihui/rmarkdown/): The guide to everything R Markdown.
+- [knitr](https://yihui.org/knitr/): The rendering engine for R Markdown where you can dig into the fine details.
+- [R Markdown Cheat Sheet](https://github.com/rstudio/cheatsheets/blob/master/rmarkdown-2.0.pdf)
+
+???
+
+When it comes to the relly fine-grained nuances of R Markdown and knitr, don't think about that now.
+I'm just throwing this out there so you know where to look in case you would be interested.
+Also, if you continue to use RStudio and R Markdown, you will almost inevitably end up needing these references.
+
+---
+
 # Coding standards
+
+.center[
+![:scale 50%](https://imgs.xkcd.com/comics/code_quality.png)
+]
 
 A coding standard (or coding style) describes how source code should be written.
 There are usually many different ones, and it is often the case that a workplace or a project group adopts their own coding standard.
@@ -33,7 +312,79 @@ There are usually many different ones, and it is often the case that a workplace
 What standard to use is not really that important.
 The important thing is that everyone involved use the same coding standard.
 
-[The tidyverse style guide](http://adv-r.had.co.nz/Style.html)
+[The tidyverse style guide](https://style.tidyverse.org/)
+
+???
+
+When sharing code, it is always good if the barrier for reading and being able to understand the code is as low as possible. 
+This is something that can be helped by a coding standard.
+
+---
+
+# [The tidyverse style guide](https://style.tidyverse.org/)
+
+As far as it is possible, don't reuse names of common functions or variables.
+
+
+```r
+# Bad
+T &lt;- FALSE
+c &lt;- 10
+mean &lt;- function(x, ...) sum(x, ...)
+```
+
+Variable and function names should use only lowercase letters, numbers, and `_`.
+Use underscores (`_`) (so called snake case) to separate words within a name.
+
+
+```r
+# Good
+day_one
+day_1
+
+# Bad
+DayOne
+dayone
+```
+
+---
+
+# [The tidyverse style guide](https://style.tidyverse.org/)
+
+Use line breaks to make your code easier to read.
+
+
+```r
+iris %&gt;%
+  group_by(Species) %&gt;%
+  summarise(
+    Sepal.Length = mean(Sepal.Length),
+    Sepal.Width = mean(Sepal.Width),
+    Species = n_distinct(Species)
+  )
+```
+
+
+```r
+# Good
+ggplot(aes(x = Sepal.Width, y = Sepal.Length, color = Species)) +
+  geom_point() +
+  labs(
+    x = "Sepal width, in cm",
+    y = "Sepal length, in cm",
+    title = "Sepal length vs. width of irises"
+  ) 
+
+# Bad
+ggplot(aes(x = Sepal.Width, y = Sepal.Length, color = Species)) +
+  geom_point() +
+  labs(x = "Sepal width, in cm", y = "Sepal length, in cm", title = "Sepal length vs. width of irises") 
+```
+
+
+???
+
+Here are some examples from the style guide, but I encourage you to skim through it yourself.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
@@ -42,7 +393,10 @@ The important thing is that everyone involved use the same coding standard.
 "ratio": "16:9",
 "highlightStyle": "github",
 "highlightLines": true,
-"countIncrementalSlides": false
+"countIncrementalSlides": false,
+"navigation": {
+"scroll": false
+}
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));

@@ -196,11 +196,11 @@ schedule:
   - day:
     - start_time:
       end_time:
-      topic: "Code sharing: RMarkdown"
+      topic: "Code sharing: R Markdown"
       url: lectures/16_code_sharing_rmarkdown.html
       room: B3-46-49 Solanum lycopersicum
       details: |
-        - What is (R)markdown?
+        - What is (R) markdown?
         - Example of how to create a self-documenting analysis
     - start_time:
       end_time:
