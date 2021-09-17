@@ -29,3 +29,22 @@ note_fa <- function(icon, scale = 2) {
 print_df_5 <- function(x, ...) {
   print(x, n = 5, ...)
 }
+
+article_tile <- function(headline, lead, date, source, source_url) {
+  div(
+    tags$time(date, datetime = date),
+    h1(headline),
+    p(lead, class = "lead"),
+    p(a(source, href = source_url), class = "source"),
+    class = "article"
+  )
+}
+
+collect_articles <- function(articles, rotation = 0) {
+  modify(articles, ~ {
+    if (!is.character(.)) {
+      .$attribs$style <- str_c("transform: rotate(", rotation * runif(1, -1, 1), "deg);")
+    }
+    .
+  }) %>% do.call(div, .)
+}

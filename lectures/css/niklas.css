@@ -227,3 +227,39 @@ iframe {
 .pull-right-75, .pull-right-60, .pull-right-40, .pull-right-25 {
   float: right;
 }
+
+.article-wrapper {
+  max-height: 700px;
+  padding-top: 1em;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+.article {
+  background-color: white;
+  max-width: 400px;
+  border: 1px solid gray;
+  padding: 0.5em 1em;
+  margin-bottom: 1em;
+}
+
+  .article time, .article .date {
+    font-size: 0.6em;
+    color: gray;
+  }
+
+  .article h1 {
+    font-size: 1.1em;
+    font-family: "Merriweather", serif;
+  }
+
+  .article .lead {
+    font-size: 0.7em;
+  }
+
+  .article .source {
+    font-size: 0.6em;
+    text-align: right;
+    margin: 0;
+  }

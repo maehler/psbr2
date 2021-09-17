@@ -25,6 +25,129 @@ class: left, middle, inverse, title-slide
 
 
 
+# Why do we need to share our data?
+
+- Science is a community effort
+- We need to be transparent about our research
+
+---
+
+<div class="article-wrapper">
+<div class="article" style="transform: rotate(-2.99785547424108deg);">
+<time datetime="2014-12-15">2014-12-15</time>
+<h1>Scientists Have a Sharing Problem</h1>
+<p class="lead">Competition and disorganization within their disciplines prevent many researchers from making their data publicly available, which is stunting scientific progress.</p>
+<p class="source">
+<a href="https://www.theatlantic.com/health/archive/2014/12/scientists-have-a-sharing-problem/383061/">The Atlantic</a>
+</p>
+</div>
+<div class="article" style="transform: rotate(1.85218595666811deg);">
+<time datetime="2018-01-10">2018-01-10</time>
+<h1>“Available upon request”: not good enough for microbiome data!</h1>
+<p class="lead"></p>
+<p class="source">
+<a href="https://doi.org/10.1186/s40168-017-0394-z">Microbiome</a>
+</p>
+</div>
+<div class="article" style="transform: rotate(4.1687577450648deg);">
+<time datetime="2019-02-26">2019-02-26</time>
+<h1>Assessing data availability and research reproducibility in hydrology and water resources</h1>
+<p class="lead">Bottlenecks [for reproducibility] include: only some digital artifacts available (44% of articles), no directions (89%), or all artifacts available but results not reproducible (5%).</p>
+<p class="source">
+<a href="https://doi.org/10.1038/sdata.2019.30">Scientific Data</a>
+</p>
+</div>
+<div class="article" style="transform: rotate(-2.15600542724133deg);">
+<time datetime="2020-06-05">2020-06-05</time>
+<h1>High profile coronavirus retractions raise concerns about data oversight</h1>
+<p class="lead">Retracted studies had relied on health-record analyses from a company that declined to share its raw data for an audit.</p>
+<p class="source">
+<a href="https://doi.org/10.1038/d41586-020-01695-w">Nature</a>
+</p>
+</div>
+<div class="article" style="transform: rotate(-3.95349872065708deg);">
+<time datetime="2020-08-25">2020-08-25</time>
+<h1>Why the United States is having a coronavirus data crisis</h1>
+<p class="lead">Political meddling, disorganization and years of neglect of public-health data management mean the country is flying blind.</p>
+<p class="source">
+<a href="https://doi.org/10.1038/d41586-020-02478-z">Nature</a>
+</p>
+</div>
+<div class="article" style="transform: rotate(2.01057459227741deg);">
+<time datetime="2021-07-27">2021-07-27</time>
+<h1>Data sharing practices and data availability upon request differ across scientific disciplines</h1>
+<p class="lead"></p>
+<p class="source">
+<a href="https://doi.org/10.1038/s41597-021-00981-0">Scientific Data</a>
+</p>
+</div>
+</div>
+
+???
+
+If we think about reproducibility, there are countless examples of studies where analyses cannot be reproduced due to data not being available.
+
+The COVID-19 pandemic has put some of these issues in the spotlight, where data being held back, or getting lost, has resulted in retracted studies and 
+Not only is this problematic from a reproducibility point of view, but these are matters of public health.
+
+The first study in Scientific Data shows that out of the papers that they looked at 
+
+The second study published in Scientific Data looked at over 800 papers published in Science and Nature in to time periods: 2000-2009 and 2010-2019.
+They could see that data availability has improved with time, but there is still work to do.
+In cases where data was missing, or partially missing, they contacted the authors, and 41% of these requests were ignored within 60 days, including two reminders.
+
+---
+
+# A community effort
+
+- Allowing others to scrutinise and expand on your work
+- Reviews
+  - It might often be relevant to reanalyse part of the data from the studies included.
+- Meta-studies
+  - Examples in humans are [identifying longevity genes](https://doi.org/10.1038/s41467-019-11558-2), [identifying genetic variation associated with human height and BMI](https://doi.org/10.1093/hmg/ddy271), and [associating genetic variation with the gut microbiota](https://doi.org/10.1038/s41588-020-00763-1).
+
+---
+
+# Concerns about data sharing
+
+- Not knowing where to put the data.
+
+???
+
+This is something I hope you will know more about after this lecture.
+
+--
+- Lack of time.
+
+???
+
+This is not something I can help you with right now, but the solution is quite easy: take this into account when planning a project.
+Nowadays, this is an essential part of science, and it should be in your time plan and your budget just as much as anything else.
+
+--
+- Concerns about privacy and confidentiality
+
+???
+
+Getting scooped is perhaps the most common concern when it comes to sharing data.
+There are also ways around this.
+For example, many repositories have a function where you can keep the data private until your study has been accepted.
+However, the fear of getting scooped is often exaggerated, especially if you are "just" sharing the data.
+In order to get scooped, someone else would need to have the same ideas as you, and the same skillset within their team, and they also constantly have to browse data repositories in order to find the data that they need for this, supposedly, specific idea.
+
+--
+- You're not the one making the final decision.
+
+???
+
+Often, you are not the one taking the final decision when it comes to publication strategy.
+If people in your team oppose themselves to sharing the data, at least voice your opinion if you think it would be a good idea to do so.
+Also, as we'll get to know, sharing data doesn't necessarily mean that we have to put it out there for all to see, and this ties back to the previous point.
+We can actually be transparent without giving absolutely everything away, and sometimes this is crucial.
+For example, if you think about studies involving humans, you have privacy concerns you have to take into account.
+
+---
+
 # The FAIR principles
 
 FAIR was established in 2016, and it is an abbreviation that outlines a set of principles for how digital assets should be handled.
@@ -126,6 +249,120 @@ One problem with the FAIR principles is that they are quite open for interpretat
 - [Swedish National Data Service](https://snd.gu.se/en/describe-and-share-data/what-does-fair-data-mean)
 - [The GO FAIR initiative](https://www.go-fair.org/fair-principles/)
 - [State of Open Data](https://stateofopendata.od4d.net)
+
+---
+
+class: title
+
+# Where can we share data?
+
+???
+
+Here I will mostly focus on the types of data that I've been working with.
+If you have experience from other types of data, please let me know, and we can see if we can find a good place for making that type of data public.
+
+---
+
+# Sequence data
+
+- [European Nucleotide Archive (ENA)](https://www.ebi.ac.uk/ena/browser/home)
+  - Hosted by EMBL-EBI
+  - Nucleotide sequence information
+  - Raw sequencing data
+  - Genome assemblies
+  - Functional annotations
+- [NCBI](https://www.ncbi.nlm.nih.gov/)
+  - Hosted by the National Institutes of Health (NIH)
+  - Raw sequencing data
+  - Genome assemblies
+  - Functional annotations
+  
+???
+
+NCBI — National Center of Biotechnology Information, hosted by the NIH — National Institutes of Health
+
+This can be many types of sequence data, including things like targeted sequencing technologies like ChIP-Seq and Hi-C.
+
+Both of these are very strict when it comes to what metadata they require.
+There is a lot of information you have to collect about your data before you can submit.
+
+---
+
+# Miscellaneous
+
+- [Zenodo](https://zenodo.org)
+- [Figshare](https://figshare.com)
+- [Dryad](https://datadryad.org)
+- [Mendeley Data](https://data.mendeley.com/)
+
+
+- Basically any type of dataset
+- Posters and presentations
+- Preprints
+- Software
+
+???
+
+It can be raw images for image analysis, sequencing data, random excel sheets, you name it.
+
+Super simple to use.
+Puts more responsibility on the user in terms of metadata since you can upload more or less what you want.
+
+---
+
+# Licencing
+
+## What is a licence?
+
+It is a legal tool that defines how someone can modify, share, or otherwise use a resource for which you have the copyright, while keeping the copyright.
+
+## Things to consider
+
+- Attribution
+  - Do you have to credit the original creator?
+- Copyleft
+  - Can the data be modified and reshared, with the same licence?
+- Non-commerciality
+  - Can you use the resource to make money?
+
+
+- [choosealicense.com](https://choosealicense.com/) can help you choose a licence, intended mainly for software.
+- [Creative Commons](https://creativecommons.org/licenses/) have a set of licences that are appropriate for papers, data, posters, etc.
+
+???
+
+Often when sharing things, be it a poster for a conference, a piece of software we wrote, or a dataset, we have to choose what licence that should apply.
+The licence tells anyone that comes across it what the conditions are for using, reusing, or modifying the resource.
+
+If you don't choose a licence, the resource is automatically set to "all rights reserved" according to copyright law, meaning no-one can do anything with it.
+That kind of sucks.
+
+---
+
+???
+
+But then you might be thinking: But what if someone uses my data that I made available and finds something using a technique I was about to try next?
+
+This is quite unlikely to happen.
+I would say that it is more likely that someone is actively working on the same thing, using their own data, completely independent of you.
+Your research doesn't happen in a vacuum.
+It is influenced by the current topics and trends that are floating around, and you are far from alone with coming up with ideas.
+This is also another reason why preprints are a good thing: you can confidently claim that you thought of this yourself, without being influenced by whatever papers that will be published while your study is stuck in peer review.
+
+This exact thing has happened to me.
+We had a paper that we had been working on for quite some time.
+As we were ready to submit it to a journal, we published a preprint.
+We got some critical, but really great reviews, clearly by people that knew what they were talking about.
+A week or so before our paper was published by the journal, another paper came out.
+Same topic, same question, different species.
+
+Now, these studies got published so close in time, so there would be no doubt that they were independent from each other.
+However, writing up your results into a paper is a *very* time consuming process, so even if the actual work was done at the same time by two different groups, that doesn't mean that they will be published close in time.
+
+Science doesn't happen in a vacuum.
+There are other people out there.
+Don't fight it.
+Embrace it.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
@@ -134,7 +371,10 @@ One problem with the FAIR principles is that they are quite open for interpretat
 "ratio": "16:9",
 "highlightStyle": "github",
 "highlightLines": true,
-"countIncrementalSlides": false
+"countIncrementalSlides": false,
+"navigation": {
+"scroll": false
+}
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
