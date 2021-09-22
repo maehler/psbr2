@@ -23,13 +23,30 @@ navbar:
             href: lectures/05_how_to_get_help.html
         - text: Week 2
           menu:
-          - text: Basics of R Programming
-            href: lectures/06_basics_of_r_programming.html
+          - text: Basics of R coding
+            href: lectures/06_basics_of_r_coding.html
           - text: R packages
             href: lectures/07_r_packages.html
           - text: Data wrangling using dplyr
-            href: lectures/08_data_wrangling_using_dplyr.html
+            href: lectures/08_data_manipulation_using_dplyr.html
+          - text: Tidy data
+            href: lectures/09_tidy_data.html
+          - text: Importing data into R
+            href: lectures/10_importing_data_into_r.html
+          - text: Reproducibility in data science
+            href: lectures/11_reproducibility_in_data_science.html
+          - text: "Advanced plotting: the grammar of graphics"
+            href: lectures/12_advanced_plotting_the_grammar_of_graphics.html
+          - text: "Advanced plotting: dos and don'ts"
+            href: lectures/13_advanced_plotting_dos_and_donts.html
         - text: Week 3
+          menu:
+          - text: Data quality control
+            href: lectures/14_data_quality_control.html
+          - text: "Code sharing: R Markdown"
+            href: lectures/16_code_sharing_rmarkdown.html
+          - text: Data sharing
+            href: lectures/17_data_sharing.html
         - text: Week 4
         - text: Week 5
     - text: Suggested reading
