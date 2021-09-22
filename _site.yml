@@ -7,8 +7,6 @@ navbar:
       href: index.html
     - text: Schedule
       href: schedule.html
-    - text: Overview
-      href: overview.html
     - text: Lectures
       menu:
         - text: Week 1
