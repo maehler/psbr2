@@ -144,6 +144,7 @@ ggplot(nordic_map, aes(x = long, y = lat)) +
 # Sharing stuff!
 
 - How to share code
+- How to share data
 - How to ask for help
 - Reproducibility
 - Transparent research
@@ -161,6 +162,71 @@ ggplot(nordic_map, aes(x = long, y = lat)) +
 --
 
 - A Unix/Linux course
+
+---
+
+# Examination
+
+The examination consists of three parts, all of which will be performed individually.
+
+--
+
+## Practical assignment 1
+
+Will treat topics from the two first weeks of the course, and will take place on October 11.
+
+--
+
+## Practical assignment 2
+
+Will treat the second part of the course, and will take place on October 27-29.
+
+--
+
+## Short-answer knowledge test
+
+A theoretical exam that will take place on November 1.
+
+---
+
+# Practical assignment 1
+
+Will be made available on the morning of October 11.
+
+- Tidying of a messy dataset
+- Data manipulation using dplyr
+- Plotting
+
+The submission will close at 23:59 on October 11.
+
+---
+
+# Practical assignment 2
+
+Will be made available on the morning of October 27.
+This task will be a bit more extensive compared to the first assignment.
+
+- Use of R Markdown
+- Load a bigger dataset into R.
+- Data quality control, including visualisation.
+- Statistical analysis.
+
+The submission will close at 23:59 on October 29.
+
+---
+
+# How to hand in the practical assignments
+
+Due to limitations in Canvas, I recommend that the assignments are handed in by:
+
+- Submitting a link to an Office365/Google document that contains all answers. This document could also link to other documents (e.g. spreadsheets, HTML files, or R scripts).
+- Documents that don't fit well into a Word document can be uploaded to OneDrive (also in Office365) and be linked to from the main document.
+
+[Office 365 at Umeå University](http://o365.umu.se) (you'll be asked to log in with your CAS ID)
+
+???
+
+As students at Umeå University, you all have access to Office 365, and this is the solution that I will recommend.
 
 ---
 
