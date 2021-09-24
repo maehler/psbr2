@@ -178,6 +178,12 @@ schedule:
   - day:
     - start_time:
       end_time:
+      topic: "Practical assignment 1"
+      room: ""
+      lecture: false
+  - day:
+    - start_time:
+      end_time:
       topic: Data quality control
       url: lectures/14_data_quality_control.html
       details: |
@@ -186,6 +192,7 @@ schedule:
     - start_time:
       end_time:
       topic: Data transformations
+      room: B3-46-49 Solanum lycopersicum
       details: |
         - `mutate`, `scale`, `log`
         - Testing for normality
@@ -216,7 +223,6 @@ schedule:
     - start_time:
       end_time:
       topic: Large-scale data
-      room: B3-46-49 Solanum lycopersicum
       details: |
         - How large is large?
         - Examples of large-scale data
@@ -226,7 +232,6 @@ schedule:
           - Extract what is needed
         - Example: RNA-Seq
           - Loading into R
-  - day:
     - start_time:
       end_time:
       topic: Quality control for large-scale data
