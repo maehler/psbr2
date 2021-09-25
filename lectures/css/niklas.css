@@ -23,21 +23,21 @@
 .title {
 }
 
-.title h1 {
-  color: #333;
-  margin-top: 25%;
-  border-bottom: 1px solid firebrick;
-}
+  .title h1 {
+    color: #333;
+    margin-top: 25%;
+    border-bottom: 1px solid firebrick;
+  }
 
 /* Slide title style */
-.remark-slide-content:not(.title-slide, .title) > h1:first-child {
+.remark-slide-content:not(.title-slide, .title) > h1:first-of-type {
   color: #F1F1F1;
   background-color: #1D1E19;
   margin: -0.6em -2.2em 0.7em -2.2em;
   padding: 0.5em 0 0.5em 2em;
 }
 
-.inverse.remark-slide-content:not(.title-slide, .title) > h1:first-child {
+.inverse.remark-slide-content:not(.title-slide, .title) > h1:first-of-type {
   color: #1D1E19;
   background-color: #FFFFFF;
 }
@@ -262,4 +262,17 @@ iframe {
     font-size: 0.6em;
     text-align: right;
     margin: 0;
+  }
+
+.footer {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  height: 1em;
+  font-size: 1em;
+  margin: 0.75em;
+}
+
+  .footer svg {
+    fill: #6D6D6D;
   }

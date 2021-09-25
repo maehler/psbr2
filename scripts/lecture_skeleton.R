@@ -79,7 +79,8 @@ pwalk(topic_df, ~ {
   script_lines <- template_lines %>%
     str_replace("\\{\\{topic\\}\\}", ..1) %>%
     str_replace("\\{\\{date\\}\\}", format(..3, format = "%Y-%m-%d")) %>%
-    str_replace("\\{\\{topic_slug\\}\\}", ..4)
+    str_replace("\\{\\{topic_slug\\}\\}", ..4) %>%
+    str_replace("\\{\\{filename\\}\\}", basename(..5))
   write_lines(script_lines, file = ..5)
   message(str_c("Created skeleton for \"", ..1, "\" -> ",
                 fs::path(args$outdir, basename(..5))))

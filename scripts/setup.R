@@ -1,4 +1,4 @@
-setup_presentation <- function(cache_prefix) {
+setup_presentation <- function(cache_prefix, filename = NA) {
   knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.retina = 2,
                         message = FALSE, warning = FALSE, dpi = 72,
                         cache.path = paste0("./figures/", cache_prefix, "_"),
@@ -12,6 +12,17 @@ setup_presentation <- function(cache_prefix) {
   conflict_prefer("filter", "dplyr")
   source(here("scripts/ggplot_themes.R"))
   set.seed(12345)
+
+  if (!is.na(filename)) {
+    div(
+      a(
+        icons::fontawesome("github"),
+        href = str_c("https://github.com/maehler/psbr2/tree/main/lectures/",
+                     filename)
+      ),
+      class = "footer"
+    )
+  }
 }
 
 base64_img <- function(filename) {

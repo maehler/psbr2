@@ -6,15 +6,19 @@ institute: "Umeå University"
 date: "2021-09-30"
 ---
 
-```{r setup, include = FALSE}
+layout: true
+
+```{r setup, echo = FALSE, warning = FALSE, message = FALSE}
 source(here::here("scripts/setup.R"))
-setup_presentation("course_introduction")
+setup_presentation("course_introduction", filename = "01_course_introduction.Rmd")
 ```
 
 ```{r packages, include = FALSE}
 library(maps)
 library(mapproj)
 ```
+
+---
 
 # Who am I?
 

@@ -6,9 +6,11 @@ institute: "Umeå University"
 date: "2021-09-30"
 ---
 
-```{r setup, include = FALSE}
+layout: true
+
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
 source(here::here("scripts/setup.R"))
-setup_presentation("introduction_to_r")
+setup_presentation("introduction_to_r", filename = "02_introduction_to_r.Rmd")
 ```
 
 # What is R?

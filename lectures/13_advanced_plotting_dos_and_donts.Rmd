@@ -8,11 +8,15 @@ editor_options:
   chunk_output_type: console
 ---
 
-```{r setup, include = FALSE}
+layout: true
+
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
 source(here::here("scripts/setup.R"))
-setup_presentation("advanced_plotting_dos_and_donts")
+setup_presentation("advanced_plotting_dos_and_donts", filename = "13_advanced_plotting_dos_and_donts.Rmd")
 knitr::opts_chunk$set(fig.align = "center")
 ```
+
+---
 
 # Don't use dynamite plots
 

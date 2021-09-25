@@ -23,7 +23,17 @@ class: left, middle, inverse, title-slide
 ---
 
 
+layout: true
 
+<div class="footer">
+<a href="https://github.com/maehler/psbr2/tree/main/lectures/10_importing_data_into_r.Rmd">
+<svg viewBox="0 0 496 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg">
+<path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"></path>
+</svg>
+</a>
+</div>
+
+---
 
 # Importing data into R
 
@@ -309,7 +319,7 @@ heights &lt;- read_csv("data/heights.csv")
 
 ```
 ## 
-## ── Column specification ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+## ── Column specification ────────────────────────────────────────────────────────
 ## cols(
 ##   earn = col_double(),
 ##   height = col_double(),
@@ -348,7 +358,7 @@ read_csv("year,month,day,temperature
 ```
 
 ```
-## # A tibble: 3 x 4
+## # A tibble: 3 × 4
 ##    year month   day temperature
 ##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
 ## 1  2021     8    10          19
@@ -382,7 +392,7 @@ read_csv("2021,8,10,19
 ```
 
 ```
-## # A tibble: 2 x 4
+## # A tibble: 2 × 4
 ##   `2021`   `8`  `10`  `19`
 ##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
 ## 1   2021     8    11    22
@@ -413,7 +423,7 @@ read_csv("2021,8,10,19
 ```
 
 ```
-## # A tibble: 3 x 4
+## # A tibble: 3 × 4
 ##      X1    X2    X3    X4
 ##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
 ## 1  2021     8    10    19
@@ -445,7 +455,7 @@ col_names = c("year", "month", "day", "temperature"))
 ```
 
 ```
-## # A tibble: 3 x 4
+## # A tibble: 3 × 4
 ##    year month   day temperature
 ##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
 ## 1  2021     8    10          19
@@ -482,7 +492,7 @@ year,month,day,temperature
 ```
 
 ```
-## # A tibble: 3 x 4
+## # A tibble: 3 × 4
 ##    year month   day temperature
 ##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
 ## 1  2021     8    10          19
@@ -520,7 +530,7 @@ year,month,day,temperature
 ```
 
 ```
-## # A tibble: 3 x 4
+## # A tibble: 3 × 4
 ##    year month   day temperature
 ##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
 ## 1  2021     8    10          19
@@ -556,7 +566,7 @@ read_csv("year,month,day,temperature
 ```
 
 ```
-## # A tibble: 3 x 4
+## # A tibble: 3 × 4
 ##    year month   day temperature
 ##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
 ## 1  2021     8    10          19
@@ -623,7 +633,7 @@ read_excel(xlsx_example)
 ```
 
 ```
-## # A tibble: 150 x 5
+## # A tibble: 150 × 5
 ##    Sepal.Length Sepal.Width Petal.Length Petal.Width Species
 ##           &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt;  
 ##  1          5.1         3.5          1.4         0.2 setosa 
@@ -668,7 +678,7 @@ read_excel(xlsx_example, sheet = "mtcars")
 ```
 
 ```
-## # A tibble: 32 x 11
+## # A tibble: 32 × 11
 ##      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
 ##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
 ##  1  21       6  160    110  3.9   2.62  16.5     0     1     4     4
@@ -748,19 +758,19 @@ read_excel(readxl_example("deaths.xlsx"), range = "A5:F15")
 ```
 
 ```
-## # A tibble: 10 x 6
-##    Name      Profession   Age `Has kids` `Date of birth`     `Date of death`    
-##    &lt;chr&gt;     &lt;chr&gt;      &lt;dbl&gt; &lt;lgl&gt;      &lt;dttm&gt;              &lt;dttm&gt;             
-##  1 David Bo… musician      69 TRUE       1947-01-08 00:00:00 2016-01-10 00:00:00
-##  2 Carrie F… actor         60 TRUE       1956-10-21 00:00:00 2016-12-27 00:00:00
-##  3 Chuck Be… musician      90 TRUE       1926-10-18 00:00:00 2017-03-18 00:00:00
-##  4 Bill Pax… actor         61 TRUE       1955-05-17 00:00:00 2017-02-25 00:00:00
-##  5 Prince    musician      57 TRUE       1958-06-07 00:00:00 2016-04-21 00:00:00
-##  6 Alan Ric… actor         69 FALSE      1946-02-21 00:00:00 2016-01-14 00:00:00
-##  7 Florence… actor         82 TRUE       1934-02-14 00:00:00 2016-11-24 00:00:00
-##  8 Harper L… author        89 FALSE      1926-04-28 00:00:00 2016-02-19 00:00:00
-##  9 Zsa Zsa … actor         99 TRUE       1917-02-06 00:00:00 2016-12-18 00:00:00
-## 10 George M… musician      53 FALSE      1963-06-25 00:00:00 2016-12-25 00:00:00
+## # A tibble: 10 × 6
+##    Name               Profession   Age `Has kids` `Date of birth`     `Date of death`    
+##    &lt;chr&gt;              &lt;chr&gt;      &lt;dbl&gt; &lt;lgl&gt;      &lt;dttm&gt;              &lt;dttm&gt;             
+##  1 David Bowie        musician      69 TRUE       1947-01-08 00:00:00 2016-01-10 00:00:00
+##  2 Carrie Fisher      actor         60 TRUE       1956-10-21 00:00:00 2016-12-27 00:00:00
+##  3 Chuck Berry        musician      90 TRUE       1926-10-18 00:00:00 2017-03-18 00:00:00
+##  4 Bill Paxton        actor         61 TRUE       1955-05-17 00:00:00 2017-02-25 00:00:00
+##  5 Prince             musician      57 TRUE       1958-06-07 00:00:00 2016-04-21 00:00:00
+##  6 Alan Rickman       actor         69 FALSE      1946-02-21 00:00:00 2016-01-14 00:00:00
+##  7 Florence Henderson actor         82 TRUE       1934-02-14 00:00:00 2016-11-24 00:00:00
+##  8 Harper Lee         author        89 FALSE      1926-04-28 00:00:00 2016-02-19 00:00:00
+##  9 Zsa Zsa Gábor      actor         99 TRUE       1917-02-06 00:00:00 2016-12-18 00:00:00
+## 10 George Michael     musician      53 FALSE      1963-06-25 00:00:00 2016-12-25 00:00:00
 ```
 ]
 
@@ -788,7 +798,7 @@ read_csv("data/heights.csv")
 
 ```
 ## 
-## ── Column specification ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+## ── Column specification ────────────────────────────────────────────────────────
 ## cols(
 ##   earn = col_double(),
 ##   height = col_double(),
@@ -800,7 +810,7 @@ read_csv("data/heights.csv")
 ```
 
 ```
-## # A tibble: 1,192 x 6
+## # A tibble: 1,192 × 6
 ##     earn height sex       ed   age race    
 ##    &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   
 ##  1 50000   74.4 male      16    45 white   
@@ -922,7 +932,7 @@ parse_integer(c("1", "2", "five"))
 ```
 ## [1]  1  2 NA
 ## attr(,"problems")
-## # A tibble: 1 x 4
+## # A tibble: 1 × 4
 ##     row   col expected   actual
 ##   &lt;int&gt; &lt;int&gt; &lt;chr&gt;      &lt;chr&gt; 
 ## 1     3    NA an integer five
@@ -1012,7 +1022,7 @@ challenge &lt;- read_csv(readr_example("challenge.csv"))
 
 ```
 ## 
-## ── Column specification ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+## ── Column specification ────────────────────────────────────────────────────────
 ## cols(
 ##   x = col_double(),
 ##   y = col_logical()
@@ -1036,7 +1046,7 @@ challenge
 ```
 
 ```
-## # A tibble: 2,000 x 2
+## # A tibble: 2,000 × 2
 ##        x y    
 ##    &lt;dbl&gt; &lt;lgl&gt;
 ##  1   404 NA   
@@ -1071,19 +1081,19 @@ problems(challenge)
 ```
 
 ```
-## # A tibble: 1,000 x 5
-##      row col   expected       actual   file                                     
-##    &lt;int&gt; &lt;chr&gt; &lt;chr&gt;          &lt;chr&gt;    &lt;chr&gt;                                    
-##  1  1001 y     1/0/T/F/TRUE/… 2015-01… '/Library/Frameworks/R.framework/Version…
-##  2  1002 y     1/0/T/F/TRUE/… 2018-05… '/Library/Frameworks/R.framework/Version…
-##  3  1003 y     1/0/T/F/TRUE/… 2015-09… '/Library/Frameworks/R.framework/Version…
-##  4  1004 y     1/0/T/F/TRUE/… 2012-11… '/Library/Frameworks/R.framework/Version…
-##  5  1005 y     1/0/T/F/TRUE/… 2020-01… '/Library/Frameworks/R.framework/Version…
-##  6  1006 y     1/0/T/F/TRUE/… 2016-04… '/Library/Frameworks/R.framework/Version…
-##  7  1007 y     1/0/T/F/TRUE/… 2011-05… '/Library/Frameworks/R.framework/Version…
-##  8  1008 y     1/0/T/F/TRUE/… 2020-07… '/Library/Frameworks/R.framework/Version…
-##  9  1009 y     1/0/T/F/TRUE/… 2011-04… '/Library/Frameworks/R.framework/Version…
-## 10  1010 y     1/0/T/F/TRUE/… 2010-05… '/Library/Frameworks/R.framework/Version…
+## # A tibble: 1,000 × 5
+##      row col   expected           actual     file                               
+##    &lt;int&gt; &lt;chr&gt; &lt;chr&gt;              &lt;chr&gt;      &lt;chr&gt;                              
+##  1  1001 y     1/0/T/F/TRUE/FALSE 2015-01-16 '/Library/Frameworks/R.framework/V…
+##  2  1002 y     1/0/T/F/TRUE/FALSE 2018-05-18 '/Library/Frameworks/R.framework/V…
+##  3  1003 y     1/0/T/F/TRUE/FALSE 2015-09-05 '/Library/Frameworks/R.framework/V…
+##  4  1004 y     1/0/T/F/TRUE/FALSE 2012-11-28 '/Library/Frameworks/R.framework/V…
+##  5  1005 y     1/0/T/F/TRUE/FALSE 2020-01-13 '/Library/Frameworks/R.framework/V…
+##  6  1006 y     1/0/T/F/TRUE/FALSE 2016-04-17 '/Library/Frameworks/R.framework/V…
+##  7  1007 y     1/0/T/F/TRUE/FALSE 2011-05-14 '/Library/Frameworks/R.framework/V…
+##  8  1008 y     1/0/T/F/TRUE/FALSE 2020-07-18 '/Library/Frameworks/R.framework/V…
+##  9  1009 y     1/0/T/F/TRUE/FALSE 2011-04-30 '/Library/Frameworks/R.framework/V…
+## 10  1010 y     1/0/T/F/TRUE/FALSE 2010-05-11 '/Library/Frameworks/R.framework/V…
 ## # … with 990 more rows
 ```
 ]
@@ -1119,19 +1129,19 @@ challenge
 ```
 
 ```
-## # A tibble: 2,000 x 2
-##        x y         
-##    &lt;dbl&gt; &lt;date&gt;    
-##  1   404 NA        
-##  2  4172 NA        
-##  3  3004 NA        
-##  4   787 NA        
-##  5    37 NA        
-##  6  2332 NA        
-##  7  2489 NA        
-##  8  1449 NA        
-##  9  3665 NA        
-## 10  3863 NA        
+## # A tibble: 2,000 × 2
+##        x y     
+##    &lt;dbl&gt; &lt;date&gt;
+##  1   404 NA    
+##  2  4172 NA    
+##  3  3004 NA    
+##  4   787 NA    
+##  5    37 NA    
+##  6  2332 NA    
+##  7  2489 NA    
+##  8  1449 NA    
+##  9  3665 NA    
+## 10  3863 NA    
 ## # … with 1,990 more rows
 ```
 
@@ -1140,7 +1150,7 @@ tail(challenge)
 ```
 
 ```
-## # A tibble: 6 x 2
+## # A tibble: 6 × 2
 ##       x y         
 ##   &lt;dbl&gt; &lt;date&gt;    
 ## 1 0.805 2019-11-21
@@ -1178,7 +1188,7 @@ challenge &lt;- read_csv(readr_example("challenge.csv"),
 
 ```
 ## 
-## ── Column specification ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+## ── Column specification ────────────────────────────────────────────────────────
 ## cols(
 ##   x = col_double(),
 ##   y = col_date(format = "")
@@ -1190,7 +1200,7 @@ tail(challenge)
 ```
 
 ```
-## # A tibble: 6 x 2
+## # A tibble: 6 × 2
 ##       x y         
 ##   &lt;dbl&gt; &lt;date&gt;    
 ## 1 0.805 2019-11-21
@@ -1270,13 +1280,13 @@ challenge
 ```
 
 ```
-## # A tibble: 2,000 x 2
-##       x y         
-##   &lt;dbl&gt; &lt;date&gt;    
-## 1   404 NA        
-## 2  4172 NA        
-## 3  3004 NA        
-## 4   787 NA        
+## # A tibble: 2,000 × 2
+##       x y     
+##   &lt;dbl&gt; &lt;date&gt;
+## 1   404 NA    
+## 2  4172 NA    
+## 3  3004 NA    
+## 4   787 NA    
 ## # … with 1,996 more rows
 ```
 
@@ -1286,7 +1296,7 @@ challenge2 &lt;- read_csv("data/challenge.csv")
 
 ```
 ## 
-## ── Column specification ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+## ── Column specification ────────────────────────────────────────────────────────
 ## cols(
 ##   x = col_double(),
 ##   y = col_logical()
@@ -1298,7 +1308,7 @@ challenge2
 ```
 
 ```
-## # A tibble: 2,000 x 2
+## # A tibble: 2,000 × 2
 ##       x y    
 ##   &lt;dbl&gt; &lt;lgl&gt;
 ## 1   404 NA   
@@ -1339,13 +1349,13 @@ read_rds("data/challenge.rds")
 ```
 
 ```
-## # A tibble: 2,000 x 2
-##       x y         
-##   &lt;dbl&gt; &lt;date&gt;    
-## 1   404 NA        
-## 2  4172 NA        
-## 3  3004 NA        
-## 4   787 NA        
+## # A tibble: 2,000 × 2
+##       x y     
+##   &lt;dbl&gt; &lt;date&gt;
+## 1   404 NA    
+## 2  4172 NA    
+## 3  3004 NA    
+## 4   787 NA    
 ## # … with 1,996 more rows
 ```
 ]

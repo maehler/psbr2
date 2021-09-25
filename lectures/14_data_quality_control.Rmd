@@ -8,10 +8,14 @@ editor_options:
   chunk_output_type: console
 ---
 
-```{r setup, include = FALSE}
+layout: true
+
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
 source(here::here("scripts/setup.R"))
-setup_presentation("data_quality_control")
+setup_presentation("data_quality_control", filename = "14_data_quality_control.Rmd")
 ```
+
+---
 
 # What we'll learn
 

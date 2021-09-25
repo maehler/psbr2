@@ -23,7 +23,17 @@ class: left, middle, inverse, title-slide
 ---
 
 
+layout: true
 
+<div class="footer">
+<a href="https://github.com/maehler/psbr2/tree/main/lectures/08_data_manipulation_using_dplyr.Rmd">
+<svg viewBox="0 0 496 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg">
+<path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"></path>
+</svg>
+</a>
+</div>
+
+---
 
 # What is data manipulation?
 
@@ -96,7 +106,7 @@ flights
 
 
 ```
-## # A tibble: 336,776 x 19
+## # A tibble: 336,776 × 19
 ##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
 ##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
 ##  1  2013     1     1      517            515         2      830            819
@@ -153,7 +163,7 @@ filter(flights, dep_delay &lt;= 0)
 ```
 
 ```
-## # A tibble: 200,089 x 19
+## # A tibble: 200,089 × 19
 ##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
 ##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
 ## 1  2013     1     1      544            545        -1     1004           1022
@@ -184,7 +194,7 @@ filter(flights, dep_delay &lt;= 0, origin == "JFK")
 ```
 
 ```
-## # A tibble: 67,385 x 19
+## # A tibble: 67,385 × 19
 ##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
 ##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
 ## 1  2013     1     1      544            545        -1     1004           1022
@@ -217,7 +227,7 @@ filter(flights, dest == "CPH" | dest == "ARN")
 ```
 
 ```
-## # A tibble: 0 x 19
+## # A tibble: 0 × 19
 ## # … with 19 variables: year &lt;int&gt;, month &lt;int&gt;, day &lt;int&gt;, dep_time &lt;int&gt;,
 ## #   sched_dep_time &lt;int&gt;, dep_delay &lt;dbl&gt;, arr_time &lt;int&gt;,
 ## #   sched_arr_time &lt;int&gt;, arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;,
@@ -242,7 +252,7 @@ filter(flights, depdelay &lt;= 0)
 ```
 ## Error: Problem with `filter()` input `..1`.
 ## ℹ Input `..1` is `depdelay &lt;= 0`.
-## ✖ object 'depdelay' not found
+## x object 'depdelay' not found
 ```
 ]
 
@@ -261,7 +271,7 @@ filter(flights, depdelay &lt;= 0)
 ```
 
 ```
-## # A tibble: 0 x 19
+## # A tibble: 0 × 19
 ## # … with 19 variables: year &lt;int&gt;, month &lt;int&gt;, day &lt;int&gt;, dep_time &lt;int&gt;,
 ## #   sched_dep_time &lt;int&gt;, dep_delay &lt;dbl&gt;, arr_time &lt;int&gt;,
 ## #   sched_arr_time &lt;int&gt;, arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;,
@@ -296,7 +306,7 @@ filter(flights, origin = "JFK")
 
 ```
 ## Error: Problem with `filter()` input `..1`.
-## ✖ Input `..1` is named.
+## x Input `..1` is named.
 ## ℹ This usually means that you've used `=` instead of `==`.
 ## ℹ Did you mean `origin == "JFK"`?
 ```
@@ -325,7 +335,7 @@ select(flights, origin, dest, dep_time)
 ```
 
 ```
-## # A tibble: 336,776 x 3
+## # A tibble: 336,776 × 3
 ##   origin dest  dep_time
 ##   &lt;chr&gt;  &lt;chr&gt;    &lt;int&gt;
 ## 1 EWR    IAH        517
@@ -357,7 +367,7 @@ select(flights, year:dep_time)
 ```
 
 ```
-## # A tibble: 336,776 x 4
+## # A tibble: 336,776 × 4
 ##    year month   day dep_time
 ##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;
 ## 1  2013     1     1      517
@@ -387,7 +397,7 @@ select(flights, starts_with("time"))
 ```
 
 ```
-## # A tibble: 336,776 x 1
+## # A tibble: 336,776 × 1
 ##   time_hour          
 ##   &lt;dttm&gt;             
 ## 1 2013-01-01 05:00:00
@@ -403,7 +413,7 @@ select(flights, starts_with(c("dep", "arr")))
 ```
 
 ```
-## # A tibble: 336,776 x 4
+## # A tibble: 336,776 × 4
 ##   dep_time dep_delay arr_time arr_delay
 ##      &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
 ## 1      517         2      830        11
@@ -434,7 +444,7 @@ select(flights, ends_with("time"))
 ```
 
 ```
-## # A tibble: 336,776 x 5
+## # A tibble: 336,776 × 5
 ##   dep_time sched_dep_time arr_time sched_arr_time air_time
 ##      &lt;int&gt;          &lt;int&gt;    &lt;int&gt;          &lt;int&gt;    &lt;dbl&gt;
 ## 1      517            515      830            819      227
@@ -450,7 +460,7 @@ select(flights, ends_with(c("time", "delay")))
 ```
 
 ```
-## # A tibble: 336,776 x 7
+## # A tibble: 336,776 × 7
 ##   dep_time sched_dep_time arr_time sched_arr_time air_time dep_delay arr_delay
 ##      &lt;int&gt;          &lt;int&gt;    &lt;int&gt;          &lt;int&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
 ## 1      517            515      830            819      227         2        11
@@ -482,7 +492,7 @@ select(flights, contains("st"))
 ```
 
 ```
-## # A tibble: 336,776 x 2
+## # A tibble: 336,776 × 2
 ##   dest  distance
 ##   &lt;chr&gt;    &lt;dbl&gt;
 ## 1 IAH       1400
@@ -518,7 +528,7 @@ select(flights, matches("d.*ay"))
 ```
 
 ```
-## # A tibble: 336,776 x 3
+## # A tibble: 336,776 × 3
 ##     day dep_delay arr_delay
 ##   &lt;int&gt;     &lt;dbl&gt;     &lt;dbl&gt;
 ## 1     1         2        11
@@ -549,7 +559,7 @@ mutate(flights_small,
 ```
 
 ```
-## # A tibble: 336,776 x 5
+## # A tibble: 336,776 × 5
 ##   dep_delay arr_delay distance air_time speed_mph
 ##       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
 ## 1         2        11     1400      227      370.
@@ -580,7 +590,7 @@ mutate(flights_small,
 ```
 
 ```
-## # A tibble: 336,776 x 6
+## # A tibble: 336,776 × 6
 ##   dep_delay arr_delay distance air_time  gain gain_per_hour
 ##       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;         &lt;dbl&gt;
 ## 1         2        11     1400      227    -9         -2.38
@@ -613,7 +623,7 @@ mutate(flights_small,
 ```
 
 ```
-## # A tibble: 336,776 x 5
+## # A tibble: 336,776 × 5
 ##   dep_delay arr_delay distance air_time speed
 ##       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
 ## 1         2        11     870.      227  230.
@@ -648,7 +658,7 @@ mutate(flights_small,
 ```
 
 ```
-## # A tibble: 336,776 x 7
+## # A tibble: 336,776 × 7
 ##   dep_delay arr_delay distance air_time speed distance_km speed_km
 ##       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;    &lt;dbl&gt;
 ## 1         2        11     1400      227  370.        870.     230.
@@ -677,7 +687,7 @@ summarise(flights, arr_delay = mean(arr_delay, na.rm = TRUE))
 ```
 
 ```
-## # A tibble: 1 x 1
+## # A tibble: 1 × 1
 ##   arr_delay
 ##       &lt;dbl&gt;
 ## 1      6.90
@@ -706,7 +716,7 @@ summarise(by_day, arr_delay = mean(arr_delay, na.rm = TRUE))
 ```
 
 ```
-## # A tibble: 365 x 4
+## # A tibble: 365 × 4
 ## # Groups:   year, month [12]
 ##    year month   day arr_delay
 ##   &lt;int&gt; &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;
@@ -837,7 +847,7 @@ left_join(flights2, airlines, by = "carrier")
 ```
 
 ```
-## # A tibble: 336,776 x 9
+## # A tibble: 336,776 × 9
 ##     year month   day  hour origin dest  tailnum carrier name                    
 ##    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;                   
 ##  1  2013     1     1     5 EWR    IAH   N14228  UA      United Air Lines Inc.   

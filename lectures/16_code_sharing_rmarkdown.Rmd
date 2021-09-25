@@ -8,10 +8,14 @@ editor_options:
   chunk_output_type: console
 ---
 
-```{r setup, include = FALSE}
+layout: true
+
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
 source(here::here("scripts/setup.R"))
-setup_presentation("code_sharing_rmarkdown")
+setup_presentation("code_sharing_rmarkdown", filename = "16_code_sharing_rmarkdown.Rmd")
 ```
+
+---
 
 # First: What is Markdown?
 

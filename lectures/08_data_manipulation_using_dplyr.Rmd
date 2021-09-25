@@ -8,11 +8,15 @@ editor_options:
   chunk_output_type: console
 ---
 
-```{r setup, include = FALSE}
+layout: true
+
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
 source(here::here("scripts/setup.R"))
-setup_presentation("data_manipulation_using_dplyr")
+setup_presentation("data_manipulation_using_dplyr", filename = "08_data_manipulation_using_dplyr.Rmd")
 library(kableExtra)
 ```
+
+---
 
 # What is data manipulation?
 

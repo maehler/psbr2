@@ -8,9 +8,11 @@ editor_options:
   chunk_output_type: console
 ---
 
-```{r setup, include = FALSE}
+layout: true
+
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
 source(here::here("scripts/setup.R"))
-setup_presentation("tidy_data")
+setup_presentation("tidy_data", filename = "09_tidy_data.Rmd")
 library(kableExtra)
 ```
 
