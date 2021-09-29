@@ -44,6 +44,7 @@ schedule:
       end_time:
       topic: How to get help
       url: lectures/05_how_to_get_help.html
+      room: B3-46-49 Solanum lycopersicum
       details: |
         - Specific functions: `?`, `??`, `help`, F1, help pane
         - General problems: Google, Stackoverflow
@@ -145,6 +146,7 @@ schedule:
       end_time:
       topic: "Advanced plotting: The grammar of graphics"
       url: lectures/12_advanced_plotting_the_grammar_of_graphics.html
+      room: B3-46-49 Solanum lycopersicum
       details: |
         - The grammar helps us make *correct* plots
         - How does it help us make *good* plots?
