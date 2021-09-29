@@ -32,6 +32,7 @@ library(mapproj)
     - Cycling
     - Video games
     - Programming
+    - Music
 ]
 
 .pull-right[
@@ -87,6 +88,8 @@ ggplot(nordic_map, aes(x = long, y = lat)) +
 
 ---
 
+class: title
+
 # What are we going to look at?
 
 ---
@@ -94,6 +97,7 @@ ggplot(nordic_map, aes(x = long, y = lat)) +
 # Data!
 
 - What is data?
+- What is metadata?
 - How to format data
 - How to deal with big datasets
 
@@ -150,6 +154,7 @@ ggplot(nordic_map, aes(x = long, y = lat)) +
 - How to share code
 - How to share data
 - How to ask for help
+- The FAIR principles
 - Reproducibility
 - Transparent research
 
@@ -198,13 +203,13 @@ A theoretical exam that will take place on November 1.
 
 # Practical assignment 1
 
-Will be made available on the morning of October 11.
+Will be made available on the morning of October 11-12.
 
 - Tidying of a messy dataset
 - Data manipulation using dplyr
 - Plotting
 
-The submission will close at 23:59 on October 11.
+The submission will close at 23:59 on October 12.
 
 ---
 
@@ -231,6 +236,10 @@ The submission will close at 23:59 on October 29.
 
 - [How to install Office 365 on your computer](https://manual.its.umu.se/en/how-do-i-download-and-install-office365/)
 - [Office 365 Online](http://o365.umu.se) (you'll be asked to log in with your CAS ID)
+
+???
+
+We will go through these things again before the practical assignment.
 
 ---
 
