@@ -13,6 +13,8 @@ source(here::here("scripts/setup.R"))
 setup_presentation("introduction_to_r", filename = "02_introduction_to_r.Rmd")
 ```
 
+---
+
 # What is R?
 
 > R is a language for statistical computing and graphics
@@ -37,6 +39,7 @@ setup_presentation("introduction_to_r", filename = "02_introduction_to_r.Rmd")
 - Free
 - Easy to get started
 - Excellent plotting tools
+- Packages (extensions) developed by the community
 - Many ways of accomplishing the same task
 ]
 
