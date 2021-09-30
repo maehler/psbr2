@@ -202,7 +202,7 @@ The examination consists of three parts, all of which will be submitted individu
 
 ## Practical assignment 1
 
-Will treat topics from the two first weeks of the course, and will take place on October 11.
+Will treat topics from the two first weeks of the course, and will take place on October 11-12.
 
 --
 
@@ -220,7 +220,7 @@ A theoretical exam that will take place on November 1.
 
 # Practical assignment 1
 
-Will be made available on the morning of October 11-12.
+Will be made available on the morning of October 11.
 
 - Tidying of a messy dataset
 - Data manipulation using dplyr
