@@ -177,6 +177,23 @@ ggplot(nordic_map, aes(x = long, y = lat)) +
 
 ---
 
+class: title
+
+# You can partly decide what this course is going to be
+
+???
+
+You have a lot of influence over this course.
+This is the first time that we're having this particular course, and it's a little bit of an experiment.
+I really would like you to interrupt me with questions if anything is unclear or if you want to know more about a certain topic.
+I can't guarantee that I will know the answer straight away, but in those cases I will definitely look it up and get back to you.
+
+Also, if you want to see live examples in R as we go, then please ask for that.
+I was thinking to have a kind of scratch pad for each lecture where I will type all the live examples.
+This I will then upload to Canvas for you to go back to if you want to.
+
+---
+
 # Examination
 
 The examination consists of three parts, all of which will be submitted individually. You are however allowed, and encouraged, to discuss the issues you run into among yourselves.
