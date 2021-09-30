@@ -48,6 +48,9 @@ navbar:
           - text: Data sharing
             href: lectures/17_data_sharing.html
         - text: Week 4
+          menu:
+          - text: Large-scale data
+            href: lectures/18_large_scale_data.html
         - text: Week 5
     - text: Suggested reading
       href: suggested_reading.html

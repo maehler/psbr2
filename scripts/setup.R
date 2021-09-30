@@ -34,7 +34,14 @@ base64_img <- function(filename) {
 }
 
 note_fa <- function(icon, scale = 2) {
-  icons::icon_style(icons::fontawesome(icon), scale = scale)
+  final_icon <- switch (icon,
+    "warning" = "exclamation-triangle",
+    "tip" = "lightbulb"
+  )
+  if (is.null(final_icon)) {
+    final_icon <- icon
+  }
+  icons::icon_style(icons::fontawesome(final_icon), scale = scale)
 }
 
 print_df_5 <- function(x, ...) {

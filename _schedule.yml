@@ -225,6 +225,7 @@ schedule:
     - start_time:
       end_time:
       topic: Large-scale data
+      url: lectures/18_large_scale_data.html
       details: |
         - How large is large?
         - Examples of large-scale data

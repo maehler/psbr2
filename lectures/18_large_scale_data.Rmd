@@ -1,0 +1,653 @@
+---
+title: "Large-scale data"
+subtitle: "Practical Skills for Biology Research II"
+author: "Niklas Mähler"
+institute: "Umeå University"
+date: "2021-10-15"
+editor_options:
+  chunk_output_type: console
+---
+
+layout: true
+
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
+source(here::here("scripts/setup.R"))
+setup_presentation("large_scale_data", filename = "18_large_scale_data.Rmd")
+```
+
+---
+
+# How large is large?
+
+- Diamonds dataset: `r str_c(dim(diamonds), c("rows", "columns"), sep = " ")`
+
+--
+- Flights dataset: `r str_c(dim(nycflights13::flights), c("rows", "columns"), sep = " ")`
+
+--
+- Spruce genome raw sequencing data: 1.1 terabytes, or ~600 billion bases
+
+---
+
+class: quote
+
+> "All science is either physics or stamp collecting."
+> .source[— Ernest Rutherford, 1871-1937]
+
+???
+
+Ernest Rutherford was a physicist from New Zealand, and with this he implied, toungue-in-cheek i presume, that all sciences except for physics just spend time collecting observations, and not actually inferring something from them.
+I would like to say that this has changed, at least in biology.
+You could argue that has a past full of "stamp collecting", for example like the systematics work by Linnaeus.
+It is mostly about collecting species and putting them in bins.
+Nowadays, we are using our observations to infer molecular mechanisms, be it the senescence of an aspen tree, or the progression of a cancer tumor.
+
+---
+
+# Large-scale data vs big data
+
+[Wikipedia says](https://wikipedia.org/Big_data):
+
+> Big data is a field that treats ways to analyze, systematically extract information from, or otherwise deal with data sets that are too large or complex to be dealt with by traditional data-processing application software.
+
+???
+
+You have probably heard the term "Big Data" before, but how does that relate to what we are doing?
+Are we working with big data?
+
+There are many different definitions of big data out there, and I will not really go into which is more correct.
+The main point is that big data doesn't really translate into how many values you have in your dataset.
+It is more the nature of your dataset, and the ability to use traditional methods to analyse them.
+This does however often correlate with the size of the datasets, but not necessarily.
+
+For example, we could collect temperature measurements every single minute for ten years.
+This would result in $`r 60 * 24 * 365.25 * 10`$ data points.
+Would you consider this to be big data?
+If we only consider the number of data points, you might consider it being big data.
+On the other hand, if we would consider other aspects of this data, it might not be so big.
+For example, we could easily analyse these data with traditional tools, like regression models.
+The size of the data on disk or in memory is tiny if you consider what computers today are capable of.
+Also, this is a simple dataset in that there is only a single dimension to it.
+You could say that it is relatively easy to get a computer to "understand" this data.
+
+Let's say that we are working with something else, like satellite images.
+Propose that we have a satellite that takes images of a glacier over the course of 10 years, where it takes one picture every week.
+This is "only" `r 52 * 10` images.
+Can this be considered big data?
+A human could relatively easily skim the images and see how the glacier shrinks and grows over time.
+Then consider what these images are composed of: potentially millions of pixels.
+This is what the computer sees.
+In order to process these images and transform them from data to information, a significant amount of work is needed.
+You have to train some kind of classifier to determine what is land and what is glacier.
+Can it handle if the ice gets dirty from sand and rocks?
+Does it still classify it as a glacier?
+And then it has to calculate the area of the glacier, and perhaps also weigh in other factors, such as weather.
+Can this be considered big data?
+
+---
+
+# Dimensionality
+
+Something that is often talked about when it comes to biological data is **dimensionality**.
+Simply put, this is how many variables you have in your dataset.
+
+.center[
+```{r how_many_dimensions, echo = FALSE}
+ggplot(mpg, aes(displ, hwy, fill = factor(cyl, ordered = TRUE))) +
+  geom_point(shape = 21, colour = "black", size = 2, position = "jitter") +
+  scale_fill_ordinal(name = "cyl")
+```
+]
+
+???
+
+How many dimensions are we looking at here?
+
+If you have two variables, you can accurately represent each observation in a two-dimensional space.
+If you have three variables, you can accurately represent each observation in a three-dimensional space.
+What about four variables?
+Or six?
+Or 30,000?
+
+Anything more than three is often difficult to visualise in a meaningful way.
+
+---
+
+# The curse of dimensionality
+
+.left-column[
+## One dimension
+]
+
+.right-column[
+A common problem in biology, or with any big dataset, is the [curse of dimensionality](https://en.wikipedia.org/wiki/Curse_of_dimensionality).
+.center[
+```{r, echo = FALSE, out.width = "80%", out.height = "80%"}
+tibble(x = seq(0, 1, by = 0.1),
+       y = 0,
+       colour = rgb(x, 0, 0)) %>% 
+  plotly::plot_ly(x = ~x, y = ~y, color = ~I(colour)) %>% 
+  plotly::add_markers()
+```
+]
+]
+
+---
+
+# The curse of dimensionality
+
+.left-column[
+## One dimension
+## Two dimensions
+]
+
+.right-column.center[
+```{r, echo = FALSE, out.width = "80%", out.height = "80%"}
+tibble(x = seq(0, 1, by = 0.1),
+       y = seq(0, 1, by = 0.1)) %>% 
+  expand(x, y) %>% 
+  mutate(colour = rgb(x, y, 0)) %>% 
+  plotly::plot_ly(x = ~x, y = ~y, color = ~I(colour)) %>% 
+  plotly::add_markers()
+```
+]
+
+???
+
+Already moving from one to two dimensions results in us needing quite a few more observations, 121 instead of 11, in order to cover all possibilities.
+
+---
+
+# The curse of dimensionality
+
+.left-column[
+## One dimension
+## Two dimensions
+## Three dimensions
+]
+
+.right-column.center[
+```{r, echo = FALSE, out.width = "80%", out.height = "80%"}
+tibble(x = seq(0, 1, by = 0.1),
+       y = seq(0, 1, by = 0.1),
+       z = seq(0, 1, by = 0.1)) %>%
+  expand(x, y, z) %>%
+  mutate(i = seq_along(x), colour = rgb(x, y, z)) %>% 
+  plotly::plot_ly(x = ~x, y = ~y, z = ~z, color = ~I(colour), size = I(20)) %>% 
+  plotly::add_markers()
+```
+]
+
+???
+
+Now this has really exploded, so we need 1331 observations in order to cover this space.
+
+---
+
+# The curse of dimensionality
+
+.left-column[
+## One dimension
+## Two dimensions
+## Three dimensions
+## More!?
+]
+
+.right-column.center[
+As we've seen, the size of the space increases exponentially with the number of dimensions.
+
+```{r curse_of_dimensionality, echo = FALSE}
+tibble(dimensions = 1:6,
+       observations = 11^dimensions) %>% 
+  ggplot(aes(x = dimensions, y = observations)) +
+  geom_line()
+```
+]
+
+???
+
+The problem isn't so much that we have a lot of variables.
+The problem is the number of observations we need to adequately cover this search space.
+The actual number of observations that are needed depends on the resolution that we need.
+If we are happy with just observing the extremes of the parameter space, that is to say two observations per variable, then we would need much fewer observations.
+For 10 variables, this still means that we need a minimum of 1024 observations, which can be a lot if you are working with trees, for example.
+Conversely, if we need higher resolution, then we would need even more observations.
+
+Note here that I said that we need at least this many observations.
+Likely we will need a lot more since the minimum number assumes that each observation represents a point in the search space that we haven't explored already.
+
+This begs the question whether the whole search space is interesting.
+
+---
+
+# Do we need to cover the whole space?
+
+Probably not.
+There are likely large parts of the search space that we would never reach, regardless of how much data we collect.
+This, of course, depends on the problem at hand.
+
+.pull-left.center[
+$2^{784}$ possible configurations.
+```{r mnist_example, echo = FALSE, out.width = "100%"}
+mnist <- read_csv("https://pjreddie.com/media/files/mnist_train.csv",
+                      col_names = FALSE, n_max = 9) %>% 
+  rename(label = X1) %>% 
+  mutate(label = str_c(seq_along(label), ":", label)) %>% 
+  pivot_longer(cols = matches("^X"), names_to = "coordinate") %>% 
+  group_by(label) %>% 
+  mutate(pos = seq_along(coordinate)-1,
+         x = pos %% 28,
+         y = pos %/% 28) %>% 
+  select(-coordinate, -pos) %>% 
+  ungroup() %>% 
+  mutate(value = ifelse(value > 0.75, 1, 0))
+
+ggplot(mnist, aes(x, y, fill = value)) +
+  geom_tile(colour = "black") +
+  facet_wrap(vars(label)) +
+  scale_fill_gradient(low = "white", high = "black") +
+  scale_y_reverse() +
+  coord_equal() +
+  theme(legend.position = "none",
+        strip.text = element_blank(),
+        panel.background = element_blank(),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank())
+```
+]
+
+???
+
+This is a classic dataset of hand-written digits that is used in machine learning.
+These are 28 by 28 pixel images, so 784 pixels in total, which is then the same as 784 dimensions.
+I have simplified this a bit by converting it from a grayscale to strict black and white.
+In other words, the pixels can only take one out of two values: white or black.
+From the earlier slide we can then conclude that the number of possible configurations here is 2^784.
+
+--
+
+.pull-right.center[
+... but most of them we'll never see.
+```{r random_squares, echo = FALSE, out.width = "100%"}
+tibble(
+  label = rep(1:9, each = 28^2),
+  x = rep(rep(0:27, 28), 9),
+  y = rep(rep(0:27, each = 28), 9),
+) %>% 
+  group_by(label) %>% 
+  mutate(value = ifelse(runif(28^2) > runif(1), 1, 0)) %>% 
+  ggplot(aes(x, y, fill = value)) +
+  geom_tile(colour = "black") +
+  facet_wrap(vars(label)) +
+  scale_fill_gradient(low = "white", high = "black") +
+  scale_y_reverse() +
+  coord_equal() +
+  theme(legend.position = "none",
+        strip.text = element_blank(),
+        panel.background = element_blank(),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank())
+```
+]
+
+???
+
+These are nine random set of pixels from this search space, and this is how most of this search space will look.
+The number of possible configurations that will be possible is just a small piece of the possible search space, and this is, in this case, decided by pen strokes.
+There is some variability in there, but you will hopefully never find someone who writes the number five like this.
+
+---
+
+class: title
+
+# Packages for dealing with large datasets
+
+---
+
+# Packages for dealing with large datasets
+
+Oftentimes, large datasets are accompanied by pretty specific data analysis.
+Therefore, there are a whole plethora of packages in R for dealing with different types of large datasets.
+
+Here I will present a couple of examples.
+
+---
+
+# What if your type of data is not presented?
+
+```{r, echo = FALSE}
+knitr::include_url("https://bioconductor.org")
+```
+
+???
+
+Bioconductor is usually the first place to go to in order to find a package for whatever you are trying to do.
+
+Note that the packages that I will go through next is not meant as a tutorial for each of these packages, but rather a quick overview of what is possible.
+
+And also, important for all of these functions, or actually anything that you do in R: READ THE DOCUMENTATION!
+There might be default arguments that don't exactly fit well with your data.
+Best case scenario, you get an error.
+Worst case scenario, your data is misrepresented, either that it is malformed, or you might miss out on some data.
+
+---
+
+# RNA-Seq count data
+
+.left-column[
+## [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html)
+]
+
+.right-column[
+For importing RNA-Sequencing count data into R. These should be gene-level counts.
+
+```{r, eval = FALSE}
+library(DESeq2)
+
+sample_table <- tibble(
+  sample = str_c("sample", seq(6)),
+  filename = str_c("sample", seq(6), "_counts.txt"),
+  condition = rep(c("control", "treated"), each = 3)
+)
+
+DESeqDataSetFromHTSeqCount(as.data.frame(sample_table),
+                           directory = "/path/to/data",
+                           design = ~ condition)
+```
+
+.note.red[
+`r note_fa("warning")`
+A caveat with DESeq2 is that the sample table does not accept tibbles, only ordinary data frames, so you have to wrap your tibble in `as.data.frame`.
+]
+]
+
+???
+
+I told you at one point that whatever you can do with data frames, you can also do with tibbles.
+So it turns out that was not 100% true.
+If you'd like to, I could break down why tibbles don't work in this particular case.
+
+---
+
+# RNA-Seq data
+
+.left-column[
+## [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html)
+## [edgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html)
+]
+
+.right-column[
+edgeR, like DESeq2, is a package mainly for differential expression analysis.
+
+```{r, eval = FALSE}
+library(edgeR)
+
+readDGE(files = str_c("sample", seq(6), ".txt"),
+        directory = "/path/to/data",
+        labels = str_c("sample", seq(6)),
+        header = FALSE)
+```
+
+]
+
+---
+
+# RNA-Seq data
+
+.left-column[
+## [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html)
+## [edgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html)
+## [tximport](https://bioconductor.org/packages/release/bioc/html/tximport.html)
+]
+
+.right-column[
+If you have transcript-level counts that you want to convert to gene-level counts for analysis, then this is the package to use.
+It has a number of presets for popular software such as salmon and kallisto.
+The results from this can also be imported to other packages, such as DESeq2.
+
+```{r, eval = FALSE}
+library(tximport)
+
+tximport(files = fs::path("/path/to/data", str_c("sample", seq(6), ".sf")),
+         type = "salmon")
+```
+]
+
+---
+
+# Sequences and alignments
+
+.left-column[
+## [Rsamtools](https://bioconductor.org/packages/release/bioc/html/Rsamtools.html)
+]
+
+.right-column[
+Read sequence alignments in BAM format.
+
+```{r, results = FALSE}
+library(Rsamtools)
+
+which <- IRangesList(seq1=IRanges(1000, 2000),
+                     seq2=IRanges(c(100, 1000), c(1000, 2000)))
+what <- c("rname", "strand", "pos", "qwidth", "seq")
+param <- ScanBamParam(which=which, what=what)
+
+bamFile <- system.file("extdata", "ex1.bam", package="Rsamtools")
+bam <- scanBam(bamFile, param=param)
+
+bam
+```
+]
+
+???
+
+This example is taken from the Rsamtools vignette.
+
+Let's walk through this, line by line.
+
+1. Load the library
+3. Define what sequences we want to extract from the BAM file. This says to extract alignments against sequence `seq1` from bases 1000 to 2000, and alignments to the sequence `seq2` from 100-1000, and 1000-2000.
+4. `what` defines what fields we want to retrieve from the BAM file. For more information about this, we can go to the BAM file specification.
+5. `param` will then be the paramters which we will use for reading the BAM file. We give this the `which` — the sequences we want to retrieve — and the `what` — what fields to retrieve.
+7. Get the filename of the example file from the Rsamtools package.
+8. Read the BAM file.
+10. The resulting R object.
+
+---
+
+# Sequences and alignments
+
+.left-column[
+## [Rsamtools](https://bioconductor.org/packages/release/bioc/html/Rsamtools.html)
+## [Rsubread](https://bioconductor.org/packages/release/bioc/html/Rsubread.html)
+]
+
+.right-column[
+Rsubread is a very versatile package that can be used for mapping reads to a reference genome, counting mapped reads for genomic features (for input to DESeq2 or edgeR, for example), or for performing QC of reads and alignment files.
+
+Examples of how to use it can be found in the [Rsubread vignette](https://bioconductor.org/packages/release/bioc/vignettes/Rsubread/inst/doc/Rsubread.pdf).
+]
+
+---
+
+# Sequences and alignments
+
+.left-column[
+## [Rsamtools](https://bioconductor.org/packages/release/bioc/html/Rsamtools.html)
+## [Rsubread](https://bioconductor.org/packages/release/bioc/html/Rsubread.html)
+## [Biostrings](https://bioconductor.org/packages/release/bioc/html/Biostrings.html)
+]
+
+.right-column[
+Biostrings can be used for any type of sequence data, such as FASTA/FASTQ, or alignments in text form, such as fasta or clustal.
+
+```{r}
+library(Biostrings)
+
+fasta_file <- system.file("extdata", "fastaEx.fa", package = "Biostrings")
+readDNAStringSet(fasta_file, format = "fasta")
+```
+]
+
+???
+
+As usual, read the documentation if you want to use these functions.
+
+---
+
+# General purpose
+
+.left-column[
+## [readr](https://readr.tidyverse.org/)
+]
+
+.right-column[
+We've already seen some of what readr can do, and it is also quite capabale when it comes to larger datasets.
+
+- `read_tsv`, `read_csv`, `read_csv2`
+]
+
+???
+
+These are functions that we have seen before, for reading rectangular data.
+
+--
+
+.right-column[
+- `read_delim`
+]
+
+???
+
+This is a more general-purpose version of the functions above where you can modify it to whatever your data might be.
+It still has to be rectangular though.
+
+---
+
+# General purpose
+
+.left-column[
+## [readr](https://readr.tidyverse.org/)
+## [chunked readr](https://readr.tidyverse.org/)
+]
+
+.right-column[
+The regular readr functions also have chunked equivalents.
+With these functions, we process a file a chunk at a time.
+
+```{r}
+read_csv_chunked(readr_example("mtcars.csv"),
+                 callback = DataFrameCallback$new(function(x, pos) {
+                   tibble(n = nrow(x))
+                 }),
+                 chunk_size = 10)
+```
+
+.note.yellow[
+`r note_fa("tip")`
+Check `?readr::callback` to see what different types of callbacks are available.
+]
+]
+
+???
+
+These functions are great if we don't have to see the whole dataset in order to start the processing.
+This is definitely always the case, but it can be good to be able to identify such cases.
+
+This is a little bit more advanced in that you would have to construct a callback function, so I'm mostly mentioning this for you to know that it exists.
+
+---
+
+# General purpose
+
+.left-column[
+## [readr](https://readr.tidyverse.org/)
+## [chunked readr](https://readr.tidyverse.org/)
+## [data.table](https://cran.r-project.org/web/packages/data.table/index.html)
+]
+
+.right-column[
+If your dataset starts to become so big that it is slow to load using readr, data.table and its `fread` function is an alternative.
+
+```{r}
+library(data.table)
+
+fread(readr_example("mtcars.csv"), data.table = FALSE) %>% 
+  as_tibble()
+```
+]
+
+???
+
+This function works similar to the functions in readr, but it can be quite a bit faster.
+By default this returns a `data.table` object, but this can easily be converted to a tibble if we would like to.
+
+I should note that I haven't used this much at all since I mostly find the readr functions to be fast enough for my needs.
+
+---
+
+# General purpose
+
+.left-column[
+## [readr](https://readr.tidyverse.org/)
+## [chunked readr](https://readr.tidyverse.org/)
+## [data.table](https://cran.r-project.org/web/packages/data.table/index.html)
+## [bigmemory](https://cran.r-project.org/web/packages/bigmemory/)
+]
+
+.right-column[
+If your dataset is too big to even fit in memory, bigmemory and the accompanying big* packages can be used.
+A downside is that that all columns need to be the same datatype.
+
+```{r}
+library(bigmemory)
+
+read.big.matrix(readr_example("mtcars.csv"),
+                type = "double")
+```
+
+.note.yellow[
+`r note_fa("tip")`
+Don't start to worry about memory prematurely, only do that once it starts to actually become a problem, i.e. your computer runs out of memory.
+]
+]
+
+???
+
+Now it's starting to become quite advanced, and I will not go into how this actually works.
+The take-home message here is that this can be used for reading objects that don't fit in memory.
+It can solve this by storing the data structure on disk, and then pointing to specific bits of these files whenever they are needed.
+
+The downside with this package is that it only deals with matrices, meaning that all columns must be of the same data type.
+
+If you are using a system that is shared among many users, then there are usually safeguards in place so that you don't consume the memory of all users.
+If that is not the case, then tread carefully and preferably err on the side of caution.
+
+---
+
+# General purpose
+
+.left-column[
+## [readr](https://readr.tidyverse.org/)
+## [chunked readr](https://readr.tidyverse.org/)
+## [data.table](https://cran.r-project.org/web/packages/data.table/index.html)
+## [bigmemory](https://cran.r-project.org/web/packages/bigmemory/)
+## [ff](https://cran.r-project.org/web/packages/ff/index.html)
+]
+
+.right-column[
+ff is similar to bigmemory in that it saves the data to disk to avoid filling up the memory.
+The difference is that it allows for multiple data types in each column, similar to a data frame.
+
+```{r}
+library(ff)
+
+read.csv.ffdf(file = readr_example("mtcars.csv"))
+```
+
+???
+
+The resulting object, which is a `ffdf` (so, ff data frame), behaves very similar to a regular data frame.
+]
