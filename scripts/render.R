@@ -15,6 +15,7 @@ suppressPackageStartupMessages({
 Usage:
   render.R lecture [--dir DIR] [--outdir DIR] N [N ...]
   render.R site
+  render.R notes N
   render.R clean [-n]
   render.R (-h | --help)
 
@@ -50,6 +51,36 @@ if (args$site) {
              knit_root_dir = here(args$dir))
     })
   }
+} else if (args$notes) {
+  r_filename <- fs::dir_ls(
+    fs::path_rel(here(args$dir), here()), type = "file",
+    glob = str_c(sprintf("*/%02d", as.integer(args$N)), "*.R")
+  )
+  cat(r_filename, '\n')
+  if (length(r_filename) == 0) {
+    stop(str_c("no notes found for lecture ", args$N))
+  } else if (length(r_filename) > 1) {
+    stop(str_c("more than one note was found for lecture ", args$N))
+  }
+  render(names(r_filename),
+         knit_root_dir = here(args$dir),
+         output_format = output_format(
+           knitr = knitr_options(
+             opts_chunk = list(
+               cache.path = str_c("./figures/notes_", args$N, "_"),
+               fig.path = str_c("./figures/notes_", args$N, "_")
+             )
+           ),
+           pandoc = pandoc_options(
+             to = "html",
+             args = c("--metadata", "author=",
+                      "--metadata", "date=")
+           ),
+           base_format = html_document(
+             self_contained = FALSE,
+             lib_dir = "libs"
+           ),
+         ))
 } else if (args$clean) {
   clean_site(preview = args$dryrun)
 }
