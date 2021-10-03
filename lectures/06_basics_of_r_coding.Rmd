@@ -498,6 +498,7 @@ x
 # Vectors
 
 If we try to combine objects of different types, R tries to convert them to a representation common to all of them.
+This is known as **coercion**.
 
 ```{r}
 c(1, 2, 3L, 4L)
@@ -523,7 +524,54 @@ c(0, 1, TRUE, FALSE, "hello")
 
 ---
 
-# Vectors
+# Coercion
+
+If there is a single character value in the vector, all values will be converted to characters.
+
+```{r}
+c(0, 1, TRUE, FALSE, "hello")
+```
+
+If it only contains numbers and logicals, the logical values will be converted to numbers.
+
+```{r}
+c(0, 1, TRUE, FALSE, 3.14)
+```
+
+---
+
+# Coercion
+
+Coercion can sometimes feel arbitrary, but once you get used to it, it can be quite useful.
+
+```{r}
+x <- c(TRUE, TRUE, FALSE, FALSE)
+sum(x)
+mean(x)
+```
+
+???
+
+One of the most useful ways we can use coercion is with logical vectors.
+The sum of a logical vector is the number of `TRUE` values.
+The mean can be seen as the fraction of `TRUE` values in the vector.
+
+---
+
+# Coercion
+
+We can also convert values manually by using the `as.*` functions.
+
+```{r}
+as.character(1)
+as.logical(1)
+as.logical(0)
+as.numeric(TRUE)
+```
+
+---
+
+# Naming vectors
 
 The elements in a vector can be named.
 
@@ -547,7 +595,7 @@ x
 
 ---
 
-# Vectors
+# Vector indexing
 
 We can access individual elements in a vector using square brackets.
 
@@ -566,7 +614,7 @@ This is not the case in R where indexing is 1-based.
 
 ---
 
-# Vectors
+# Vector indexing
 
 You can also get a range of numbers by indexing a vector with another vector.
 
@@ -586,7 +634,7 @@ x[c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE)]
 
 ---
 
-# Vectors
+# Vector indexing
 
 Finally, if your vector has names, you can also access elements by using these.
 
@@ -653,7 +701,7 @@ Note that this is not equivalent of setting the missing value to a fixed value.
 Used for representing categorical variables.
 
 ```{r}
-factor(c(1, 1, 2, 2, 3, 3))
+(x <- factor(c(1, 1, 2, 2, 3, 3)))
 ```
 ]
 
@@ -684,6 +732,90 @@ as.numeric(factor(c("one", "one", "two", "two", "three", "three")))
 
 .left-column[
 ## Factor
+]
+
+.right-column[
+We can access the unique levels of a factor using the function `levels`:
+
+```{r}
+x <- factor(c(1, 2, 1, 3, 4, 3), labels = c("one", "two", "three", "four"))
+levels(x)
+```
+
+... and we can get the number of levels with the function `nlevels`:
+
+```{r}
+nlevels(x)
+```
+]
+
+---
+
+
+# Composite data types
+
+.left-column[
+## Factor
+]
+
+.right-column[
+A convenience function for quickly creating factors is `gl` (generate levels).
+
+```{r}
+gl(3, 2)
+```
+
+```{r}
+gl(3, 5, labels = c("WT", "treatment1", "treatment2"))
+```
+]
+
+???
+
+The first argument to `gl` is the number of levels that we want in our factor.
+
+The second argument is how many times each factor level should occur.
+
+---
+
+# Composite data types
+
+.left-column[
+## Factor
+### Ordered factors
+]
+
+.right-column[
+This is a special case of a regular factor where we have a natural ordering of the levels within a categorical variable.
+
+```{r}
+factor(c(1, 1, 2, 2, 3, 3), ordered = TRUE)
+```
+]
+
+--
+
+.right-column[
+```{r}
+ordered(c(1, 1, 3, 3, 2, 2))
+```
+]
+
+--
+
+.right-column[
+```{r}
+gl(3, 2, ordered = TRUE)
+```
+]
+
+---
+
+# Composite data types
+
+.left-column[
+## Factor
+### Ordered factors
 ## Matrix
 ]
 
@@ -711,6 +843,7 @@ x
 
 .left-column[
 ## Factor
+### Ordered factors
 ## Matrix
 ]
 
@@ -733,6 +866,7 @@ x[row, col]
 
 .left-column[
 ## Factor
+### Ordered factors
 ## Matrix
 ]
 
@@ -752,6 +886,7 @@ x[, 2]
 
 .left-column[
 ## Factor
+### Ordered factors
 ## Matrix
 ## List
 ]
@@ -773,6 +908,7 @@ x
 
 .left-column[
 ## Factor
+### Ordered factors
 ## Matrix
 ## List
 ]
@@ -792,6 +928,7 @@ str(x)
 
 .left-column[
 ## Factor
+### Ordered factors
 ## Matrix
 ## List
 ]
@@ -813,6 +950,7 @@ typeof(x[1])
 
 .left-column[
 ## Factor
+### Ordered factors
 ## Matrix
 ## List
 ]
@@ -832,6 +970,7 @@ typeof(x[[1]])
 
 .left-column[
 ## Factor
+### Ordered factors
 ## Matrix
 ## List
 ]
@@ -857,6 +996,7 @@ x$one
 
 .left-column[
 ## Factor
+### Ordered factors
 ## Matrix
 ## List
 ## Data frame
@@ -881,6 +1021,7 @@ This is probably the data structure that we will be spending most of our time wi
 
 .left-column[
 ## Factor
+### Ordered factors
 ## Matrix
 ## List
 ## Data frame
@@ -906,6 +1047,7 @@ x[, 2]
 
 .left-column[
 ## Factor
+### Ordered factors
 ## Matrix
 ## List
 ## Data frame
@@ -935,6 +1077,7 @@ x$some_letters[2]
 
 .left-column[
 ## Factor
+### Ordered factors
 ## Matrix
 ## List
 ## Data frame
@@ -966,6 +1109,7 @@ All of the tools that we will be presenting during these weeks work perfectly we
 
 .left-column[
 ## Factor
+### Ordered factors
 ## Matrix
 ## List
 ## Data frame
@@ -984,6 +1128,7 @@ mpg
 
 .left-column[
 ## Factor
+### Ordered factors
 ## Matrix
 ## List
 ## Data frame
@@ -1069,3 +1214,13 @@ x_mean <- mean(x)
 
 Imagine that we have code following this statement that would use this mean a thousand times in some type of calculation.
 Instead of calculating the mean a thousand times, we pre-calculate it in order to save some computing resources.
+
+---
+
+# Suggested reading and exercises
+
+- [R for Data Science: Vectors](https://r4ds.had.co.nz/vectors.html)
+- Hands-On Programming with R
+  - [The Very Basics](https://rstudio-education.github.io/hopr/basics.html) (skip 2.4 Writing Your Own Functions)
+  - [R Objects](https://rstudio-education.github.io/hopr/r-objects.html): Sections 5.1-5.8
+- [Base R Cheat Sheet](https://github.com/rstudio/cheatsheets/blob/master/base-r.pdf)
