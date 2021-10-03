@@ -16,6 +16,8 @@ setup_presentation("tidy_data", filename = "09_tidy_data.Rmd")
 library(kableExtra)
 ```
 
+---
+
 # Data representation
 
 The same data can be represented in many different ways.
