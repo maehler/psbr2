@@ -68,7 +68,8 @@ if (args$site) {
            knitr = knitr_options(
              opts_chunk = list(
                cache.path = str_c("./figures/notes_", args$N, "_"),
-               fig.path = str_c("./figures/notes_", args$N, "_")
+               fig.path = str_c("./figures/notes_", args$N, "_"),
+               error = TRUE
              )
            ),
            pandoc = pandoc_options(
