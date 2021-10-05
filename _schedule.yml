@@ -116,17 +116,17 @@ schedule:
   - day:
     - start_time:
       end_time:
-      topic: Catching up/Q&A
-      lecture: false
-  - day:
-    - start_time:
-      end_time:
       topic: Importing data into R
       url: lectures/10_importing_data_into_r.html
       details: |
         - readr package
-        - readxl package (?)
+        - readxl package
         - Load the data from the first course
+    - start_time:
+      end_time:
+      topic: Loading data into R, manipulation and visualisation
+      lecture: false
+  - day:
     - start_time:
       end_time:
       topic: Reproducibility in data science
