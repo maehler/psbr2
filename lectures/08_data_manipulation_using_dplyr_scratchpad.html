@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="" />
+
+
+<title>08_data_manipulation_using_dplyr_scratchpad.R</title>
+
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">08_data_manipulation_using_dplyr_scratchpad.R</h1>
+<h4 class="author"></h4>
+
+</div>
+
+
+<div id="data-manipulation-using-dplyr" class="section level1">
+<h1>Data manipulation using dplyr</h1>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
+<pre><code>## ✔ ggplot2 3.3.5     ✔ readr   2.0.2
+## ✔ tibble  3.1.5     ✔ dplyr   1.0.7
+## ✔ tidyr   1.1.4     ✔ forcats 0.5.1</code></pre>
+<pre><code>## ── Conflicts ───────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(nycflights13)</code></pre>
+<div id="missing-an-equals-sign" class="section level2">
+<h2>Missing an equals sign</h2>
+<p>Often in R we get pretty bad error messages. This is an exception.</p>
+<pre class="r"><code>filter(flights, dep_delay &lt;= 0, origin = &quot;JFK&quot;)</code></pre>
+<pre><code>## Error: Problem with `filter()` input `..2`.
+## ✖ Input `..2` is named.
+## ℹ This usually means that you&#39;ve used `=` instead of `==`.
+## ℹ Did you mean `origin == &quot;JFK&quot;`?</code></pre>
+<p>If we write it a bit differently, we don’t get a super-informative error message.</p>
+<pre class="r"><code>filter(flights, dep_delay &lt;= 0 &amp; origin = &quot;JFK&quot;)</code></pre>
+<pre><code>## Error: unexpected &#39;=&#39; in &quot;filter(flights, dep_delay &lt;= 0 &amp; origin =&quot;</code></pre>
+</div>
+<div id="or-filtering" class="section level2">
+<h2>OR filtering</h2>
+<p>We can also filter using OR logic (<code>|</code>).</p>
+<pre class="r"><code>filter(flights, dest == &quot;LAX&quot; | dest == &quot;ORD&quot;)</code></pre>
+<pre><code>## # A tibble: 33,457 × 19
+##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
+##  1  2013     1     1      554            558        -4      740            728
+##  2  2013     1     1      558            600        -2      753            745
+##  3  2013     1     1      558            600        -2      924            917
+##  4  2013     1     1      608            600         8      807            735
+##  5  2013     1     1      628            630        -2     1016            947
+##  6  2013     1     1      629            630        -1      824            810
+##  7  2013     1     1      656            700        -4      854            850
+##  8  2013     1     1      658            700        -2     1027           1025
+##  9  2013     1     1      702            700         2     1058           1014
+## 10  2013     1     1      709            700         9      852            832
+## # … with 33,447 more rows, and 11 more variables: arr_delay &lt;dbl&gt;,
+## #   carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;,
+## #   air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
+</div>
+<div id="mutate-across" class="section level2">
+<h2>Mutate across</h2>
+<p>Create a smaller dataset…</p>
+<pre class="r"><code>flights_small &lt;- select(flights, matches(&quot;time&quot;), dest, origin)</code></pre>
+<p>… that we then add new variables to by dividing all variables whose names end with “time” by 60, so converting minutes to hours. The names are set to the original column names, but with "_hour" appended.</p>
+<pre class="r"><code>mutate(flights_small, across(.cols = ends_with(&quot;time&quot;),
+                             .fns = ~ . / 60,
+                             .names = &quot;{.col}_hour&quot;))</code></pre>
+<pre><code>## # A tibble: 336,776 × 13
+##    dep_time sched_dep_time arr_time sched_arr_time air_time time_hour          
+##       &lt;int&gt;          &lt;int&gt;    &lt;int&gt;          &lt;int&gt;    &lt;dbl&gt; &lt;dttm&gt;             
+##  1      517            515      830            819      227 2013-01-01 05:00:00
+##  2      533            529      850            830      227 2013-01-01 05:00:00
+##  3      542            540      923            850      160 2013-01-01 05:00:00
+##  4      544            545     1004           1022      183 2013-01-01 05:00:00
+##  5      554            600      812            837      116 2013-01-01 06:00:00
+##  6      554            558      740            728      150 2013-01-01 05:00:00
+##  7      555            600      913            854      158 2013-01-01 06:00:00
+##  8      557            600      709            723       53 2013-01-01 06:00:00
+##  9      557            600      838            846      140 2013-01-01 06:00:00
+## 10      558            600      753            745      138 2013-01-01 06:00:00
+## # … with 336,766 more rows, and 7 more variables: dest &lt;chr&gt;, origin &lt;chr&gt;,
+## #   dep_time_hour &lt;dbl&gt;, sched_dep_time_hour &lt;dbl&gt;, arr_time_hour &lt;dbl&gt;,
+## #   sched_arr_time_hour &lt;dbl&gt;, air_time_hour &lt;dbl&gt;</code></pre>
+<p>Here’s an example where we apply two functions to the same variables. The default names in this case are the names of the original variables and the names of the functions that are applied to them.</p>
+<pre class="r"><code>mutate(flights_small, across(.cols = ends_with(&quot;time&quot;),
+                             .fns = list(second = ~ . * 60,
+                                         hour = ~ . / 60)))</code></pre>
+<pre><code>## # A tibble: 336,776 × 18
+##    dep_time sched_dep_time arr_time sched_arr_time air_time time_hour          
+##       &lt;int&gt;          &lt;int&gt;    &lt;int&gt;          &lt;int&gt;    &lt;dbl&gt; &lt;dttm&gt;             
+##  1      517            515      830            819      227 2013-01-01 05:00:00
+##  2      533            529      850            830      227 2013-01-01 05:00:00
+##  3      542            540      923            850      160 2013-01-01 05:00:00
+##  4      544            545     1004           1022      183 2013-01-01 05:00:00
+##  5      554            600      812            837      116 2013-01-01 06:00:00
+##  6      554            558      740            728      150 2013-01-01 05:00:00
+##  7      555            600      913            854      158 2013-01-01 06:00:00
+##  8      557            600      709            723       53 2013-01-01 06:00:00
+##  9      557            600      838            846      140 2013-01-01 06:00:00
+## 10      558            600      753            745      138 2013-01-01 06:00:00
+## # … with 336,766 more rows, and 12 more variables: dest &lt;chr&gt;, origin &lt;chr&gt;,
+## #   dep_time_second &lt;dbl&gt;, dep_time_hour &lt;dbl&gt;, sched_dep_time_second &lt;dbl&gt;,
+## #   sched_dep_time_hour &lt;dbl&gt;, arr_time_second &lt;dbl&gt;, arr_time_hour &lt;dbl&gt;,
+## #   sched_arr_time_second &lt;dbl&gt;, sched_arr_time_hour &lt;dbl&gt;,
+## #   air_time_second &lt;dbl&gt;, air_time_hour &lt;dbl&gt;</code></pre>
+</div>
+<div id="group-by" class="section level2">
+<h2>Group by</h2>
+<p>Group by can be used in order to apply a function to groups of observations in a data frame. In this example, I create a group for each day in the data, and then summarise it by counting the number of flights for each day, and calculating the mean arrival delay.</p>
+<pre class="r"><code>by_day &lt;- group_by(flights, year, month, day)
+summarise(by_day, n = n(), mean_arr_delay = mean(arr_delay, na.rm = TRUE))</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;year&#39;, &#39;month&#39;. You can override using the `.groups` argument.</code></pre>
+<pre><code>## # A tibble: 365 × 5
+## # Groups:   year, month [12]
+##     year month   day     n mean_arr_delay
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;          &lt;dbl&gt;
+##  1  2013     1     1   842         12.7  
+##  2  2013     1     2   943         12.7  
+##  3  2013     1     3   914          5.73 
+##  4  2013     1     4   915         -1.93 
+##  5  2013     1     5   720         -1.53 
+##  6  2013     1     6   832          4.24 
+##  7  2013     1     7   933         -4.95 
+##  8  2013     1     8   899         -3.23 
+##  9  2013     1     9   902         -0.264
+## 10  2013     1    10   932         -5.90 
+## # … with 355 more rows</code></pre>
+</div>
+<div id="mutate-across-again" class="section level2">
+<h2>Mutate across again</h2>
+<p>Here is another example of mutate where we use the existing function <code>mean</code>. We have to pass it the argument <code>na.rm = TRUE</code> in order to get something back from it. This is the reason why the argument names that are specific to <code>across</code> start with a period. We can then tell what arguments belong to <code>across</code>, and what arguments belong to the function(s) in <code>.fns</code>.</p>
+<pre class="r"><code>group_by(flights, year, month, day) %&gt;% 
+  mutate(across(.cols = ends_with(&quot;time&quot;),
+                .fns = mean,
+                na.rm = TRUE))</code></pre>
+<pre><code>## # A tibble: 336,776 × 19
+## # Groups:   year, month, day [365]
+##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;dbl&gt;          &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;
+##  1  2013     1     1    1385.          1372.         2    1562.          1568.
+##  2  2013     1     1    1385.          1372.         4    1562.          1568.
+##  3  2013     1     1    1385.          1372.         2    1562.          1568.
+##  4  2013     1     1    1385.          1372.        -1    1562.          1568.
+##  5  2013     1     1    1385.          1372.        -6    1562.          1568.
+##  6  2013     1     1    1385.          1372.        -4    1562.          1568.
+##  7  2013     1     1    1385.          1372.        -5    1562.          1568.
+##  8  2013     1     1    1385.          1372.        -3    1562.          1568.
+##  9  2013     1     1    1385.          1372.        -3    1562.          1568.
+## 10  2013     1     1    1385.          1372.        -2    1562.          1568.
+## # … with 336,766 more rows, and 11 more variables: arr_delay &lt;dbl&gt;,
+## #   carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;,
+## #   air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
+</div>
+<div id="separateunite" class="section level2">
+<h2>Separate/unite</h2>
+<p>Here are a couple of examples how we can use separate and unite in order to clean up a messy dataset.</p>
+<pre class="r"><code>table5 %&gt;% 
+  unite(&quot;year&quot;, century, year, sep = &quot;&quot;) %&gt;% 
+  mutate(year = as.numeric(year)) %&gt;% 
+  separate(rate, into = c(&quot;cases&quot;, &quot;population&quot;), sep = &quot;/&quot;,
+           convert = TRUE)</code></pre>
+<pre><code>## # A tibble: 6 × 4
+##   country      year  cases population
+##   &lt;chr&gt;       &lt;dbl&gt;  &lt;int&gt;      &lt;int&gt;
+## 1 Afghanistan  1999    745   19987071
+## 2 Afghanistan  2000   2666   20595360
+## 3 Brazil       1999  37737  172006362
+## 4 Brazil       2000  80488  174504898
+## 5 China        1999 212258 1272915272
+## 6 China        2000 213766 1280428583</code></pre>
+<pre class="r"><code>table5 %&gt;% 
+  unite(&quot;year&quot;, century, year, sep = &quot;&quot;) %&gt;% 
+  mutate(year = as.numeric(year)) %&gt;% 
+  separate(rate, into = c(&quot;cases&quot;, &quot;population&quot;), sep = &quot;/&quot;) %&gt;% 
+  mutate(across(c(cases, population), as.integer))</code></pre>
+<pre><code>## # A tibble: 6 × 4
+##   country      year  cases population
+##   &lt;chr&gt;       &lt;dbl&gt;  &lt;int&gt;      &lt;int&gt;
+## 1 Afghanistan  1999    745   19987071
+## 2 Afghanistan  2000   2666   20595360
+## 3 Brazil       1999  37737  172006362
+## 4 Brazil       2000  80488  174504898
+## 5 China        1999 212258 1272915272
+## 6 China        2000 213766 1280428583</code></pre>
+</div>
+<div id="joins" class="section level2">
+<h2>Joins</h2>
+<p>Here is an example where I join the <code>flights</code> data frame with the <code>weather</code> data frame in order to see if there is a correlation between the departure delay and any of the weather metrics.</p>
+<p>First I create a subset of the <code>flights</code> data, just for the sake of convenience.</p>
+<pre class="r"><code>flights2 &lt;- flights %&gt;% 
+  select(year:day, hour, dest, origin, dep_delay)</code></pre>
+<p>This is then joined with the weather data.</p>
+<pre class="r"><code>flights_weather &lt;- left_join(flights2, weather, c(&quot;origin&quot;, &quot;year&quot;, &quot;month&quot;, &quot;day&quot;, &quot;hour&quot;))</code></pre>
+<p>Neither wind speed nor visibility seem to be associated with the departure delay.</p>
+<pre class="r"><code>ggplot(flights_weather, aes(dep_delay, wind_speed)) +
+  geom_point()</code></pre>
+<pre><code>## Warning: Removed 9861 rows containing missing values (geom_point).</code></pre>
+<p><img src="figures/notes_8_unnamed-chunk-13-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(flights_weather, aes(dep_delay, visib)) +
+  geom_point()</code></pre>
+<pre><code>## Warning: Removed 9783 rows containing missing values (geom_point).</code></pre>
+<p><img src="figures/notes_8_unnamed-chunk-13-2.png" width="672" /></p>
+<p>I pull out some weather variables that I then correlate with the departure delay. For the correlation, we need to specify how missing values should be handled, check <code>?cor</code> for details.</p>
+<pre class="r"><code>weather_var &lt;- flights_weather %&gt;% select(dewp, humid, wind_speed, precip, pressure)
+cor(flights_weather$dep_delay, weather_var,
+    use = &quot;complete.obs&quot;)</code></pre>
+<pre><code>##            dewp      humid wind_speed     precip   pressure
+## [1,] 0.09325152 0.08088159  0.0336295 0.05104822 -0.1142736</code></pre>
+<p>From this, we can see that the metric <code>pressure</code> had the highest correlation with the departure delay, so we can go ahead and plot this relationship. There is a lot of overplotting going on, so I set the <code>alpha</code> parameter to a smallish value to be able to see the relationship better. A value of 1/20 means that if we have 20 points that overlap, then the colour should be pure black.</p>
+<pre class="r"><code>ggplot(flights_weather, aes(dep_delay, pressure)) +
+  geom_point(alpha = 1/20) +
+  scale_x_log10()</code></pre>
+<pre><code>## Warning in self$trans$transform(x): NaNs produced</code></pre>
+<pre><code>## Warning: Transformation introduced infinite values in continuous x-axis</code></pre>
+<pre><code>## Warning: Removed 211715 rows containing missing values (geom_point).</code></pre>
+<p><img src="figures/notes_8_unnamed-chunk-15-1.png" width="672" /></p>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
