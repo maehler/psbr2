@@ -529,6 +529,84 @@ It is similar to `sessionInfo`, but it excludes information that is rarely used,
 
 ---
 
+# Persistent identifiers
+
+Whenever we share information online, we usually have a URL pointing to whatever we shared.
+The problem with URLs is that they might change in the future.
+
+**Persistent identifiers** aim to get around this by having an ID that refers to an object, regardless of where it is being kept.
+
+A couple of examples of persistent identifiers are
+
+- [Digital Object Identifier (DOI)](https://www.doi.org/): used for scientific papers, datasets, Github repositories, etc.
+- [Open Researcher and Contributor ID (ORCID)](https://orcid.org/): used for researchers.
+
+???
+
+Persistent identifiers aren't really connected to our everyday work, as such, but they are really useful.
+
+The change to a URL scheme is something that we cannot control.
+If Github, for example, decides to change the structure of their website, and then also the URL scheme, then there's nothing much we can do about that.
+
+DOI: You might have seen these numbers on journal articles.
+These are probably some of the most widespread identifiers today.
+
+ORCID: A system for keeping track of researchers.
+Useful if you have a very common name, or if you change your name for whatever reason.
+Many journals are starting to require this for publishing, at least for corresponding authors.
+
+---
+
+# DOI
+
+- The International DOI Foundation launched in 1998, first applications in 2000.
+- ~257 million DOI names assigned.
+- Over 5 billion DOI resolutions per year.
+
+
+- Main goal: provide a persistent link between an ID and an object.
+- Any entity can get a DOI.
+- No central search function, but generally most web search engines will resolve DOIs.
+
+.pull-left.center[
+![DOI logo](https://www.doi.org/img/doi_logo_for_display.gif)
+
+[DOI Factsheet](https://www.doi.org/factsheets/DOIKeyFacts.html)
+]
+
+.pull-right[
+![Googling a DOI](../img/google_doi.png)
+]
+
+
+???
+
+It's a *digital identifier* of an object, not an identifier of a *digital object*.
+
+Since it's meant to be a persistent identifier, you should not change or update an object that has gotten a DOI name.
+Many DOI Registration Agencies actively prevent entities from being updated once they've been assigned a DOI.
+
+---
+
+# Persistent identifiers — where can we get one?
+
+- [Zenodo](https://zenodo.org/)
+- [Figshare](https://figshare.com/)
+- [ORCID](https://orcid.org/)
+
+.pull-left.center.framed[
+![:scale 80%](../img/persistent_identifier_example.png)
+]
+
+.pull-right.center[
+![:scale 80%](../img/github_doi.png)
+]
+
+???
+
+
+---
+
 # How to ask for help
 
 .left-column[
