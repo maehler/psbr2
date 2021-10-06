@@ -118,3 +118,79 @@ cor(flights_weather$dep_delay, weather_var,
 ggplot(flights_weather, aes(dep_delay, pressure)) +
   geom_point(alpha = 1/20) +
   scale_x_log10()
+
+#' ## Questions related to exercises
+#' 
+#' ### 
+#' 
+flights %>% 
+  arrange(desc(is.na(dep_time))) %>% 
+  select(year:day, dep_time)
+
+#' ### Mutating joins
+#' 
+#' **Compute the average delay by destination, then join on the `airports` data frame so you can show the spatial distribution of delays.**
+#' 
+#' First I group the flights by `dest` and calculate the average arrival delay using `summarise` and `mean`.
+#' 
+flights2 <- flights %>% 
+  group_by(dest) %>% 
+  summarise(average_delay = mean(arr_delay, na.rm = TRUE))
+
+#' I then make an inner join of `airports` and the newly created `flights2` tibble, which then is plotted according to the instructions in the book.
+#' The delay is represented by both the point colour and the point size.
+#' 
+airports %>%
+  inner_join(flights2, c("faa" = "dest")) %>%
+  ggplot(aes(lon, lat)) +
+  borders("state") +
+  geom_point(aes(colour = average_delay, size = average_delay)) +
+  coord_quickmap()
+
+#' ### Filter rows with `filter()`
+#' 
+#' **Find all flights that flew to Houston (`IAH` or `HOU`)**
+#' 
+#' First we look at an example that does not work.
+#'
+flights %>% 
+  filter(dest == c("IAH", "HOU")) %>% 
+
+#' At first glance it might seem that this is working since no errors are reported, and we get a tibble back.
+#' However, if we write the expression differently, we get a different result.
+flights %>% 
+  filter(dest == "IAH" | dest == "HOU") %>% 
+  nrow()
+
+#' The reason that the first example does not work is due to vector recycling.
+#' When comparing two vectors, R will recycle the shorter of the two in order to make them the same length.
+#' A comparison like this
+#' 
+c(1, 2, 3, 4) == 2
+
+#' is equivalent to
+#'
+c(1, 2, 3, 4) == c(2, 2, 2, 2)
+
+#' The following comparison
+#' 
+c(1, 2, 3, 4) == c(1, 3)
+
+#' is the same as
+#' 
+c(1, 2, 3, 4) == c(1, 3, 1, 3)
+
+#' Whenever the shorter vector can be perfectly recycled into the longer vector (i.e. the length of the shorter is a multiple of the longer), we don't get any warning messages.
+#' If this is not the case, we would get a warning.
+#' 
+c(1, 2, 3, 4) == c(1, 2, 4)
+
+#' If we go back to the filtering of `flights`, we don't get a warning since this dataset has an even number of rows, and thus the vector `c("IAH", "HOU")` can be perfectly recycled.
+#' 
+
+#' A more consise way of checking multiple values at once is by using the `%in%` operator.
+#' For each value in the vector left of `%in%`, it will check if that value is present in the vector to the right of `%in%`.
+#' 
+flights %>% 
+  filter(dest %in% c("IAH", "HOU")) %>% 
+  nrow()
