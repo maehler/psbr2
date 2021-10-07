@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Niklas Mähler" />
     <meta name="date" content="2021-10-08" />
-    <script src="libs/header-attrs-2.8/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/niklas.css" type="text/css" />
     <link rel="stylesheet" href="css/niklas-fonts.css" type="text/css" />
@@ -139,6 +139,94 @@ ggplot(diamonds, aes(cut, fill = cut)) +
 
 This is a case where a bar chart is much simpler, and also easier to read.
 Here it is very obvious that there are more "Premium" cuts than "Very Good" cuts.
+
+---
+
+# Don't plot data relative to wild-type
+
+
+
+.pull-left[
+
+```r
+expression_data
+```
+
+```
+## # A tibble: 30 × 2
+##    line  expression
+##    &lt;fct&gt;      &lt;dbl&gt;
+##  1 WT          3.75
+##  2 WT          2.33
+##  3 WT          2.54
+##  4 WT          7.50
+##  5 WT          4.20
+##  6 WT          2.07
+##  7 WT          5.82
+##  8 WT          1.84
+##  9 WT          3.12
+## 10 WT          3.39
+## # … with 20 more rows
+```
+]
+
+.pull-right[
+
+```r
+summarised_expression &lt;- expression_data %&gt;% 
+  group_by(line) %&gt;% 
+  summarise(median = median(expression),
+            se = sd(expression) / sqrt(n()))
+
+wt_median &lt;- summarised_expression %&gt;%
+  filter(line == "WT") %&gt;%
+  pull(median)
+
+relative_expression &lt;- summarised_expression %&gt;% 
+  mutate(rel_expression = median / wt_median)
+
+relative_expression
+```
+
+```
+## # A tibble: 3 × 4
+##   line    median    se rel_expression
+##   &lt;fct&gt;    &lt;dbl&gt; &lt;dbl&gt;          &lt;dbl&gt;
+## 1 WT       3.26  0.567          1    
+## 2 mutant1  0.880 0.204          0.270
+## 3 mutant2  7.43  1.10           2.28
+```
+]
+
+---
+
+# Don't plot data relative to wild-type
+
+
+```r
+ggplot(relative_expression, aes(line, rel_expression)) +
+  geom_col(fill = "olivedrab") +
+  geom_errorbar(aes(ymin = pmax(rel_expression - se, 0),
+                    ymax = rel_expression + se),
+                width = 0.1) +
+  labs(x = "", y = "Relative expression")
+```
+
+&lt;img src="./figures/advanced_plotting_dos_and_donts_relative_to_wildtype-1.png" width="55%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Do plot all of the data for wild-type
+
+
+```r
+ggplot(expression_data, aes(line, expression)) +
+  geom_point(aes(colour = line), position = position_jitter(height = 0, width = 0.2)) +
+  labs(x = "", y = "Gene expression") + 
+  theme(legend.position = "none")
+```
+
+&lt;img src="./figures/advanced_plotting_dos_and_donts_show_all_data_for_wildtype-1.png" width="55%" style="display: block; margin: auto;" /&gt;
 
 ---
 

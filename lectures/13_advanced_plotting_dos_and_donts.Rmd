@@ -107,6 +107,66 @@ Here it is very obvious that there are more "Premium" cuts than "Very Good" cuts
 
 ---
 
+# Don't plot data relative to wild-type
+
+```{r, echo = FALSE}
+expression_data <- tibble(
+  line = gl(3, 10, labels = c("WT", "mutant1", "mutant2")),
+  expression = c(rgamma(10, 3, 1), rgamma(10, 1, 1), rgamma(10, 7, 1))
+)
+```
+
+.pull-left[
+```{r}
+expression_data
+
+```
+]
+
+.pull-right[
+```{r}
+summarised_expression <- expression_data %>% 
+  group_by(line) %>% 
+  summarise(median = median(expression),
+            se = sd(expression) / sqrt(n()))
+
+wt_median <- summarised_expression %>%
+  filter(line == "WT") %>%
+  pull(median)
+
+relative_expression <- summarised_expression %>% 
+  mutate(rel_expression = median / wt_median)
+
+relative_expression
+```
+]
+
+---
+
+# Don't plot data relative to wild-type
+
+```{r relative_to_wildtype, out.width = "55%"}
+ggplot(relative_expression, aes(line, rel_expression)) +
+  geom_col(fill = "olivedrab") +
+  geom_errorbar(aes(ymin = pmax(rel_expression - se, 0),
+                    ymax = rel_expression + se),
+                width = 0.1) +
+  labs(x = "", y = "Relative expression")
+```
+
+---
+
+# Do plot all of the data for wild-type
+
+```{r show_all_data_for_wildtype, out.width = "55%"}
+ggplot(expression_data, aes(line, expression)) +
+  geom_point(aes(colour = line), position = position_jitter(height = 0, width = 0.2)) +
+  labs(x = "", y = "Gene expression") + 
+  theme(legend.position = "none")
+```
+
+---
+
 # Do describe plotting parameters in figure captions
 
 .center[
