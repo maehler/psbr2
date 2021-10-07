@@ -692,6 +692,33 @@ Just the effort of trying to explain the issue to someone else might make you se
 
 ---
 
+# How to ask for help
+
+.left-column[
+## Different levels
+## Rubber ducking
+## reprex
+]
+
+.right-column[
+The reprex package is for helping out making **repr**oducible **ex**amples.
+It is a part of the tidyverse.
+
+In essense, the package just helps you copy-paste code, but as opposed to simple copy-paste, it also runs it and generates any output as comments.
+As a consequence, if not all dependencies of your code are fulfilled, it will fail.
+
+It can work in a couple of different ways, but the way I have been using it is to copy the relevant code (<kbd>Ctrl</kbd>+<kbd>C</kbd> or <kbd>Cmd</kbd>+</kbd>C</kbd>) and running `reprex::reprex()`.
+By default, this creates a markdown snippet that can be shared wherever you want to ask for help.
+
+You can [read more about the reprex package on the tidyverse website](https://www.tidyverse.org/help/#reprex-pkg)
+]
+
+???
+
+I will show a live demo of how this package works.
+
+---
+
 # Writing methods sections
 
 Oftentimes, the methods section in a published paper is the only thing we have in order to be able to reproduce methods, and more often than not, they are not very good.
@@ -761,33 +788,6 @@ The papers I've had on bioRxiv haven't gotten too much attention, but they've be
 With the COVID-19 pandemic, we saw a surge of COVID related papers and preprints, and in many cases valuable research could reach the community much faster thanks to preprints.
 There were a whole bunch of retractions as well, but seemingly not more than for research in general.
 You could however argue that the impact of some of the papers retracted was larger than what is common.
-
----
-
-# How to ask for help
-
-.left-column[
-## Different levels
-## Rubber ducking
-## reprex
-]
-
-.right-column[
-The reprex package is for helping out making **repr**oducible **ex**amples.
-It is a part of the tidyverse.
-
-In essense, the package just helps you copy-paste code, but as opposed to simple copy-paste, it also runs it and generates any output as comments.
-As a consequence, if not all dependencies of your code are fulfilled, it will fail.
-
-It can work in a couple of different ways, but the way I have been using it is to copy the relevant code (<kbd>Ctrl</kbd>+<kbd>C</kbd> or <kbd>Cmd</kbd>+</kbd>C</kbd>) and running `reprex::reprex()`.
-By default, this creates a markdown snippet that can be shared wherever you want to ask for help.
-
-You can [read more about the reprex package on the tidyverse website](https://www.tidyverse.org/help/#reprex-pkg)
-]
-
-???
-
-I will show a live demo of how this package works.
 
 ---
 
