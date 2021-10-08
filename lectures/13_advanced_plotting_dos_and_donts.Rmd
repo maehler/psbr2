@@ -354,3 +354,10 @@ Since a piece of paper doesn't have any depth, trying to compare two points beco
 ![:scale 50%, Animation of Homer Simpson pouring bleech into his eyes](https://media.giphy.com/media/lIU7yoG72gyhq/giphy.gif?cid=ecf05e47xtdiks74pesqx0tzm4tito1fhf0d0479jhf54lug&rid=giphy.gif)
 ]
 
+---
+
+# Suggested reading
+
+- [Hadley Wickham: The Layered Grammar of Graphics](http://vita.had.co.nz/papers/layered-grammar.pdf)
+- [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/)
+- [Dataviz caveats](https://www.data-to-viz.com/caveats.html)
