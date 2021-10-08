@@ -419,7 +419,7 @@ summary_plot + geom_ribbon(stat = "summary") + ggtitle("geom_ribbon")
 
 In order to get a summary across all our observations, we have to remove the grouping for `geom_smooth`.
 
-```{r oxboys_smooth, heights_trend}
+```{r heights_trend}
 ggplot(Oxboys, aes(age, height, group = Subject)) +
   geom_line(alpha = 0.3) +
   geom_point(alpha = 0.3) +
@@ -943,6 +943,71 @@ plot_grid(plot1, plot2, labels = c("A", "B"))
 We've already looked at faceting, or small multiples, but this only works well if the variables are common across all facets.
 If we want to combine plots that are related, but don't share variables, we need a different approach.
 The same generally applies if you want to combine different types of plots.
+
+---
+
+# Too long x-axis labels
+
+.left-column[
+## The problem
+]
+
+.right-column[
+When having a categorical variable on the x-axis, depending on the width of the plot and the number of levels of the variable, the labels might overlap.
+
+```{r overlapping_x_labels}
+ggplot(mpg, aes(manufacturer)) +
+  geom_bar()
+```
+]
+
+---
+
+# Too long x-axis labels
+
+.left-column[
+## The problem
+## Dodging labels
+]
+
+```{r overlapping_x_labels_dodge}
+ggplot(mpg, aes(manufacturer)) +
+  geom_bar() +
+  scale_x_discrete(guide = guide_axis(n.dodge = 2))
+```
+
+---
+
+# Too long x-axis labels
+
+.left-column[
+## The problem
+## Dodging labels
+## Rotating labels
+]
+
+```{r overlapping_x_labels_label_rot}
+ggplot(mpg, aes(manufacturer)) +
+  geom_bar() +
+  scale_x_discrete(guide = guide_axis(angle = 40))
+```
+
+---
+
+# Too long x-axis labels
+
+.left-column[
+## The problem
+## Dodging labels
+## Rotating labels
+## Rotating the coordinate system
+]
+
+```{r overlapping_x_labels_coord_rot}
+ggplot(mpg, aes(manufacturer)) +
+  geom_bar() +
+  coord_flip()
+```
 
 ---
 

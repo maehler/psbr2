@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Niklas Mähler" />
     <meta name="date" content="2021-10-08" />
-    <script src="libs/header-attrs-2.8/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/niklas.css" type="text/css" />
     <link rel="stylesheet" href="css/niklas-fonts.css" type="text/css" />
@@ -447,7 +447,7 @@ ggplot(Oxboys, aes(age, height, group = Subject)) +
   geom_smooth(group = 1)
 ```
 
-&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_oxboys_smooth, heights_trend-1.png" width="432" /&gt;
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_heights_trend-1.png" width="432" /&gt;
 
 ---
 
@@ -1502,6 +1502,83 @@ plot_grid(plot1, plot2, labels = c("A", "B"))
 We've already looked at faceting, or small multiples, but this only works well if the variables are common across all facets.
 If we want to combine plots that are related, but don't share variables, we need a different approach.
 The same generally applies if you want to combine different types of plots.
+
+---
+
+# Too long x-axis labels
+
+.left-column[
+## The problem
+]
+
+.right-column[
+When having a categorical variable on the x-axis, depending on the width of the plot and the number of levels of the variable, the labels might overlap.
+
+
+```r
+ggplot(mpg, aes(manufacturer)) +
+  geom_bar()
+```
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_overlapping_x_labels-1.png" width="432" /&gt;
+]
+
+---
+
+# Too long x-axis labels
+
+.left-column[
+## The problem
+## Dodging labels
+]
+
+
+```r
+ggplot(mpg, aes(manufacturer)) +
+  geom_bar() +
+  scale_x_discrete(guide = guide_axis(n.dodge = 2))
+```
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_overlapping_x_labels_dodge-1.png" width="432" /&gt;
+
+---
+
+# Too long x-axis labels
+
+.left-column[
+## The problem
+## Dodging labels
+## Rotating labels
+]
+
+
+```r
+ggplot(mpg, aes(manufacturer)) +
+  geom_bar() +
+  scale_x_discrete(guide = guide_axis(angle = 40))
+```
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_overlapping_x_labels_label_rot-1.png" width="432" /&gt;
+
+---
+
+# Too long x-axis labels
+
+.left-column[
+## The problem
+## Dodging labels
+## Rotating labels
+## Rotating the coordinate system
+]
+
+
+```r
+ggplot(mpg, aes(manufacturer)) +
+  geom_bar() +
+  coord_flip()
+```
+
+&lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_overlapping_x_labels_coord_rot-1.png" width="432" /&gt;
 
 ---
 
