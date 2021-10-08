@@ -1019,10 +1019,16 @@ ggplot(mpg, aes(manufacturer)) +
 
 # Suggested reading
 
+- [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/)
+- [Hadley Wickham: The Layered Grammar of Graphics](http://vita.had.co.nz/papers/layered-grammar.pdf)
+- [R Graphics Cookbook: Graphs](http://www.cookbook-r.com/Graphs/)
+
 ## If you're interested in data visualisation
 
 - [Flowing Data: a blog on data visualisation by Nathan Yau](https://flowingdata.com)
 - [Information is Beautiful](https://informationisbeautiful.net/)
+- [R graph gallery](https://www.r-graph-gallery.com/)
+- [The subreddir r/dataisbeautiful](https://reddit.com/r/dataisbeautiful)
 
 ???
 
