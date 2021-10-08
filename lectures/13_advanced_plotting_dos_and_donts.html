@@ -260,9 +260,7 @@ Be sure to consult the help pages for the different geoms and stats that you use
 .right-column[
 - Use colours that are colour blind friendly, for example, don't use red and green as contrasting colours.
   - [Run your figures through a colour blind simulator](http://hclwizard.org:3000/cvdemulator/), or check out the [colorblindr R package](https://github.com/clauswilke/colorblindr).
-- Use a sequential colour scale for continuous data.
-- Use a diverging colour scale when zero is included.
-- Use a qualitative colour scale for categorical data.
+- Use appropriate colour scales.
 - [colorspace package](http://colorspace.r-forge.r-project.org/index.html)
 - [RColorBrewer](https://www.r-graph-gallery.com/38-rcolorbrewers-palettes.html)
 ]
@@ -287,10 +285,95 @@ Accessibility could be a course on its own, but here are some things that we can
 
 ---
 
+# Choose appropriate colour scales
+
+.left-column[
+## Colours
+### Continuous data
+]
+
+.right-column[
+Is zero a natural baseline for the scale? Choose a sequential palette.
+
+```r
+library(colorspace)
+hcl_palettes(type = "sequential", plot = TRUE)
+```
+
+&lt;img src="./figures/advanced_plotting_dos_and_donts_colorspace_sequential-1.png" width="864" style="display: block; margin: auto;" /&gt;
+]
+
+---
+
+# Choose appropriate colour scales
+
+.left-column[
+## Colours
+### Continuous data
+]
+
+.right-column[
+Does the scale have a natural center? Choose a diverging palette.
+
+```r
+hcl_palettes(type = "diverging", plot = TRUE, n = 9)
+```
+
+&lt;img src="./figures/advanced_plotting_dos_and_donts_colorspace_diverging-1.png" width="576" style="display: block; margin: auto;" /&gt;
+]
+
+---
+
+# Choose appropriate colour scales
+
+.left-column[
+## Colours
+### Continuous data
+### Categorical data
+]
+
+.right-column[
+Is the categorical variable unordered? Choose a qualitative colour palette.
+
+```r
+hcl_palettes(type = "qualitative", plot = TRUE, n = 8)
+```
+
+&lt;img src="./figures/advanced_plotting_dos_and_donts_colorspace_qualitative-1.png" width="576" style="display: block; margin: auto;" /&gt;
+]
+
+???
+
+These scales are meant for categorical data where there is no particular ordering of the levels, and where all levels should be given equal weight, i.e. nothing should stand out.
+
+---
+
+# Choose appropriate colour scales
+
+.left-column[
+## Colours
+### Continuous data
+### Categorical data
+]
+
+.right-column[
+Is the categorical variable ordered? Choose a sequential colour palette.
+
+```r
+hcl_palettes(type = "sequential", plot = TRUE)
+```
+![](figures/advanced_plotting_dos_and_donts_colorspace_sequential-1.png)
+]
+
+---
+
 # Do make your figures accessible
 
 .left-column[
 ## Colours
+### Continuous data
+### Categorical data
+## Colour blindness
 ]
 
 .right-column[
@@ -310,6 +393,9 @@ p
 
 .left-column[
 ## Colours
+### Continuous data
+### Categorical data
+## Colour blindness
 ]
 
 .right-column[
@@ -331,6 +417,9 @@ This is an example of how things can look for someone that has problems with per
 
 .left-column[
 ## Colours
+### Continuous data
+### Categorical data
+## Colour blindness
 ## Font sizes
 ]
 
@@ -355,6 +444,9 @@ ggplot(iris, aes(Sepal.Length, fill = Species)) +
 
 .left-column[
 ## Colours
+### Continuous data
+### Categorical data
+## Colour blindness
 ## Font sizes
 ## Redundant coding
 ]
@@ -440,6 +532,7 @@ Since a piece of paper doesn't have any depth, trying to compare two points beco
 - [Hadley Wickham: The Layered Grammar of Graphics](http://vita.had.co.nz/papers/layered-grammar.pdf)
 - [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/)
 - [Dataviz caveats](https://www.data-to-viz.com/caveats.html)
+- [Colorspace paper](https://arxiv.org/abs/1903.06490)
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
