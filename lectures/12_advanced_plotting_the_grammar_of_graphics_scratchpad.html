@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="" />
+
+
+<title>12_advanced_plotting_the_grammar_of_graphics_scratchpad.R</title>
+
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">12_advanced_plotting_the_grammar_of_graphics_scratchpad.R</h1>
+<h4 class="author"></h4>
+
+</div>
+
+
+<div id="advanced-plotting" class="section level1">
+<h1>Advanced plotting</h1>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
+<pre><code>## ✔ ggplot2 3.3.5     ✔ readr   2.0.2
+## ✔ tibble  3.1.5     ✔ dplyr   1.0.7
+## ✔ tidyr   1.1.4     ✔ forcats 0.5.1</code></pre>
+<pre><code>## ── Conflicts ───────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<div id="implicit-and-explicit-grouping" class="section level2">
+<h2>Implicit and explicit grouping</h2>
+<p>First, we create a simple example dataset.</p>
+<pre class="r"><code>geom_df &lt;- tribble(
+  ~x, ~y, ~label,
+  3, 2, &quot;a&quot;,
+  1, 4, &quot;b&quot;,
+  5, 6, &quot;c&quot;
+)
+
+geom_df</code></pre>
+<pre><code>## # A tibble: 3 × 3
+##       x     y label
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;
+## 1     3     2 a    
+## 2     1     4 b    
+## 3     5     6 c</code></pre>
+<p>If we initialise a plot with x, y, and map the label to the colour, and try to add a path layer, we will get a warning.</p>
+<pre class="r"><code>ggplot(geom_df, aes(x, y, colour = label)) +
+  geom_path()</code></pre>
+<pre><code>## geom_path: Each group consists of only one observation. Do you need to adjust
+## the group aesthetic?</code></pre>
+<p><img src="figures/notes_12_unnamed-chunk-3-1.png" width="672" /></p>
+<p>The reason for this is that since the label is a categorical variable, it will define groups in the data, and every group now only consists of a single observation. As you understand, we need at least two observations in each group in order to be able to draw a line.</p>
+<p>A way of solving this is to set the grouping variable explicitly in <code>geom_path</code>. If we set that to a constant value, this will be applied to the whole dataset, and it will be considered a single group. It doesn’t matter what the value is, but by setting it to <code>1</code>, we could read it as “there is 1 group in the data, i.e. all observations.”</p>
+<pre class="r"><code>ggplot(geom_df, aes(x, y, colour = label)) +
+  geom_path(group = 1)</code></pre>
+<p><img src="figures/notes_12_unnamed-chunk-4-1.png" width="672" /></p>
+<p>Even though we specified three colours, only two of the lines are coloured. Since each line segment is built by two observations, ggplot has to decide which one of these observations should define the colour of the line. By default, this is decided by the first point in the line segment.</p>
+<p>If we plot points in addition to the line, we see that all of them will be represented since each observation is mapped to a colour of its own, rather than two observations being mapped to two different colours, as in the case of the line.</p>
+<pre class="r"><code>ggplot(geom_df, aes(x, y, colour = label)) +
+  geom_path(group = 1) +
+  geom_point(size = 5)</code></pre>
+<p><img src="figures/notes_12_unnamed-chunk-5-1.png" width="672" /></p>
+<p>The following plot just illustrates the difference between <code>geom_path</code> and <code>geom_line</code>. <code>geom_path</code> will plot a line where the order of the line segments is decided by the order in the data. <code>geom_line</code>, on the other hand, will draw the line from left to right, and ignore the order of the observations in the original tibble.</p>
+<pre class="r"><code>ggplot(geom_df, aes(x, y, colour = label)) +
+  geom_line(group = 1)</code></pre>
+<p><img src="figures/notes_12_unnamed-chunk-6-1.png" width="672" /></p>
+<p>Finally, setting the colour of a more complex collective geom, such as a polygon, is a bit more tricky. In this particular case, we can see that the colour gets defined by the first point in the data.</p>
+<pre class="r"><code>ggplot(geom_df, aes(x, y)) +
+  geom_polygon(aes(colour = label), group = 1, size = 3)</code></pre>
+<p><img src="figures/notes_12_unnamed-chunk-7-1.png" width="672" /></p>
+</div>
+<div id="summarising-geoms" class="section level2">
+<h2>Summarising geoms</h2>
+<p>Here’s a different example of grouping using a slightly more complex dataset. The data contains ages and heights of 26 boys that was recorded at nine different occasions. In the plot below, we visualise the height of the boys as they age, and we connect the dots belonging to the same boy (<code>Subject</code>). We set the group to be <code>Subject</code> in order to get the lines that we expect. On top of this, we add a summary of the data with <code>geom_smooth</code>, but in order for this to become a summary of all our data points, and not only for the groups we have previously defined, we set <code>group</code> to constant.</p>
+<pre class="r"><code>data(Oxboys, package = &quot;nlme&quot;)
+ggplot(Oxboys, aes(age, height, group = Subject)) +
+  geom_line(alpha = 0.1) +
+  geom_point(alpha = 0.1) +
+  geom_smooth(group = 1)</code></pre>
+<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<p><img src="figures/notes_12_unnamed-chunk-8-1.png" width="672" /></p>
+</div>
+<div id="colour-palettes" class="section level2">
+<h2>Colour palettes</h2>
+<p>If we want to customise what colour scale that we use for our plots, we have a couple of different options.</p>
+<div id="setting-the-colours-manually" class="section level3">
+<h3>Setting the colours manually</h3>
+<p>This is probably the most tedious way, but also the way where we have complete control over what colours are used.</p>
+<pre class="r"><code>ggplot(iris, aes(Sepal.Length, Sepal.Width, colour = Species)) +
+  geom_point() +
+  scale_colour_manual(values = c(setosa = &quot;gold&quot;,
+                                 virginica = &quot;forestgreen&quot;,
+                                 versicolor = &quot;slateblue&quot;))</code></pre>
+<p><img src="figures/notes_12_unnamed-chunk-9-1.png" width="672" /></p>
+<p>or</p>
+<pre class="r"><code>ggplot(iris, aes(Sepal.Length, Sepal.Width, colour = Species)) +
+  geom_point() +
+  scale_colour_discrete(type = c(setosa = &quot;gold&quot;,
+                                 virginica = &quot;forestgreen&quot;,
+                                 versicolor = &quot;slateblue&quot;))</code></pre>
+<p><img src="figures/notes_12_unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+<div id="using-a-pre-defined-palette" class="section level3">
+<h3>Using a pre-defined palette</h3>
+<p>ggplot2 includes palettes from the RColorBrewer package that can be accessed with <code>scale_*_brewer</code>. In the example below, we’re using this for the <code>colour</code> aesthetic, but we could also use it for <code>fill</code>.</p>
+<pre class="r"><code>ggplot(iris, aes(Sepal.Length, Sepal.Width, colour = Species)) +
+  geom_point(size = 2) +
+  scale_colour_brewer(type = &quot;qual&quot;)</code></pre>
+<p><img src="figures/notes_12_unnamed-chunk-11-1.png" width="672" /></p>
+<p>We can display all the RColorBrewer palettes like this</p>
+<pre class="r"><code>RColorBrewer::display.brewer.all()</code></pre>
+<p><img src="figures/notes_12_unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+<div id="colorspace-package" class="section level3">
+<h3>colorspace package</h3>
+<p>We can list the palettes that are available in colorspace:</p>
+<pre class="r"><code>colorspace::hcl_palettes()</code></pre>
+<pre><code>## HCL palettes
+## 
+## Type:  Qualitative 
+## Names: Pastel 1, Dark 2, Dark 3, Set 2, Set 3, Warm, Cold, Harmonic, Dynamic
+## 
+## Type:  Sequential (single-hue) 
+## Names: Grays, Light Grays, Blues 2, Blues 3, Purples 2, Purples 3, Reds 2,
+##        Reds 3, Greens 2, Greens 3, Oslo
+## 
+## Type:  Sequential (multi-hue) 
+## Names: Purple-Blue, Red-Purple, Red-Blue, Purple-Orange, Purple-Yellow,
+##        Blue-Yellow, Green-Yellow, Red-Yellow, Heat, Heat 2, Terrain,
+##        Terrain 2, Viridis, Plasma, Inferno, Rocket, Mako, Dark Mint,
+##        Mint, BluGrn, Teal, TealGrn, Emrld, BluYl, ag_GrnYl, Peach,
+##        PinkYl, Burg, BurgYl, RedOr, OrYel, Purp, PurpOr, Sunset,
+##        Magenta, SunsetDark, ag_Sunset, BrwnYl, YlOrRd, YlOrBr, OrRd,
+##        Oranges, YlGn, YlGnBu, Reds, RdPu, PuRd, Purples, PuBuGn, PuBu,
+##        Greens, BuGn, GnBu, BuPu, Blues, Lajolla, Turku, Hawaii, Batlow
+## 
+## Type:  Diverging 
+## Names: Blue-Red, Blue-Red 2, Blue-Red 3, Red-Green, Purple-Green,
+##        Purple-Brown, Green-Brown, Blue-Yellow 2, Blue-Yellow 3,
+##        Green-Orange, Cyan-Magenta, Tropic, Broc, Cork, Vik, Berlin,
+##        Lisbon, Tofino</code></pre>
+<p>… but we can also launch an interactive application for choosing an appropriate colour scale with the function <code>colorspace::hcl_wizard()</code>.</p>
+<p>Once we know what palette we want, we can define it using the <code>scale_*</code> functions from colorspace:</p>
+<pre class="r"><code>ggplot(iris, aes(Sepal.Length, Sepal.Width, colour = Species)) +
+  geom_point(size = 2) +
+  colorspace::scale_colour_discrete_qualitative(&quot;Harmonic&quot;)</code></pre>
+<p><img src="figures/notes_12_unnamed-chunk-14-1.png" width="672" /></p>
+<p>These functions are named according to the scheme <code>scale_&lt;aesthetic&gt;_&lt;datatype&gt;_&lt;colourscale&gt;()</code>, <code>&lt;aesthetic&gt;</code> is the name of the aesthetic we want to affect (<code>color</code> or <code>fill</code>), <code>&lt;datatype&gt;</code> is the datatype of the variable that is mapped to the asesthetic (<code>continuous</code> or <code>discrete</code>), and <code>&lt;colourscale&gt;</code> is the type of the palette we want to use (<code>qualitative</code>, <code>sequential</code>, <code>diverging</code>).</p>
+</div>
+<div id="defining-our-own-palette" class="section level3">
+<h3>Defining our own palette</h3>
+<p>We can use the function <code>colorRampPalette</code> for creating a colour palette of our own. It takes a vector of colours as the input, and it returns a function. The returned function in turn takes a single argument, which is the number of colours you would like to fetch from the palette you have defined.</p>
+<p>Let’s do this in a couple of steps. First we create our palette function.</p>
+<pre class="r"><code>my_palette &lt;- colorRampPalette(c(&quot;firebrick&quot;, &quot;gold&quot;, &quot;slateblue&quot;))</code></pre>
+<p><code>my_palette</code> is now a function that accepts a single number, which is the number of colors we want. The colours it generates will be on a continuous gradient from firebrick via gold to slateblue.</p>
+<pre class="r"><code>my_palette(5)</code></pre>
+<pre><code>## [1] &quot;#B22222&quot; &quot;#D87C11&quot; &quot;#FFD700&quot; &quot;#B49866&quot; &quot;#6A5ACD&quot;</code></pre>
+<p>We can then use this in <code>scale_*_manual</code>. In this particular case, we want to modify the <code>fill</code> aesthetic, so we use the <code>scale_fill_manual</code> function.</p>
+<pre class="r"><code>diamond_cuts &lt;- ggplot(diamonds, aes(cut, fill = clarity)) +
+  geom_bar(position = &quot;dodge&quot;) +
+  scale_fill_manual(values = my_palette(8)) +
+  labs(x = &quot;Cut&quot;,
+       y = &quot;Count&quot;,
+       fill = &quot;Clarity&quot;)
+
+diamond_cuts</code></pre>
+<p><img src="figures/notes_12_unnamed-chunk-17-1.png" width="672" /></p>
+<p>For more information on how to use colours in ggplot2, check out the <a href="https://ggplot2-book.org/scale-colour.html">chapter on colour scales in the ggplot2 book</a>.</p>
+</div>
+</div>
+<div id="labels" class="section level2">
+<h2>Labels</h2>
+<p>Adding the <code>labs</code> function to a ggplot we can adjust our labels. This function accepts any <code>key = value</code> pair, and the key’s in this case should be aesthetics in the plot, e.g. <code>x</code>, <code>y</code>, <code>colour</code>, <code>fill</code>, etc. <code>x</code> and <code>y</code> will by default modify the axis labels, while others will typically modify the legend titles. It also takes the arguments <code>title</code> and <code>subtitle</code> for adding titles to a plot. This example also shows how you could center the title of the plot.</p>
+<pre class="r"><code>ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) +
+  geom_point() +
+  labs(x = &quot;Engine size (l)&quot;,
+       y = &quot;Highway fuel efficiency (miles/gallon)&quot;,
+       colour = &quot;Cylinders&quot;,
+       title = &quot;Highway fuel effiency&quot;,
+       subtitle = &quot;We&#39;ve seen this already&quot;) +
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))</code></pre>
+<p><img src="figures/notes_12_unnamed-chunk-18-1.png" width="672" /></p>
+</div>
+<div id="saving-plots-to-disk" class="section level2">
+<h2>Saving plots to disk</h2>
+<p>We can save ggplots by using the function <code>ggsave</code>. By default, if we call <code>ggsave</code> with just the name of the file where we’d like to save the plot, it will use the last plot that was generated by ggplot2. In this case it will be the <code>diamond_cuts</code> plot.</p>
+<pre class="r"><code>diamond_cuts</code></pre>
+<p><img src="figures/notes_12_unnamed-chunk-19-1.png" width="672" /></p>
+<pre class="r"><code>ggsave(&quot;~/Desktop/diamond_cuts.png&quot;)</code></pre>
+<pre><code>## Saving 7 x 5 in image</code></pre>
+<p>We can also specify which plot we want to save with the <code>plot</code> argument.</p>
+<pre class="r"><code>ggsave(&quot;~/Desktop/diamond_cuts.png&quot;, plot = diamond_cuts)</code></pre>
+<pre><code>## Saving 7 x 5 in image</code></pre>
+<p>Often we want to adjust the dimensions of the plot that we save. We can do this by changing the <code>width</code> and <code>height</code> arguments. The default unit of these are inches.</p>
+<pre class="r"><code>ggsave(&quot;~/Desktop/diamond_cuts.png&quot;,
+       width = 6, height = 4)</code></pre>
+<p>We can change the units with the <code>units</code> argument.</p>
+<pre class="r"><code>ggsave(&quot;~/Desktop/diamond_cuts.png&quot;,
+       width = 15, height = 8, units = &quot;cm&quot;)</code></pre>
+<p>Further, we can also play with the resolution of the figure with the <code>dpi</code> argument. DPI is an abbreviation for dots per inch, and comes from the printing world. A higher value means higher resolution.</p>
+<pre class="r"><code>ggsave(&quot;~/Desktop/diamond_cuts.png&quot;,
+       width = 6, height = 4, dpi = 72)</code></pre>
+<p>A higher resolution is generally preferred if we want to print our figures. If we are only showing them on a screen, we can get away with a lower resolution. Also, higher resolution → larger files.</p>
+<p>Another thing to consider is whether going for a raster format (i.e. pixel graphics such as PNG), or for a vector format (such as PDF, EPS, or SVG). Generally, raster formats are good for viewing on a screen, while vector formats are good for printing, since the resolution is infinite (thus the <code>dpi</code> argument does not apply to vector formats). <code>ggsave</code> will figure out the format based on the file extension of the plot that you are saving, but you can also specify it explicitly with the <code>device</code> argument.</p>
+<pre class="r"><code>ggsave(&quot;~/Desktop/diamond_cuts.pdf&quot;,
+       plot = diamond_cuts,
+       width = 6, height = 4)
+
+ggsave(&quot;~/Desktop/diamond_cuts.eps&quot;,
+       plot = diamond_cuts,
+       device = &quot;eps&quot;,
+       width = 6, height = 4)</code></pre>
+<p>One caveat with vector formats is that every single element in a plot will become an object in the figure, regardless of whether we can see it or not. This means that saving a vector image of a scatter plot containing two million points might be a bad idea. It will be slow, and the resulting file will be huge. In cases like this it’s better to go with a raster format.</p>
+<p>As always check the documentation (<code>?ggsave</code>) for more information.</p>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
