@@ -575,10 +575,10 @@ This function will then return a tibble with `y` being the mean value of `y`, `y
 ## Summary function
 ]
 
+.right-column[
 We can specify our own summary function using the `fun.data` argument.
 In this example we use `mean_sdl`, which by default calculates the mean &pm; 2 standard deviations.
 
-.right-column[
 ```{r summary_mean_sdl}
 ggplot(summary_df) +
   geom_crossbar(aes(x, y), stat = "summary", fun.data = mean_sdl)
@@ -970,11 +970,13 @@ ggplot(mpg, aes(manufacturer)) +
 ## Dodging labels
 ]
 
+.right-column[
 ```{r overlapping_x_labels_dodge}
 ggplot(mpg, aes(manufacturer)) +
   geom_bar() +
   scale_x_discrete(guide = guide_axis(n.dodge = 2))
 ```
+]
 
 ---
 
@@ -986,11 +988,13 @@ ggplot(mpg, aes(manufacturer)) +
 ## Rotating labels
 ]
 
+.right-column[
 ```{r overlapping_x_labels_label_rot}
 ggplot(mpg, aes(manufacturer)) +
   geom_bar() +
   scale_x_discrete(guide = guide_axis(angle = 40))
 ```
+]
 
 ---
 
@@ -1003,11 +1007,13 @@ ggplot(mpg, aes(manufacturer)) +
 ## Rotating the coordinate system
 ]
 
+.right-column[
 ```{r overlapping_x_labels_coord_rot}
 ggplot(mpg, aes(manufacturer)) +
   geom_bar() +
   coord_flip()
 ```
+]
 
 ---
 

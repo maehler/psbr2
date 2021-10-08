@@ -630,10 +630,10 @@ This function will then return a tibble with `y` being the mean value of `y`, `y
 ## Summary function
 ]
 
+.right-column[
 We can specify our own summary function using the `fun.data` argument.
 In this example we use `mean_sdl`, which by default calculates the mean &amp;pm; 2 standard deviations.
 
-.right-column[
 
 ```r
 ggplot(summary_df) +
@@ -1532,6 +1532,7 @@ ggplot(mpg, aes(manufacturer)) +
 ## Dodging labels
 ]
 
+.right-column[
 
 ```r
 ggplot(mpg, aes(manufacturer)) +
@@ -1540,6 +1541,7 @@ ggplot(mpg, aes(manufacturer)) +
 ```
 
 &lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_overlapping_x_labels_dodge-1.png" width="432" /&gt;
+]
 
 ---
 
@@ -1551,6 +1553,7 @@ ggplot(mpg, aes(manufacturer)) +
 ## Rotating labels
 ]
 
+.right-column[
 
 ```r
 ggplot(mpg, aes(manufacturer)) +
@@ -1559,6 +1562,7 @@ ggplot(mpg, aes(manufacturer)) +
 ```
 
 &lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_overlapping_x_labels_label_rot-1.png" width="432" /&gt;
+]
 
 ---
 
@@ -1571,6 +1575,7 @@ ggplot(mpg, aes(manufacturer)) +
 ## Rotating the coordinate system
 ]
 
+.right-column[
 
 ```r
 ggplot(mpg, aes(manufacturer)) +
@@ -1579,6 +1584,7 @@ ggplot(mpg, aes(manufacturer)) +
 ```
 
 &lt;img src="./figures/advanced_plotting_the_grammar_of_graphics_overlapping_x_labels_coord_rot-1.png" width="432" /&gt;
+]
 
 ---
 
