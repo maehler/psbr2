@@ -76,6 +76,17 @@ If it doesn't, chances are that something has gone wrong.
 If you are the person that have collected the data, or at least is in close collaboration with whomever did it, you likely know the data pretty well, and you should take your gut feeling seriously.
 
 --
+- Assess variation on different levels
+
+???
+
+Without variation we cannot use our data for analysis, since variation is the foundation for statistical testing.
+However, we have to assess that we have variation where it we benefit from it, and that other types of variation are minimised.
+
+Just as an aside, once we have collected our data, we cannot do anything about the variation that is already in there.
+These are things that need to be addressed in the design of the experiment.
+
+--
 - Identify batch or sampling effects.
 
 ???
@@ -322,7 +333,7 @@ ggplot(leaves, aes(area, fill = site)) +
 
 ???
 
-Histograms on top of eachother can be hard to read, especially if we have more than two distributions.
+Histograms on top of each other can be hard to read, especially if we have more than two distributions.
 
 ---
 
@@ -581,7 +592,7 @@ In this particular example, I had to talk to my colleagues that worked much clos
 
 .right-column[
 .pull-left[
-If the perimeter and area metrics of the leaf match up well, then we might get values that are not 100% correct.
+If the perimeter and area metrics of the leaf doesn't match up well, then we might get values that are not 100% correct.
 
 $$
 C = \frac{4\pi{}A}{P^2}
@@ -601,3 +612,73 @@ It turns out that this is probably due to some imperfections in the calculation 
 Since the distribution in this case looks ok, we can probably leave these values as they are.
 The main characteristic is still there: the larger the value, the more circular the leaves are.
 Unless we need to be more precise than that, this data is good for us.
+
+---
+
+# Biological vs technical replication
+
+When performing an experiment, we have to consider what constitutes biological replication and what is technical replication.
+
+.pull-left[
+## Technical replication
+
+Replicates from the same biological sample that should yield identical results if the measurement procedure was perfect.
+
+.center[
+![:scale 80%](../img/technical_replicates.png)
+
+n = 1
+]
+]
+
+.pull-right[
+## Biological replication
+
+Replicates from biological samples that we would expect to exhibit biological variation.
+
+.center[
+![:scale 80%](../img/biological_replicates.png)
+
+n = 3
+]
+]
+
+???
+
+The purpose of technical replicates is to assess the variability in the measurement technique.
+This could either be the variability of an instrument, or this in combination with variability in terms of the human factor, e.g. inconsistent pipetting.
+Furthermore, depending of what type of variability you want to assess, you might need different types of technical replicates.
+
+It is not always that technical replication is needed.
+For example, if a platform is known to have very high technical replicability, and it has been shown time and time again, then it might be a waste of time to produce technical replicates.
+RNA-sequencing is an example of such a technology.
+Then it is better to spend your time and money on more biological replicates for greater statistical power in your analysis.
+
+---
+
+# Biological vs technical replication
+
+It is important to distinguish between these two types of replicates in your analyses.
+If a method handles replicates, this almost always refers to biological replicates.
+
+**Technical replicates don't tell you anything about the biological relevance of your study.**
+
+If the technical variation is high, to the point where it starts to hide biological variation, it is probably worth investigating what the reason for the high technical variation is.
+
+[Blainey, et al. 2014 Nature Methods](https://doi.org/10.1038/nmeth.3091)
+
+---
+
+# Suggested reading
+
+- [Blainey, et al. 2014 Nature Methods](https://doi.org/10.1038/nmeth.3091)
+- [Introduction to Statistics in R](https://www.bioinformatics.babraham.ac.uk/training/R_Statistics/Introduction%20to%20Statistics%20with%20R%20manual.pdf)
+- [Statistical Modeling: Experiments](https://dtkaplan.github.io/SM2-bookdown/experiment.html)
+- [An Introduction to Statistical Learning](https://www.statlearning.com/)
+
+## Exercise
+
+Do you have replication in your datasets?
+If you do, what type of replication is it?
+What is the sample size?
+Experiment with plotting the distribution of your data points, both globally, but also within different groups of the data.
