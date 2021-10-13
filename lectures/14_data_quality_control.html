@@ -39,6 +39,8 @@ layout: true
 
 - How to determine whether your data is of sufficient quality.
 - How to see whether there are factors that haven't been accounted for.
+- Different types of variation.
+- Different types of replication.
 
 ---
 
@@ -222,7 +224,7 @@ The sites and the sampling years are also represented by the variables `site` an
 # Exploring the data
 
 .left-column[
-## Distributions
+## Variation
 ]
 
 .right-column[
@@ -245,7 +247,7 @@ As they get more extreme, we also see that they also get less and less likely to
 # Exploring the data
 
 .left-column[
-## Distributions
+## Variation
 ]
 
 .right-column[
@@ -268,7 +270,7 @@ Now, these figures are not based on all the measurements that were made, only on
 # Exploring the data
 
 .left-column[
-## Distributions
+## Variation
 ]
 
 .right-column[
@@ -321,7 +323,50 @@ This could be due to random chance, or it could possibly be explained by somethi
 # Exploring the data
 
 .left-column[
-## Distributions
+## Variation
+## Covariation
+]
+
+.right-column[
+The variation we've looked at so far has been within a variable.
+Covariation is the variation between variables.
+Often we see that variables are related at some level, and vary together.
+
+.pull-left[
+&lt;img src="./figures/data_quality_control_ice_cream_example1-1.png" width="432" /&gt;
+]
+
+.pull-right[
+&lt;img src="./figures/data_quality_control_ice_cream_example2-1.png" width="432" /&gt;
+]
+]
+
+---
+
+# Exploring the data
+
+.left-column[
+## Variation
+## Covariation
+]
+
+.right-column[
+
+```r
+library(GGally)
+ggpairs(leaves, columns = c(9:ncol(leaves)))
+```
+
+&lt;img src="./figures/data_quality_control_leaves_pairs-1.png" width="432" /&gt;
+]
+
+---
+
+# Exploring the data
+
+.left-column[
+## Variation
+## Covariation
 ## Grouping
 ]
 
@@ -344,7 +389,8 @@ Histograms on top of each other can be hard to read, especially if we have more 
 # Exploring the data
 
 .left-column[
-## Distributions
+## Variation
+## Covariation
 ## Grouping
 ]
 
@@ -367,7 +413,8 @@ This is much easier to read, but again, with more than two it still becomes a bi
 # Exploring the data
 
 .left-column[
-## Distributions
+## Variation
+## Covariation
 ## Grouping
 ]
 
@@ -394,7 +441,8 @@ The variance looks to be roughly similar, but especially for the Ekebo garden, w
 # Exploring the data
 
 .left-column[
-## Distributions
+## Variation
+## Covariation
 ## Grouping
 ]
 
@@ -460,7 +508,8 @@ We learned something about our data!
 # Exploring the data
 
 .left-column[
-## Distributions
+## Variation
+## Covariation
 ## Grouping
 ]
 
@@ -496,7 +545,8 @@ From this, it is not obvious that there is any difference between the blocks whe
 # Exploring the data
 
 .left-column[
-## Distributions
+## Variation
+## Covariation
 ## Grouping
 ## Outliers
 ]
@@ -523,7 +573,8 @@ We don't really see the outliers themselves due to the size of the dataset, but 
 # Exploring the data
 
 .left-column[
-## Distributions
+## Variation
+## Covariation
 ## Grouping
 ## Outliers
 ]
@@ -551,7 +602,8 @@ Let's use dplyr to fish these out to see what's going on.
 # Exploring the data
 
 .left-column[
-## Distributions
+## Variation
+## Covariation
 ## Grouping
 ## Outliers
 ]
@@ -602,7 +654,8 @@ If they do, however, you probably want to find out why they are there, and if yo
 # Exploring the data
 
 .left-column[
-## Distributions
+## Variation
+## Covariation
 ## Grouping
 ## Outliers
 ## Other weird values
@@ -637,7 +690,8 @@ In this particular example, I had to talk to my colleagues that worked much clos
 # Exploring the data
 
 .left-column[
-## Distributions
+## Variation
+## Covariation
 ## Grouping
 ## Outliers
 ## Other weird values
@@ -724,6 +778,7 @@ If the technical variation is high, to the point where it starts to hide biologi
 
 # Suggested reading
 
+- [R for Data Science: Exploratory Data Analysis](https://r4ds.had.co.nz/exploratory-data-analysis.html)
 - [Blainey, et al. 2014 Nature Methods](https://doi.org/10.1038/nmeth.3091)
 - [Introduction to Statistics in R](https://www.bioinformatics.babraham.ac.uk/training/R_Statistics/Introduction%20to%20Statistics%20with%20R%20manual.pdf)
 - [Statistical Modeling: Experiments](https://dtkaplan.github.io/SM2-bookdown/experiment.html)
@@ -735,6 +790,9 @@ Do you have replication in your datasets?
 If you do, what type of replication is it?
 What is the sample size?
 Experiment with plotting the distribution of your data points, both globally, but also within different groups of the data.
+Also look at co-variation among your variables.
+Could they help you in any way?
+Are there redundant variables?
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
