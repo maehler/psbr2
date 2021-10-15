@@ -246,8 +246,111 @@ output: html_document
 ---
 ```
 
-This is a **preamble**, and it help out in creating the title for our rendered document.
-It can also be used to control the default format of our rendered document.
+This is a **preamble**, and it helps out in creating the title for our rendered document.
+It can also be used to control the default format of our rendered document, as well as a whole bunch of other parameters.
+For more information on this, check out the [R Markdown Cheat Sheet](https://github.com/rstudio/cheatsheets/blob/master/rmarkdown-2.0.pdf).
+
+---
+
+# Code chunks
+
+.left-column[
+## Introduction
+]
+
+.right-column[
+We can create chunks of code in our document, that is executed when we compile the document.
+These are initiated with three backticks, followed by `{r}`.
+This tells the compiler that this is R code that it should execute.
+
+````md
+```{r}`r ""`
+x <- rnorm(1000)
+mean(x)
+```
+````
+]
+
+---
+
+# Code chunks
+
+.left-column[
+## Introduction
+## Labels
+]
+
+.right-column[
+We can label our chunks like this
+
+````md
+```{r random_numbers}`r ""`
+x <- rnorm(1000)
+mean(x)
+```
+````
+
+This can be very helpful, especially when having a larger document
+
+![](../img/rmd_navigation.png)
+]
+
+---
+
+# Code chunks
+
+.left-column[
+## Introduction
+## Labels
+## Options
+]
+
+.right-column[
+There are a lot of options that we can set for code chunks.
+All available options you can find in the [knitr documentation](https://yihui.org/knitr/options/#chunk-options).
+
+They are written in the form of `tag = value`:
+
+````md
+```{r random_numbers, echo = TRUE, eval = FALSE}`r ""`
+x <- rnorm(1000)
+mean(x)
+```
+````
+
+Some useful options are
+
+- `echo`: Whether to render the code chunk or not.
+- `eval`: Whether to actually execute the code in the chunk.
+- `include`: Whether to render the chunk *and* its output.
+- `fig.width`/`fig.height`: Control the size of figures.
+- `message`: Whether or not to render messages.
+- `warning`: Whether or not to render warnings.
+- `fig.align`: How figures should be aligned on the page.
+]
+
+---
+
+# Code chunks
+
+.left-column[
+## Introduction
+## Labels
+## Options
+## Global options
+]
+
+.right-column[
+Something that I find is a nice setup is to have a configuration chunk as the first chunk in the document.
+
+````md
+```{r setup, include = FALSE}`r ''`
+knitr::opts_chunk$set(echo = FALSE, fig.width = 5, fig.height = 3,
+                      message = FALSE, warning = FALSE,
+                      fig.align = "center")
+```
+````
+]
 
 ---
 
@@ -364,3 +467,12 @@ ggplot(aes(x = Sepal.Width, y = Sepal.Length, color = Species)) +
 ???
 
 Here are some examples from the style guide, but I encourage you to skim through it yourself.
+
+---
+
+# Suggested reading
+
+- [The tidyverse style guide](https://style.tidyverse.org/)
+- [R Markdown: The Definitive Guide](https://bookdown.org/yihui/rmarkdown/)
+- [knitr documentation](https://yihui.org/knitr/)
+- [R Markdown Cheat Sheet](https://github.com/rstudio/cheatsheets/blob/master/rmarkdown-2.0.pdf)
