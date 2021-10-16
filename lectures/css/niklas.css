@@ -198,7 +198,7 @@ iframe {
 }
 
 .pull-right + * {
-    clear: right;
+    clear: left;
 }
 
 .pull-left, .pull-right {

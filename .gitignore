@@ -16,3 +16,5 @@ docs/**/*.md
 *.rdx
 lectures/data/challenge.*
 .httr-oauth
+data/aspwood/*
+!data/aspwood/README.md

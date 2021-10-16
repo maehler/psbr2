@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Quality control and visualisation of large-scale data</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Niklas Mähler" />
+    <meta name="date" content="2021-10-18" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/niklas.css" type="text/css" />
+    <link rel="stylesheet" href="css/niklas-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: left, middle, inverse, title-slide
+
+# Quality control and visualisation of large-scale data
+## Practical Skills for Biology Research II
+### Niklas Mähler
+### Umeå University
+### 2021-10-18
+
+---
+
+
+layout: true
+
+<div class="footer">
+<a href="https://github.com/maehler/psbr2/tree/main/lectures/19_quality_control_and_visualisation_of_large_scale_data.Rmd">
+<svg viewBox="0 0 496 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg">
+<path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"></path>
+</svg>
+</a>
+</div>
+
+---
+
+# Learning goals
+
+After this lecture, you should have
+
+- A basic understanding of dimensionality reduction techniques.
+- Know a few different ways that large datasets can be visualised.
+
+---
+
+# How does QC differ from smaller datasets?
+
+We've looked at quality control for "small" datasets, but what do we do differently for larger datasets?
+
+Some of the problems unique for larger datasets:
+
+- The sheer size of the data
+- Large number of variables
+
+???
+
+- The size of the dataset can make it unruly to manage. We talked a bit about this in the previous lecture, but this can quickly escalate into quite elaborate computer science problems, and this is not the venue for this. Also, with the capacity of computers today, it's quite seldom that we encounter these types of issues.
+- The large number of variables makes it difficult to get an overview.
+
+---
+
+class: title
+
+# What do we focus on?
+
+---
+
+# Observations?
+
+- Do our samples group like we would expect them to?
+- Are there outliers in the context of the whole dataset?
+
+???
+
+A whole sample can be an outlier, based on the whole dataset.
+It might be, in the case of biological samples, that it has a genotype that is vastly different from the rest of the data, for example.
+
+---
+
+# ... or variables?
+
+- Are there unexpected correlations among the variables?
+- Are there outliers for only some of the variables?
+
+???
+
+We can also have outliers for just one or a few variables for a sample.
+This might not be enough to classify the whole sample as an outlier, but how should we treat these?
+Set them to missing?
+
+---
+
+# Example dataset of the day — AspWood
+
+.pull-left[
+This is a gene expression dataset from the wood of aspen (*Populus tremula*).
+For a single year ring, micrometer-thin slices were cut, and RNA was extracted from these slices and sequenced.
+
+- ~35 thousand genes
+- 5 trees
+- 137 samples
+]
+
+.pull-right[
+![](../img/aspwood.jpg)
+
+I will show you both the raw counts from this data, as well as the normalised gene expression data.
+]
+
+---
+
+# Removing useless variables
+
+.left-column[
+## Useless variables
+]
+
+.right-column[
+Since we have a lot of variables in our big datasets, we need to make sure that we only include variables that are informative.
+Examples of variables that are uninformative are
+
+- Variables with no or very low variance
+- Highly correlated variables
+- Variables with many missing values
+]
+
+???
+
+Depending on what type of data we have, it might not make sense to remove highly correlated variables.
+For example, in the case of gene expression, these might be involved in the same process, but not be redunant at all.
+Imagine a biosynthesis pathway with two enzymes where one of them uses the product of the other enzyme as substrate.
+The expression of these genes might be highly correlated, but it doesn't make sense to remove either of them.
+
+Also, in all of these cases there is the question of "what is low variance", or what are "many missing values".
+In the end, thresholds like these become arbitrary.
+Just be sure to document them.
+
+---
+
+# Removing useless variables
+
+.left-column[
+## Useless variables
+## No variance
+]
+
+.right-column[
+.pull-left.small[
+
+```r
+gene_stats &lt;- aspwood %&gt;% 
+  group_by(gene) %&gt;% 
+  summarise(tpm_mean = mean(tpm),
+            tpm_var = var(tpm))
+
+zero_var_genes &lt;- gene_stats %&gt;% 
+  filter(tpm_var == 0) %&gt;% 
+  pull(gene)
+
+aspwood &lt;- aspwood %&gt;% 
+  filter(!gene %in% zero_var_genes)
+```
+]
+
+.pull-right.small[
+
+```r
+ggplot(gene_stats, aes(tpm_var)) +
+  geom_histogram(bins = 100) +
+  scale_x_log10() +
+  labs(x = "TPM variance",
+       y = "Number of genes")
+```
+
+&lt;img src="./figures/quality_control_and_visualisation_of_large_scale_data_aspwood_gene_variance-1.png" width="432" /&gt;
+]
+]
+
+---
+
+class: title
+
+# Visualisation techniques
+
+---
+
+# Heatmaps
+
+Heatmaps are ubiquitous in biology research, often used to visualise things such as gene expression.
+
+This is one of the few types of plots that I don't usually try to create in ggplot2 since it requires a couple of different packages for the different components, and then we have to puzzle these together. If you want to customise all aspects of a heatmap, it might however be a good option.
+
+Other options are
+
+- `stats::heatmap`: built-in function for producing heatmaps.
+- `gplots::heatmap.2`: an extension of the standard `heatmap` function.
+- `pheatmap::pheatmap`: an even more feature-rich function.
+
+---
+
+# Heatmaps — `pheatmap`
+
+
+```r
+random_genes &lt;- unique(aspwood$gene) %&gt;% sample(100)
+aspwood_mat &lt;- aspwood %&gt;% 
+  filter(gene %in% random_genes) %&gt;% 
+  pivot_wider(names_from = gene, values_from = tpm) %&gt;% 
+  unite(sample, c(tree, slice)) %&gt;% 
+  column_to_rownames("sample") %&gt;% 
+  as.matrix()
+
+library(pheatmap)
+pheatmap(t(aspwood_mat))
+```
+
+&lt;img src="./figures/quality_control_and_visualisation_of_large_scale_data_aspwood_pheatmap1-1.png" width="432" style="display: block; margin: auto;" /&gt;
+
+---
+
+
+```r
+pheatmap(t(aspwood_mat), scale = "row",
+         clustering_distance_rows = "correlation",
+         clustering_distance_cols = "correlation")
+```
+
+&lt;img src="./figures/quality_control_and_visualisation_of_large_scale_data_aspwood_pheatmap2-1.png" width="432" /&gt;
+
+
+```r
+variable_genes &lt;- aspwood %&gt;% 
+  group_by(gene) %&gt;% 
+  summarise(expr_var = var(tpm)) %&gt;% 
+  top_n(500, expr_var)
+
+aspwood_mat2 &lt;- aspwood %&gt;% 
+  filter(gene %in% variable_genes$gene) %&gt;% 
+  pivot_wider(names_from = gene, values_from = tpm) %&gt;% 
+  unite(sample, c(tree, slice)) %&gt;% 
+  column_to_rownames("sample") %&gt;% 
+  as.matrix()
+
+pheatmap(log2(t(aspwood_mat2) + 1),
+         clustering_distance_rows = "correlation",
+         clustering_distance_cols = "correlation")
+```
+
+&lt;img src="./figures/quality_control_and_visualisation_of_large_scale_data_aspwood_pheatmap3-1.png" width="432" /&gt;
+
+```r
+pheatmap(log2(t(aspwood_mat2) + 1),
+         color = colorRampPalette(RColorBrewer::brewer.pal(5, "GnBu"))(50),
+         clustering_distance_rows = "correlation",
+         clustering_distance_cols = "correlation")
+```
+
+&lt;img src="./figures/quality_control_and_visualisation_of_large_scale_data_aspwood_pheatmap3-2.png" width="432" /&gt;
+
+```r
+pheatmap(log2(t(aspwood_mat2) + 1),
+         scale = "row",
+         clustering_distance_rows = "correlation",
+         clustering_distance_cols = "correlation")
+```
+
+&lt;img src="./figures/quality_control_and_visualisation_of_large_scale_data_aspwood_pheatmap3-3.png" width="432" /&gt;
+
+---
+
+# Heatmaps — Colour scales
+
+We've already talked a bit about colour scales in this course, but it is a topic worth revisiting.
+
+---
+
+# Dimensionality reduction
+
+.left-column[
+## Introduction
+]
+
+.right-column[
+How can we take all variables into account when judging the quality of our data?
+One way of doing this is by a collection of techniques called dimensionality reduction.
+
+- [PCA](https://en.wikipedia.org/wiki/Principal_component_analysis)
+- [MDS](https://en.wikipedia.org/wiki/Multidimensional_scaling)
+- [Phate](https://doi.org/10.1038/s41587-019-0336-3)
+- [t-SNE](https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding)
+- [UMAP](https://arxiv.org/abs/1802.03426)
+]
+
+???
+
+We've talked about the curse of dimensionality before, and this is related.
+
+---
+
+# Dimensionality reduction
+
+.left-column[
+## Introduction
+## PCA
+]
+
+.right-column[
+## Principal Component Analysis
+
+Map the observations onto a space of lower dimensionality that captures the most of the variation.
+
+This is done by finding orthogonal vectors in the dataset.
+]
+
+???
+
+Imagine taking a three-dimensional everyday object, like a banana, and reducing it down to two dimensions, so a flat representation.
+There are many different ways we could accomplish this, it all depends on the angle of the banana.
+
+---
+
+# Dimensionality reduction
+
+.left-column[
+## Introduction
+## PCA
+### Intuition
+]
+
+.right-column.center[
+![:scale 80%](../img/banana_top.png)
+]
+
+---
+
+# Dimensionality reduction
+
+.left-column[
+## Introduction
+## PCA
+### Intuition
+]
+
+.right-column.center[
+![:scale 80%](../img/banana_side_rotated.png)
+]
+
+---
+
+# Dimensionality reduction
+
+.left-column[
+## Introduction
+## PCA
+### Intuition
+]
+
+.right-column.center[
+![:scale 80%](../img/banana_side.png)
+]
+
+---
+
+# Dimensionality reduction
+
+.left-column[
+## Introduction
+## PCA
+### Intuition
+]
+
+.right-column[
+
+```r
+banana &lt;- read_tsv(here("data/banana.tsv"),
+                   col_names = c("x", "y", "z"))
+ggplot(banana, aes(x, y)) +
+  geom_point() +
+  coord_fixed() +
+  labs(title = "Banana?")
+```
+
+&lt;img src="./figures/quality_control_and_visualisation_of_large_scale_data_weird_banana-1.png" width="432" /&gt;
+]
+
+---
+
+# Dimensionality reduction
+
+.left-column[
+## Introduction
+## PCA
+### Intuition
+]
+
+.right-column[
+The function for doing a PCA in R is `prcomp`.
+
+
+```r
+banana_pca &lt;- prcomp(banana)
+
+ggplot(as_tibble(banana_pca$x), aes(PC1, PC2)) +
+  geom_point() + 
+  coord_fixed() +
+  labs(title = "Banana!")
+```
+
+&lt;img src="./figures/quality_control_and_visualisation_of_large_scale_data_banana_pca-1.png" width="540" /&gt;
+]
+
+---
+
+# Dimensionality reduction
+
+.left-column[
+## Introduction
+## PCA
+### Intuition
+### The maths
+]
+
+.right-column[
+PCA can be calculated using a method called [singular value decomposition](https://en.wikipedia.org/wiki/Singular_value_decomposition).
+
+$$
+\mathbf{X} = \mathbf{U \Sigma V}^\intercal
+$$
+- `\(\mathbf{X}\)`: `\(m \times n\)` matrix of your data
+- `\(\mathbf{U}\)`: `\(n \times n\)` matrix of left singular vectors
+- `\(\mathbf{\Sigma}\)`: diagonal matrix of singular values
+- `\(\mathbf{V}\)`: `\(m \times m\)` matrix of right singular vectors
+]
+
+???
+
+This is all linear algebra, and I don't expect you to do these calculations or anything, I just want to give you a little bit of a background to this.
+
+In the SVD, each column of `\(\mathbf{X}\)` represent an observation, so the opposite of how we are used to represent our data.
+
+---
+
+# Dimensionality reduction
+
+.left-column[
+## Introduction
+## PCA
+### Intuition
+### The maths
+]
+
+.right-column[
+$$
+\mathbf{X} = \mathbf{U \Sigma V}^\intercal
+$$
+
+In PCA, `\(\mathbf{X}\)` should be centered (and possibly scaled) data, and each row should be an observation, just like we're used to.
+If we're using PCA-speak, then 
+
+- `\(\mathbf{X}\)`: `\(n \times m\)` matrix of your (numerical) data.
+- `\(\mathbf{U}\)`: `\(n \times n\)` matrix of the influence of each variable.
+- `\(\mathbf{\Sigma}\)`: diagonal matrix of the **standard deviation** of the principal components (the square root of the eigenvalues).
+- `\(\mathbf{V}\)`: `\(m \times m\)` matrix of our eigenvectors, or **loadings**.
+
+The principal components `\(\mathbf{T}\)` (or **scores**) are then defined as `\(\mathbf{T} = \mathbf{XV}\)`, or `\(\mathbf{T} = \mathbf{U\Sigma}\)`.
+]
+
+???
+
+As mentioned last week, scaling is important if the variables we are working with are on very different scales.
+
+The two ways of obtainin the principal components `\(\mathbf{T}\)` are equivalent, and I leave it as an exercise for you to explore that, if you'd like.
+
+---
+
+# Dimensionality reduction
+
+.left-column[
+## Introduction
+## PCA
+### Intuition
+### The maths
+### In R
+]
+
+.right-column[
+In order to run PCA in R, we use the function `prcomp`.
+Behind the scenes it uses singular value decomposition.
+
+
+```r
+prcomp(x, center = TRUE)
+```
+
+Back from this we get a list-like object with the following items:
+
+- `sdev`: the standard deviation of the principal components.
+- `rotation`: the loadings.
+- `x`: the principal components.
+- `center`: the centering used, or `FALSE`.
+- `scale`: the scaling used, or `FALSE`.
+
+Since the standard deviation contains the standard devation for each component, we can calculate the total variance explained by the components like
+
+
+```r
+sdev^2 / sum(sdev^2)
+```
+]
+
+---
+
+# Dimensionality reduction
+
+.left-column[
+## Introduction
+## PCA
+### Intuition
+### The maths
+### In R
+]
+
+.right-column[
+&lt;img src="./figures/quality_control_and_visualisation_of_large_scale_data_dcloud_scatter-1.png" width="432" /&gt;
+]
+
+---
+
+# Dimensionality reduction
+
+.left-column[
+## Introduction
+## PCA
+### Intuition
+### The maths
+### In R
+]
+
+.right-column[
+.pull-left[
+&lt;img src="./figures/quality_control_and_visualisation_of_large_scale_data_dcloud_scatter_random_component-1.png" width="100%" /&gt;
+]
+
+.pull-right[
+&lt;img src="./figures/quality_control_and_visualisation_of_large_scale_data_dcloud_scatter_pc1-1.png" width="100%" /&gt;
+]
+]
+
+---
+
+# Dimensionality reduction
+
+.left-column[
+## Introduction
+## PCA
+### Intuition
+### The maths
+### In R
+]
+
+.right-column[
+![](./figures/quality_control_and_visualisation_of_large_scale_data_data_cloud_pca-1.gif)&lt;!-- --&gt;
+]
+
+???
+
+In this example we have a cloud of data in two dimensions, and we can clearly identify the axes where the we have the most variation.
+Here these axes are represented by the coloured arrows.
+These coloured arrows are also known as the loadings in PCA.
+When we run a PCA on this data, what happens is that these vectors are identified, and the data is rotated so that the x-axis in this case represents the first principal component, and the y-axis the second principal component.
+
+---
+
+# Dimensionality reduction
+
+.left-column[
+## Introduction
+## PCA
+### Intuition
+### The maths
+### In R
+### Examples
+]
+
+.right-column.small[
+
+```r
+iris_pca &lt;- prcomp(iris[, 1:4])
+
+varexp &lt;- with(iris_pca, sdev^2 / sum(sdev^2))
+
+iris_pca$x %&gt;% 
+  as_tibble() %&gt;% 
+  bind_cols(species = iris$Species) %&gt;% 
+  ggplot(aes(PC1, PC2, colour = species)) +
+  geom_point() +
+  coord_fixed() +
+  labs(x = str_c("PC1 (", format(100 * varexp[1], digits = 2), "%)"),
+       y = str_c("PC2 (", format(100 * varexp[2], digits = 2), "%)"))
+```
+
+&lt;img src="./figures/quality_control_and_visualisation_of_large_scale_data_iris_pca-1.png" width="576" /&gt;
+]
+
+---
+
+# Dimensionality reduction
+
+.left-column[
+## Introduction
+## PCA
+### Intuition
+### The maths
+### In R
+### Examples
+]
+
+.right-column[
+.pull-left[
+<div class="article">
+<time datetime="2014-10-16">2014-10-16</time>
+<h1>&lt;i&gt;Populus tremula&lt;/i&gt; (European aspen) shows no evidence of sexual dimorphism</h1>
+<p class="lead"></p>
+<p class="source">
+<a href="https://doi.org/10.1186/s12870-014-0276-5">BMC Plant Biology (2014)</a>
+</p>
+</div>
+]
+
+.pull-right.clear[
+- 17 trees
+- 9 females, 8 males
+- RNA-Seq data of leaves
+]
+
+.small[
+
+```r
+sex_mat &lt;- read_csv(here("data/aspen_sex/aspen_sex_vst.csv")) %&gt;% 
+  rename(gene = ...1) %&gt;% 
+  column_to_rownames("gene") %&gt;% 
+  as.matrix() %&gt;% 
+  t()
+
+sex_metadata &lt;- read_csv(here("data/aspen_sex/sex_samples.csv"))
+
+sex_pca &lt;- prcomp(sex_mat)
+variance_explained &lt;- with(sex_pca, sdev^2 / sum(sdev^2))
+
+sex_pca_tbl &lt;- as_tibble(sex_pca$x) %&gt;% 
+  mutate(sample = rownames(sex_mat)) %&gt;% 
+  left_join(sex_metadata, by = "sample") %&gt;% 
+  mutate(sampling_year = factor(date))
+
+sex_pca_scatter &lt;- ggplot(sex_pca_tbl, aes(PC1, PC2), size = 2) +
+  coord_fixed() +
+  labs(
+    x = str_c("PC1 (",format(100 * variance_explained[1], digits = 3), "%)"),
+    y = str_c("PC2 (", format(100 * variance_explained[2], digits = 3), "%)")
+  ) +
+  theme(legend.position = "none")
+```
+]
+]
+
+???
+
+*P. tremula* is dioecious, meaning that each individual has a distinct sex.
+This in turn means that each tree either has male or female flowers — whenever they flower.
+It can take 15-20 years for an aspen to start flowering.
+Flowers was the only thing that could be used to distinguish the two sexes, so extracting RNA from flowers would kind of be cheating.
+Therefore we instead looked at mRNA from leaves.
+
+---
+
+# Dimensionality reduction
+
+.left-column[
+## Introduction
+## PCA
+### Intuition
+### The maths
+### In R
+### Examples
+]
+
+.right-column[
+
+```r
+sex_pca_scatter +
+  geom_point() +
+  labs(title = "")
+```
+
+&lt;img src="./figures/quality_control_and_visualisation_of_large_scale_data_sex_pca_scatter-1.png" width="504" /&gt;
+]
+
+---
+
+# Dimensionality reduction
+
+.left-column[
+## Introduction
+## PCA
+### Intuition
+### The maths
+### In R
+### Examples
+]
+
+.right-column[
+
+```r
+sex_pca_scatter +
+  geom_point(aes(colour = sex)) +
+  labs(title = "Coloured by sex")
+```
+
+&lt;img src="./figures/quality_control_and_visualisation_of_large_scale_data_sex_pca_scatter_sex-1.png" width="504" /&gt;
+]
+
+---
+
+# Dimensionality reduction
+
+.left-column[
+## Introduction
+## PCA
+### Intuition
+### The maths
+### In R
+### Examples
+]
+
+.right-column[
+
+```r
+sex_pca_scatter + 
+  geom_point(aes(colour = sampling_year)) +
+  labs(title = "Coloured by sampling year")
+```
+
+&lt;img src="./figures/quality_control_and_visualisation_of_large_scale_data_sex_pca_scatter_year-1.png" width="504" /&gt;
+]
+
+---
+
+# Suggested reading
+
+- [You probably don't understand heatmaps](http://www.opiniomics.org/you-probably-dont-understand-heatmaps/)
+- [Explain PCA to your grandmother](https://stats.stackexchange.com/a/140579/10727)
+
+???
+
+Ignore the colour choices in the first blog post.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="js/macros.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"navigation": {
+"scroll": false
+}
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

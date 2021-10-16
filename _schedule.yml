@@ -237,15 +237,10 @@ schedule:
           - Loading into R
     - start_time:
       end_time:
-      topic: Quality control for large-scale data
+      topic: Quality control and visualisation of large-scale data
+      url: lectures/19_quality_control_and_visualisation_of_large_scale_data.html
       details: |
-        - PCA
         - UPSC pipeline for Biological QA
-  - day:
-    - start_time:
-      end_time:
-      topic: Visualising large-scale data
-      details: |
         - Plotting whole datasets
           - PCA, MDS
           - Heatmaps
@@ -253,6 +248,10 @@ schedule:
         - Plotting subsets of large datasets
           - How do we choose a subset
           - Faceting in ggplot2
+  - day:
+    - start_time:
+      end_time:
+      topic: TBA
   - day:
     - start_time:
       end_time:
