@@ -252,6 +252,7 @@ schedule:
     - start_time:
       end_time:
       topic: TBA
+      lecture: false
   - day:
     - start_time:
       end_time:

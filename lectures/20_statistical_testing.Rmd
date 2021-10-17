@@ -1,0 +1,104 @@
+---
+title: "Statistical testing"
+subtitle: "Practical Skills for Biology Research II"
+author: "Niklas Mähler"
+institute: "Umeå University"
+date: "2021-10-20"
+editor_options:
+  chunk_output_type: console
+---
+
+layout: true
+
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
+source(here::here("scripts/setup.R"))
+setup_presentation("statistical_testing", filename = "20_statistical_testing.Rmd")
+```
+
+---
+
+# Things we'll learn
+
+- How a *p*-value is defined.
+- Differences between parametric and non-parametric tests.
+- How to choose an appropriate test depending on our question and our data.
+- Basic understanding of linear models.
+
+---
+
+class: title
+
+# *p*s-values
+
+---
+
+# History
+
+- Ronald Fisher
+
+---
+
+# The null hypothesis
+
+---
+
+# The definition
+
+A *p*-value is defined as the probability of a result as extreme as that we observe, or more extreme, given the null hypothesis is true.
+
+---
+
+# Why 0.05?
+
+---
+
+# Problems with multiple testing
+
+---
+
+class: title
+
+# Types of tests
+
+---
+
+# Parametric tests
+
+---
+
+# Non-parametric tests
+
+---
+
+class: title
+
+# How to choose a test
+
+---
+
+# What is the data we want to use for the test?
+
+---
+
+# What is it we want to test?
+
+---
+
+class: title
+
+# Linear models
+
+---
+
+# What is a linear model?
+
+---
+
+# What about a linear model is linear?
+
+---
+
+# Suggested reading
+
+- [R for Data Science: Modelling](https://r4ds.had.co.nz/model-intro.html)
+- [An Introduction to Statistical Learning](https://www.statlearning.com/)

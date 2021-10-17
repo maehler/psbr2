@@ -53,6 +53,8 @@ navbar:
             href: lectures/18_large_scale_data.html
           - text: Large-scale data
             href: lectures/19_quality_control_and_visualisation_of_large_scale_data.html
+          - text: Statistical testing
+            href: lectures/20_statistical_testing.html
         - text: Week 5
     - text: Suggested reading
       href: suggested_reading.html
