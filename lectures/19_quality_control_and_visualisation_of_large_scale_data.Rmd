@@ -21,11 +21,11 @@ if (!fs::file_exists(aspwood_txt_file)) {
 }
 
 if (!fs::file_exists(aspwood_rds_file)) {
-  aspwood <- read_delim(aspwood_file,
+  aspwood <- read_delim(aspwood_txt_file,
                         col_names = c("gene", "sample", "tpm"),
                         col_types = "ccd",
                         delim = " ") %>% 
-    separate(sample, c("tree", "slice"))
+    separate(sample, c("tree", "slice"), remove = FALSE, convert = TRUE)
   write_rds(aspwood, aspwood_rds_file)
 } else {
   aspwood <- read_rds(aspwood_rds_file)
@@ -180,9 +180,54 @@ class: title
 
 ---
 
+# Density line plots
+
+If we want to compare distributions of our samples (or variables for that matter), we can use density plots.
+
+```{r aspwood_tpm_density}
+ggplot(aspwood, aes(tpm, colour = sample)) +
+  geom_density() +
+  scale_x_log10() +
+  theme(legend.position = "none")
+```
+
+---
+
+# Ridgeline plots
+
+.pull-left.small[
+```{r aspwood_tpm_ridges, fig.height = 6}
+library(ggridges)
+ggplot(aspwood %>% filter(tpm > 0), aes(tpm, sample, fill = sample)) +
+  geom_density_ridges() +
+  scale_x_log10() +
+  theme(legend.position = "none")
+```
+]
+
+--
+
+.pull-right.small[
+```{r aspwood_tpm_ridges_faceted, fig.height = 5.5}
+library(ggridges)
+ggplot(aspwood %>% filter(tpm > 0),
+       aes(tpm, factor(slice), fill = tree)) +
+  facet_grid(cols = vars(tree)) +
+  geom_density_ridges() +
+  scale_x_log10() +
+  theme(legend.position = "none")
+```
+]
+
+???
+
+From this, we also see something that wasn't obvious from before, and that is that the different trees have different number of slices.
+
+---
+
 # Heatmaps
 
-Heatmaps are ubiquitous in biology research, often used to visualise things such as gene expression.
+[Heatmaps](https://en.wikipedia.org/wiki/Heat_map) are ubiquitous in biology research, often used to visualise things such as gene expression.
 
 This is one of the few types of plots that I don't usually try to create in ggplot2 since it requires a couple of different packages for the different components, and then we have to puzzle these together. If you want to customise all aspects of a heatmap, it might however be a good option.
 
@@ -196,60 +241,169 @@ Other options are
 
 # Heatmaps — `pheatmap`
 
-```{r aspwood_pheatmap1, fig.align = "center"}
+```{r aspwood_pheatmap1}
 random_genes <- unique(aspwood$gene) %>% sample(100)
 aspwood_mat <- aspwood %>% 
   filter(gene %in% random_genes) %>% 
   pivot_wider(names_from = gene, values_from = tpm) %>% 
   unite(sample, c(tree, slice)) %>% 
   column_to_rownames("sample") %>% 
-  as.matrix()
+  as.matrix() %>% t()
 
 library(pheatmap)
-pheatmap(t(aspwood_mat))
+pheatmap(aspwood_mat)
 ```
 
 ---
 
-```{r aspwood_pheatmap2}
-pheatmap(t(aspwood_mat), scale = "row",
-         clustering_distance_rows = "correlation",
-         clustering_distance_cols = "correlation")
+# Heatmaps — `pheatmap`
+
+```{r, error = TRUE}
+pheatmap(log2(aspwood_mat))
 ```
 
-```{r aspwood_pheatmap3}
+???
+
+This fails since the logarithm of zero is undefined.
+A heatmap consists of many different things: we have the data points themselves, but we also have the relationship between our variables and between our samples with the dendrogram on the side.
+The functions that are used under the hood to calculate these relationships don't like missing values.
+
+--
+
+```{r, error = TRUE}
+pheatmap(log2(aspwood_mat + 1))
+```
+
+???
+
+By taking the logarithm + 1, we offset the whole matrix with one, so that all values that originally were 0 now become 
+
+---
+
+# Heatmaps — `pheatmap`
+
+```{r aspwood_pheatmap2}
+pheatmap(aspwood_mat, scale = "row")
+```
+
+???
+
+Another way we can get around this is with scaling.
+Here we scale and center each row in the data.
+One downside of doing this is that we lose information on how highly expressed the genes are.
+Here it looks like all of them have more or less equal expression, which we see is far from the truth when looking at the previous plot.
+
+---
+
+# Heatmaps — Choosing a better subset
+
+.pull-left[
+```{r}
 variable_genes <- aspwood %>% 
   group_by(gene) %>% 
   summarise(expr_var = var(tpm)) %>% 
-  top_n(500, expr_var)
+  top_n(100, expr_var)
 
 aspwood_mat2 <- aspwood %>% 
   filter(gene %in% variable_genes$gene) %>% 
   pivot_wider(names_from = gene, values_from = tpm) %>% 
-  unite(sample, c(tree, slice)) %>% 
-  column_to_rownames("sample") %>% 
-  as.matrix()
+  column_to_rownames("sample") %>%
+  select(-tree, -slice) %>% 
+  as.matrix() %>% t()
+```
+]
 
-pheatmap(log2(t(aspwood_mat2) + 1),
+.pull-right[
+```{r aspwood_pheatmap3}
+pheatmap(log2(aspwood_mat2 + 1),
          clustering_distance_rows = "correlation",
          clustering_distance_cols = "correlation")
+```
+]
 
-pheatmap(log2(t(aspwood_mat2) + 1),
-         color = colorRampPalette(RColorBrewer::brewer.pal(5, "GnBu"))(50),
-         clustering_distance_rows = "correlation",
-         clustering_distance_cols = "correlation")
+???
 
-pheatmap(log2(t(aspwood_mat2) + 1),
-         scale = "row",
-         clustering_distance_rows = "correlation",
-         clustering_distance_cols = "correlation")
+The labels are really hard to read, so let's see if we can fix that.
+
+---
+
+# Heatmaps — Annotations
+
+```{r aspwood_heatmap4}
+heatmap_sample_annot <- aspwood %>% 
+  select(sample, tree, slice) %>% 
+  distinct() %>% 
+  column_to_rownames("sample")
+
+pheatmap(log2(aspwood_mat2 + 1),
+         annotation_col = heatmap_sample_annot)
+```
+
+---
+
+# Heatmaps — Annotations
+
+```{r aspwood_heatmap5}
+pheatmap(log2(aspwood_mat2 + 1),
+         annotation_col = heatmap_sample_annot,
+         cluster_cols = FALSE,
+         show_colnames = FALSE)
 ```
 
 ---
 
 # Heatmaps — Colour scales
 
+.pull-left[
 We've already talked a bit about colour scales in this course, but it is a topic worth revisiting.
+
+.small[
+```{r aspwood_heatmap6, fig.height = 8, fig.show = "hide"}
+pheatmap(log2(aspwood_mat2 + 1),
+         color = colorspace::sequential_hcl(
+           20, palette = "BluGrn", rev = TRUE),
+         annotation_col = heatmap_sample_annot,
+         cluster_cols = FALSE,
+         show_colnames = FALSE,
+         fontsize_row = 6)
+```
+]
+]
+
+.pull-right[
+![:scale 80%](figures/quality_control_and_visualisation_of_large_scale_data_aspwood_heatmap6-1.png)
+]
+
+---
+
+# Heatmaps — Colour scales
+
+.pull-left[
+For good measure, let's scale by row and use a diverging colour scale as well.
+
+.small[
+```{r aspwood_heatmap7, fig.height = 8, fig.show = "hide"}
+pheatmap(log2(aspwood_mat2 + 1),
+         scale = "row",
+         color = colorspace::diverging_hcl(
+           20, palette = "Vik"),
+         annotation_col = heatmap_sample_annot,
+         cluster_cols = FALSE,
+         show_colnames = FALSE,
+         fontsize_row = 6)
+```
+]
+]
+
+.pull-right[
+![:scale 80%](figures/quality_control_and_visualisation_of_large_scale_data_aspwood_heatmap7-1.png)
+]
+
+---
+
+class: title
+
+# Dimensionality reduction
 
 ---
 
@@ -791,7 +945,12 @@ sex_pca_scatter +
 # Suggested reading
 
 - [You probably don't understand heatmaps](http://www.opiniomics.org/you-probably-dont-understand-heatmaps/)
+- [Making a heatmap in R with the pheatmap package](https://davetang.org/muse/2018/05/15/making-a-heatmap-in-r-with-the-pheatmap-package/)
 - [Explain PCA to your grandmother](https://stats.stackexchange.com/a/140579/10727)
+
+# Exercises
+
+Do a PCA on the AspWood dataset.
 
 ???
 
