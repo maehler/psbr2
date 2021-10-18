@@ -207,7 +207,8 @@ ggplot(aspwood, aes(tpm, colour = sample)) +
 
 ```r
 library(ggridges)
-ggplot(aspwood %&gt;% filter(tpm &gt; 0), aes(tpm, sample, fill = sample)) +
+ggplot(aspwood %&gt;% filter(tpm &gt; 0),
+       aes(tpm, sample, fill = sample)) +
   geom_density_ridges() +
   scale_x_log10() +
   theme(legend.position = "none")
@@ -221,7 +222,6 @@ ggplot(aspwood %&gt;% filter(tpm &gt; 0), aes(tpm, sample, fill = sample)) +
 .pull-right.small[
 
 ```r
-library(ggridges)
 ggplot(aspwood %&gt;% filter(tpm &gt; 0),
        aes(tpm, factor(slice), fill = tree)) +
   facet_grid(cols = vars(tree)) +
@@ -250,6 +250,94 @@ Other options are
 - `stats::heatmap`: built-in function for producing heatmaps.
 - `gplots::heatmap.2`: an extension of the standard `heatmap` function.
 - `pheatmap::pheatmap`: an even more feature-rich function.
+
+---
+
+# Heatmaps — What are they?
+
+.pull-left[
+Imagine that we have some data with a few observations and a few variables.
+Some of the variables have higher values in some of the samples.
+
+.small[
+
+```r
+hm_data &lt;- tibble(
+  sample = gl(12, 1),
+  annot = gl(3, 4)
+) %&gt;%
+  bind_cols(map(set_names(1:50, str_c("gene", 1:50)),
+                ~ rnorm(12))) %&gt;% 
+  mutate(
+    across(gene20:gene35, ~ {
+      .[annot == "1"] &lt;- .[annot == "1"] - 2
+      .[annot == "2"] &lt;- .[annot == "2"] + 3
+      .[annot == "3"] &lt;- .[annot == "3"] - 1
+      .
+    }),
+    across(gene1:gene10, ~ {
+      .[annot == "1"] &lt;- .[annot == "1"] + 2
+      .[annot == "2"] &lt;- .[annot == "2"] + 1
+      .[annot == "3"] &lt;- .[annot == "3"] - 2
+      .
+    }))
+```
+]
+]
+
+.pull-right[
+We can plot these as lines.
+
+.small[
+
+```r
+hm_data %&gt;% 
+  pivot_longer(cols = matches("gene")) %&gt;% 
+  ggplot(aes(name, value, group = sample, colour = sample)) +
+  geom_line()
+```
+
+&lt;img src="./figures/quality_control_and_visualisation_of_large_scale_data_hm_lineplot-1.png" width="432" /&gt;
+]
+]
+
+---
+
+# Heatmaps — What are they?
+
+.pull-left[
+Or we can plot it as a heatmap.
+
+
+```r
+hm_mat &lt;- hm_data %&gt;%
+  select(sample, matches("gene")) %&gt;% 
+  column_to_rownames("sample") %&gt;% 
+  as.matrix() %&gt;% t()
+
+heatmap(hm_mat, scale = "none", cexRow = 0.5)
+```
+
+This is a quite complex visualisation, and there are a lot of things going on.
+There is a reason there's a blog post called ["You probably don't understand heatmaps"](http://www.opiniomics.org/you-probably-dont-understand-heatmaps/), which explains some of the pitfalls related to heatmaps.
+I want you all to read this.
+]
+
+.pull-right[
+![](figures/quality_control_and_visualisation_of_large_scale_data_hm_example-1.png)
+]
+
+???
+
+By default, heatmaps produced with this function are row-scaled, meaning that each row is mean-centered and scaled to a standard deviation of 1.
+This is a pretty complex visualisation, and there are many things going on.
+
+- We have the heatmap itself, where the colours are mapped to the values in our data. In this particular case, darker colours represent higher values.
+- We have dendrograms on the columns and the rows. These are used to order the heatmap. You might notice that the ordering of the samples and the genes do not match with the dataset. They have been reordered according to their similarity. By default this is done using euclidean distance between the samples, and using complete linkage for the calculation of the hierarchical clustering.
+
+In making this slide, I noticed something peculiar, and that was that not all of the genes showed up in the visualisation.
+This is apparently a relatively recent addition to R where it tries to only show labels that fit within the plot boundaries.
+This is why I set the font size of the row labels in this example.
 
 ---
 
@@ -297,7 +385,7 @@ The functions that are used under the hood to calculate these relationships don'
 pheatmap(log2(aspwood_mat + 1))
 ```
 
-&lt;img src="./figures/quality_control_and_visualisation_of_large_scale_data_unnamed-chunk-3-1.png" width="432" /&gt;
+&lt;img src="./figures/quality_control_and_visualisation_of_large_scale_data_aspwood_pheatmap1-2-1.png" width="432" /&gt;
 
 ???
 
