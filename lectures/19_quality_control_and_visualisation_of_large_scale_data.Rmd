@@ -849,7 +849,7 @@ if (!fs::file_exists(pca_anim_file)) {
     labs(title = "{closest_state}") +
     ease_aes("cubic-in-out")
 } else {
-  knitr::include_graphics(pca_anim_file)
+  knitr::include_graphics(fs::path_rel(pca_anim_file, here("lectures")))
 }
 ```
 ]
