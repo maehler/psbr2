@@ -44,6 +44,17 @@ note_fa <- function(icon, scale = 2) {
   icons::icon_style(icons::fontawesome(final_icon), scale = scale)
 }
 
+note <- function(msg, type = c("tip", "warning"), class = "yellow") {
+  type <- match.arg(type)
+  div(
+    p(
+      note_fa(type),
+      msg
+    ),
+    class = str_c(c("note", class), collapse = " ")
+  )
+}
+
 print_df_5 <- function(x, ...) {
   print(x, n = 5, ...)
 }

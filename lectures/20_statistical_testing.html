@@ -4,7 +4,7 @@
     <title>Statistical testing</title>
     <meta charset="utf-8" />
     <meta name="author" content="Niklas Mähler" />
-    <meta name="date" content="2021-10-20" />
+    <meta name="date" content="2021-10-19" />
     <script src="libs/header-attrs-2.11/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/niklas.css" type="text/css" />
@@ -18,7 +18,7 @@ class: left, middle, inverse, title-slide
 ## Practical Skills for Biology Research II
 ### Niklas Mähler
 ### Umeå University
-### 2021-10-20
+### 2021-10-19
 
 ---
 
@@ -46,17 +46,84 @@ layout: true
 
 class: title
 
-# *p*s-values
+# *p*-values
 
 ---
 
 # History
 
-- Ronald Fisher
+.pull-left[
+- Date as far back as the 18th century.
+  - [John Arbuthnot](https://en.wikipedia.org/wiki/John_Arbuthnot) tested the sex ratio of newborns.
+- Formally introduced by [Karl Pearson](https://en.wikipedia.org/wiki/Karl_Pearson) with the `\(\chi^2\)` test in the early 1900s.
+- Popularised by [Ronald Fisher](https://en.wikipedia.org/wiki/Ronald_Fisher) in his book [Statistical Methods for Research Workers](https://en.wikipedia.org/wiki/Statistical_Methods_for_Research_Workers) from 1925.
+  - Also popularised the 0.05 significance level.
+]
+
+.pull-right[
+&gt; "From whence it follows, that it is Art, not Chance, that governs."
+&gt; .source[— John Arbuthnot]
+]
+
+???
+
+---
+
+# The lady tasting tea
+
+.pull-left[
+This was an experiment set up by Ronald Fisher in order to test the claim of [Muriel Bristol](https://en.wikipedia.org/wiki/Muriel_Bristol) that she could taste the difference in whether milk had been added to the tea, or the tea added to the milk.
+She was given eight cups of tea with milk, where in four cups the milk had been added to the tea, and the four others the tea to the milk.
+
+This test can be expressed as "what is the probability to correctly classify four cups of tea".
+Mathematically, this can be expressed as
+
+$$
+\frac{1}{8 \choose 4} = \frac{1}{70} \approx 0.014
+$$
+The null hypothesis, i.e. that the woman would not be able to distinguish between the different ways of preparation, was rejected
+]
+
+.pull-right.center[
+[![](https://upload.wikimedia.org/wikipedia/en/2/2d/The_Lady_Tasting_Tea_-_David_Salsburg.jpg)](https://en.wikipedia.org/wiki/The_Lady_Tasting_Tea)
+]
+
+???
+
+The book is a nice popular science perspective on the evolution of modern-day statistics.
 
 ---
 
 # The null hypothesis
+
+The null hypothesis, often denoted `\(H_0\)`, is an important part of hypothesis testing.
+We can see it as the counter-point to whatever we are trying to test.
+
+Let's say that we are testing whether the mean height of trees is different whether or not they have been fertilised.
+Before we perform the experiment, we should set up our hypotheses.
+The null hypothesis, i.e. our negative outcome, would be that the mean height is the same:
+$$
+H_0: \mu_1 = \mu_2
+$$
+and the alternative hypothesis would be
+$$
+H_1: \mu_1 \neq \mu_2
+$$
+
+???
+
+So, what is a null hypothesis?
+In this particular example, we don't care which way the comparison goes, we just care that they are different.
+In other words, this is a two-sided test.
+
+If we have a particular question in mind, we need to try to formulate what a negative outcome of that test would be.
+
+Many times in our field of study, we aren't doing classical hypothesis testing such as this, but rather take a more explorative approach.
+Then it might not make sense to think of an hypothesis before we perform the experiment.
+
+Still, we have to think about this whenever we do statistical testing.
+Every test that we do will have a set null hypothesis, and we have to make sure that this applies to what we are testing.
+If not, it is probably not an appropriate test for us, and if we still decide to use it, the results might not reflect our question.
 
 ---
 
@@ -64,13 +131,198 @@ class: title
 
 A *p*-value is defined as the probability of a result as extreme as that we observe, or more extreme, given the null hypothesis is true.
 
+.pull-left[
+Consider a value `\(t\)` sampled from an unknown distribution `\(T\)`.
+$$
+p = \Pr(T \geq t~|~H_0)
+$$
+
+If the *p*-value is less than our significance threshold `\(\alpha\)` (often 0.05), then we reject the null hypothesis.
+
+<div class="note yellow">
+<p>
+<svg viewBox="0 0 576 512" style="position:relative;display:inline-block;top:.1em;height:2em;" xmlns="http://www.w3.org/2000/svg">
+<path d="M569.517 440.013C587.975 472.007 564.806 512 527.94 512H48.054c-36.937 0-59.999-40.055-41.577-71.987L246.423 23.985c18.467-32.009 64.72-31.951 83.154 0l239.94 416.028zM288 354c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z"></path>
+</svg>
+Note that this is not the same as saying the null hypothesis is false. It is simply a way of rejecting a scenario that is unlikely given our data.
+</p>
+</div>
+]
+
+.pull-right[
+&lt;img src="./figures/statistical_testing_p_definition-1.png" width="100%" /&gt;
+]
+
+???
+
+The overall shape of the distribution represents all possible observations, given that the null hypothesis is true.
+In other words, if the null hypothesis is true, we expect most values to be close to zero.
+The further out towards the edges we get, the more unlikely an observation becomes.
+
+A small p-value can either mean that we are observing something very unlikely, or that our null hypothesis is false.
+If the p-value is lower than our threshold level `\(\alpha\)`, then we usually reject the null hypothesis.
+What this esentially means is that we deem this event so unlikely that we accept that our observation might come from a different distribution entirely.
+
 ---
+
+# An example
+
+.pull-left[
+Here we have height measurements of 20 trees each from two populations, one which has been fertilised, and one that has not.
+
+&lt;img src="./figures/statistical_testing_tree_mean_heights-1.png" width="432" /&gt;
+]
+
+.pull-right[
+
+|population     | mean_height| sd_height|
+|:--------------|-----------:|---------:|
+|non-fertilised |    253.8258|  41.69677|
+|fertilised     |    320.1927|  60.44756|
+]
+
+???
+
+We could do a two-sample t-test on this in order to compare the means.
+Keep in mind that t-tests assume a normal distribution.
+In this case I know that the values come from a normal distribution, but this we can't always know.
+Therefore you should always check for normality, for example with a Q-Q plot.
+
+---
+
+# An example
+
+.pull-left[
+
+|population     | mean_height| sd_height|
+|:--------------|-----------:|---------:|
+|non-fertilised |    253.8258|  41.69677|
+|fertilised     |    320.1927|  60.44756|
+
+$$
+t = 
+  \frac{\overline{X_1} - \overline{X_2}}{s_p \sqrt{\frac{2}{n}}} = 
+  \frac{311.6 - 255.3}{\sqrt{\frac{57.6^2 + 64.8^2}{2}} \sqrt{\frac{2}{20}}}
+  \approx 2.9
+$$
+
+This is a two-sided test, which means we also have to consider the other extreme.
+$$
+p = 2 \min{\left(\Pr(T \geq t~|~H_0), \Pr(T \leq t~|~H_0)\right)}
+$$
+The p-value is then the sum of the areas of the distribution from the observations to infinity.
+$$
+p \approx 0.006
+$$
+]
+
+.pull-right[
+The *t*-statistic for the difference in means follows a *t*-distribution.
+
+&lt;img src="./figures/statistical_testing_t_distribution-1.png" width="100%" /&gt;
+]
+
+???
+
+This test assumes that the samples come from a normal distribution, and that the variances are equal.
+
+In this case, the distribution is symmetric around zero, so it doesn't matter which one we use.
+
+This tail goes on to infinity, and this is also why we, at least theoretically, can't have p-values that are exactly zero or exactly one.
+
+---
+
+exclude: true
+
+# The central limit theorem
+
+---
+
+exclude: true
 
 # Why 0.05?
 
 ---
 
+exclude: true
+
+# What the *p*-value is not
+
+- It is **not** the probability that the null hypothesis is true.
+
+---
+
 # Problems with multiple testing
+
+.pull-left[
+Another interpretation of the p-value is in terms of error rates.
+We can say that at the `\(\alpha = 0.05\)` level, there is a 5% chance that we reject the null hypothesis even though it is true.
+The more tests we do, the more likely it is that we will see an extreme value purely by chance.
+
+In these cases we have to adjust for *multiple testing*.
+This means either modifying our p-values, or our significance level to reflect the number of tests that have been made.
+
+If we do 100 tests at the `\(\alpha = 0.05\)` level, then we expect to incorrectly reject the null hypothesis five times.
+Compare this with performing a single test at the same confidence level and only having a 5% chance of rejecting the null hypothesis.
+]
+
+.pull-right[
+&lt;iframe src="https://imgs.xkcd.com/comics/significant.png" width="100%" height="500px" data-external="1"&gt;&lt;/iframe&gt;
+]
+
+---
+
+# Multiple testing correction in R
+
+In R, we can correct for multiple testing with the `p.adjust` function.
+
+.pull-left[
+
+```r
+pvals &lt;- tibble(
+  p = map_dbl(
+    1:1000,
+    ~ t.test(rnorm(20),
+             rnorm(1000))$p.value
+  ),
+  padj = p.adjust(p)
+)
+
+sum(pvals$p &lt; 0.05)
+```
+
+```
+## [1] 52
+```
+
+```r
+sum(pvals$padj &lt; 0.05)
+```
+
+```
+## [1] 1
+```
+]
+
+.pull-right.small[
+
+```r
+pvals %&gt;% 
+  pivot_longer(everything()) %&gt;% 
+  ggplot(aes(value)) +
+  facet_grid(cols = vars(name)) +
+  geom_histogram() +
+  geom_vline(xintercept = 0.05, colour = "firebrick2",
+             linetype = "dashed") +
+  labs(x = "p-value", y = "Number of observations")
+```
+
+&lt;img src="./figures/statistical_testing_padjust_example-1.png" width="432" /&gt;
+]
+
+???
+
+`p.adjust` has a lot of different types of correction, but I will leave it to you to explore this.
 
 ---
 

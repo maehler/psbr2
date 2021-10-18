@@ -251,12 +251,8 @@ schedule:
   - day:
     - start_time:
       end_time:
-      topic: TBA
-      lecture: false
-  - day:
-    - start_time:
-      end_time:
       topic: Statistical testing
+      url: lectures/20_statistical_testing.html
       details: |
         - t-test
         - ANOVA
@@ -274,7 +270,6 @@ schedule:
     - start_time:
       end_time:
       topic: "Advanced R: Functions"
-      room: B3-46-49 Solanum lycopersicum
       details: |
         - Writing your own functions
           - Get specification on inputs and outputs
@@ -282,6 +277,7 @@ schedule:
     - start_time:
       end_time:
       topic: "Flow control"
+      room: B3-46-49 Solanum lycopersicum
       details: |
         - Choices
           - `if`, `switch`
@@ -290,6 +286,7 @@ schedule:
     - start_time:
       end_time:
       topic: Vectorisation
+      room: B3-46-49 Solanum lycopersicum
       details: |
         - Why are `for` loops often slow?
         - Difference between `&`/`&&`, and `|`/`||`
@@ -308,6 +305,13 @@ schedule:
         - Make available in morning
         - Large scale data: ITS data from Andreas
         - Plotting large scale data
+      lecture: false
+  - day:
+    - start_time:
+      end_time:
+      topic: "Practical assignment 2"
+      room: ""
+      details:
       lecture: false
   - day:
     - start_time:
