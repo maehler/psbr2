@@ -222,12 +222,11 @@ The p-value is then the sum of the areas of the distribution from the observatio
 $$
 p \approx 0.006
 $$
+
 ]
 
 .pull-right[
-The *t*-statistic for the difference in means follows a *t*-distribution.
-
-```{r t_distribution, echo = FALSE, out.width = "100%", fig.height = 5}
+```{r t_distribution, echo = FALSE, out.width = "100%", fig.height = 4.5}
 tibble(
   x = seq(-5, 5, length.out = 200),
   y = dt(x, 38)
@@ -245,6 +244,8 @@ tibble(
        y = "Density") +
   theme_classic()
 ```
+
+`r note("Rejecting the null hypothesis if it is true is also known as <b>Type I error</b>. Failure to reject the null hypothesis if it is false is known as <b>Type II error</b>.", "tip", c("yellow", "small"))`
 ]
 
 ???
@@ -291,8 +292,8 @@ If we do 100 tests at the $\alpha = 0.05$ level, then we expect to incorrectly r
 Compare this with performing a single test at the same confidence level and only having a 5% chance of rejecting the null hypothesis.
 ]
 
-.pull-right[
-`r knitr::include_url("https://imgs.xkcd.com/comics/significant.png", height = "500px")`
+.pull-right.center[
+![:scale 35%](https://imgs.xkcd.com/comics/significant.png)
 ]
 
 ---
@@ -303,23 +304,26 @@ In R, we can correct for multiple testing with the `p.adjust` function.
 
 .pull-left[
 ```{r}
-pvals <- tibble(
-  p = map_dbl(
-    1:1000,
-    ~ t.test(rnorm(20),
-             rnorm(1000))$p.value
-  ),
+population <- rnorm(1000)
+pvalues <- map_dbl(
+  1:1000,
+  ~ t.test(sample(population, 20),
+           population)$p.value
+)
+
+pval_tbl <- tibble(
+  p = pvalues,
   padj = p.adjust(p)
 )
 
-sum(pvals$p < 0.05)
-sum(pvals$padj < 0.05)
+sum(pval_tbl$p < 0.05)
+sum(pval_tbl$padj < 0.05)
 ```
 ]
 
 .pull-right.small[
 ```{r padjust_example}
-pvals %>% 
+pval_tbl %>% 
   pivot_longer(everything()) %>% 
   ggplot(aes(value)) +
   facet_grid(cols = vars(name)) +
@@ -344,9 +348,83 @@ class: title
 
 # Parametric tests
 
+Any test that assumes that the data comes from a population that can be modeled by a distribution with a fixed set of parameters is a **parametric test**.
+
+Here are some examples of parametric tests that assume that the data is sampled from a normal distribution:
+
+- *t*-test
+- ANOVA
+- Pearson correlation
+
+.pull-left[
+```{r norm_histogram, echo = FALSE}
+rnorm_tbl <- as_tibble(qqnorm(rnorm(1000), plot.it = FALSE))
+ggplot(rnorm_tbl, aes(y)) +
+  geom_histogram(bins = 50) +
+  labs(x = "Observed value", y = "Number of observations")
+```
+]
+
+.pull-right[
+```{r norm_qq_plot, echo = FALSE}
+qqline_params <- function(y, distribution = qnorm,
+                          probs = c(0.25, 0.75), qtype = 7) {
+  stopifnot(length(probs) == 2, is.function(distribution))
+  y <- quantile(y, probs, names = FALSE, type = qtype, na.rm = TRUE)
+  x <- distribution(probs)
+  list(
+    slope = diff(y)/diff(x),
+    intercept = y[1] - (diff(y)/diff(x)) * x[1]
+  )
+}
+
+ggplot(rnorm_tbl, aes(x, y)) +
+  geom_point() +
+  geom_abline(aes(slope = qqline_params(y)$slope,
+                  intercept = qqline_params(y)$intercept),
+              colour = "firebrick2", linetype = "dashed") +
+  labs(x = "Expected value", y = "Observed value")
+```
+]
+
 ---
 
 # Non-parametric tests
+
+If we have data that doesn't fit a normal distribution, too few data points to safely assume a normal distribution, or outliers in our data, we should use non-parametric tests.
+These don't make assumptions of the underlying distribution.
+
+.small[
+```{r, echo = FALSE}
+tribble(
+  ~`Parametric test`, ~`Non-parametric equivalent`,
+  "Paired *t*-test", "Wilcoxon rank-sum test",
+  "Unpaired *t*-test", "Mann-Whitney U test",
+  "Pearson correlation", "Spearman correlation",
+  "One-way ANOVA", "Kruskal-Wallis test"
+) %>% knitr::kable()
+```
+]
+
+.pull-left[
+```{r beta_histogram, echo = FALSE}
+rbeta_tbl <- as_tibble(qqnorm(rbeta(1000, 2, 5), plot.it = FALSE))
+ggplot(rbeta_tbl, aes(y)) +
+  geom_histogram(bins = 60) +
+  labs(x = "Observed value", y = "Number of observations")
+```
+]
+
+.pull-right[
+```{r beta_qq_plot, echo = FALSE}
+ggplot(rbeta_tbl, aes(x, y)) +
+  geom_point() +
+  geom_abline(aes(slope = qqline_params(y)$slope,
+                  intercept = qqline_params(y)$intercept),
+              colour = "firebrick2", linetype = "dashed") +
+  labs(x = "Expected value", y = "Observed value")
+```
+]
 
 ---
 
@@ -356,11 +434,45 @@ class: title
 
 ---
 
-# What is the data we want to use for the test?
+# Why not always go non-parametric?
+
+1. We are rarely interested in a significance test alone; we would like to say something about the population from which the samples came, and this is best done with estimates of parameters and confidence intervals.
+2. Non-parametric tests are not as flexible, e.g. being able to take confounding factors into account using multiple regression.
+3. Parametric tests usually have more statistical power than their non-parametric equivalents, i.e. you are more likely to detect significant differences if they actually exist.
+
+???
+
+So, if non-parametric tests can always be applied, why don't we always use this type of test, and just don't bother about normality assumptions?
+Parametric tests are preferred for the following reasons.
 
 ---
 
-# What is it we want to test?
+# What test to choose?
+
+.center[
+![:scale 70%](../img/choose_test.png)
+.small.right[&copy; Benedicte Albrectsen]
+]
+
+---
+
+class: title
+
+# Exploratory analysis
+
+---
+
+# Exploratory analysis
+
+So far we've been looking at classical hypothesis testing, which is generally governed by quite strict rules that make it difficult to get right.
+First of all, each observation can only be used for exploration or confirmation; not both.
+Secondly, if we have saved observations for our confirmation, we can only use them once.
+If we use them more than once, it's no longer confirmation, but exploration.
+
+## What if we don't have a hypothesis defined before we start?
+
+We can see hypothesis testing as **hypothesis confirming**, but we can also go in blind and instead **generate hypotheses** by exploring our data.
+Perhaps we find some interesting pattern that warrants a deeper look into that particular phenomenon.
 
 ---
 
@@ -368,13 +480,449 @@ class: title
 
 # Linear models
 
+???
+
+On the slide with the different types of statistical tests, regression models were represented by a single box, but this is a huge family of related models.
+Here I will try to show the basics of regression models, how they can handle multiple variables, confounding effects, and co-variates.
+
 ---
 
 # What is a linear model?
 
+When we want to check for a relationship between a response variable (dependent variable) and some independent variables.
+The basic form of a linear model is
+$$
+y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_nx_n
+$$
+where $y$ is our dependent variable, $x_1, x_2, \ldots, x_n$ are our dependent variables, and $\beta_0, \beta_1, \ldots, \beta_n$ are parameters (or coefficients) that have to be estimated.
+
 ---
 
-# What about a linear model is linear?
+# Linear models in R
+
+.pull-left[
+We can construct linear models in R using the `lm` function.
+
+```{r sim1}
+library(modelr)
+ggplot(sim1, aes(x, y)) +
+  geom_point()
+```
+]
+
+.pull-right[
+```{r}
+sim1_mod <- lm(y ~ x, data = sim1)
+coefficients(sim1_mod)
+```
+
+$$
+\begin{align}
+y &= \beta_0 + \beta_1 x_1 \\
+y &= 4.221 + 2.052x
+\end{align}
+$$
+]
+
+???
+
+The modelr package is a part of the tidyverse that provides some functions that enables us to use models in the context of dplyr and tidy data.
+
+---
+
+# Model predictions
+
+.pull-left[
+```{r}
+grid <- data_grid(sim1, x) %>% 
+  add_predictions(sim1_mod)
+grid
+```
+]
+
+.pull-right[
+```{r sim1_predictions}
+ggplot(sim1) +
+  geom_point(aes(x, y)) +
+  geom_line(aes(x, pred), data = grid, colour = "red")
+```
+]
+
+---
+
+# Model residuals
+
+.pull-left[
+```{r sim1_residual_lines, echo = FALSE}
+sim1 %>% 
+  add_residuals(sim1_mod) %>% 
+  ggplot() +
+  geom_segment(aes(x, y, xend = x, yend = y - resid),
+               colour = "gray", linetype = "solid") +
+  geom_point(aes(x, y)) +
+  geom_line(aes(x, pred), data = grid, colour = "red")
+```
+]
+
+.pull-right[
+```{r}
+sim1 <- add_residuals(sim1, sim1_mod)
+sim1
+```
+]
+
+???
+
+The residuals are the distances between our points and the line, or the prediction error of our model.
+These are important when it comes to the evaluation of our model.
+
+---
+
+# Model residuals
+
+.pull-left[
+```{r sim1_residuals}
+ggplot(sim1, aes(x, resid)) +
+  geom_ref_line(h = 0) +
+  geom_point()
+```
+]
+
+.pull-right[
+```{r sim1_residuals_histogram}
+ggplot(sim1, aes(resid)) +
+  geom_histogram(bins = 10)
+```
+]
+
+???
+
+Thanks to how the model works, our residuals will be centered around zero.
+If our model is good, we should see a random scatter around zero.
+If we would see a pattern in this, then that can be a sign that there is some variable we should have taken into account, but we haven't.
+
+The whole point of the model is to minimise the sum of the residuals, or rather the sum of squares of the residuals.
+
+---
+
+# Root-mean-squared deviation
+
+.pull-left[
+The goal of the model is to minimise the residuals, but how does it do this?
+First of all, we have to be able to represent the residuals as a single number.
+A common way to do this is by using the **root-mean-squared deviation**.
+$$
+\text{RMSD} = \sqrt{\frac{\sum_{i=1}^N{\left(y - \hat{y}\right)^2}}{N}}
+$$
+]
+
+.pull-right[
+```{r}
+sqrt(mean((sim1$y - predict(sim1_mod))^2))
+rmse(sim1_mod, sim1)
+```
+]
+
+---
+
+# Root-mean-squared deviation
+
+.pull-left[
+```{r random_models, echo = FALSE}
+models <- tibble(
+  a1 = c(runif(249, -20, 40), 4.221),
+  a2 = c(runif(249, -5, 5), 2.052)
+)
+
+model1 <- function(a, data) {
+  a[1] + data$x * a[2]
+}
+
+measure_distance <- function(mod, data) {
+  diff <- data$y - model1(mod, data)
+  sqrt(mean(diff ^ 2))
+}
+
+sim1_dist <- function(a1, a2) {
+  measure_distance(c(a1, a2), sim1)
+}
+
+models <- models %>% 
+  mutate(dist = purrr::map2_dbl(a1, a2, sim1_dist))
+
+ggplot(sim1, aes(x, y)) +
+  geom_point() +
+  geom_abline(aes(intercept = a1, slope = a2),
+              data = models, alpha = 0.2)
+```
+
+Here we have 250 random models, including the model we got from `lm` earlier.
+]
+
+.pull-right[
+```{r random_models_distance, echo = FALSE}
+ggplot(sim1, aes(x, y)) +
+  geom_point() +
+  geom_abline(aes(intercept = a1, slope = a2, colour = -dist),
+              data = models %>% top_n(10, -dist), alpha = 1)
+```
+
+This is what we get if we filter the models to only include the 10 with the smallest RMSD, and also colouring them accordingly.
+]
+
+---
+
+# Categorical independent variables
+
+We are not restricted to using continuous independent variables, but we can also use categorical variables in order to explain a continuous variable. A typical example of this in biology research is genomic associations where we want to associate genetic variation with a quantitative trait.
+
+.pull-left[
+If we look back to the formula for a linear model
+$$
+y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_n x_n
+$$
+we see that we cannot use a categorical variable directly in this, since it's not a number, and we cannot multiply it with the coefficients.
+In order to get around this, R converts the variable into a number by creating a **model matrix**.
+
+Only male is assigned here, and we can interpret it as `female` being the base level in our test.
+]
+
+.pull-right[
+```{r}
+tribble(
+  ~sex, ~response,
+  "male", 1,
+  "female", 2,
+  "male", 1,
+  "female", 1
+) %>% model_matrix(response ~ sex)
+```
+]
+
+???
+
+It wouldn't work if we also had a `sexfemale` column in our model matrix.
+The reason for this is that we cannot have columns in our model matrix that can be perfectly predicted by another column in the model matrix.
+The `sexfemale` column could be expressed as `1 - sexmale`.
+What this implies for the model construction is that we have an infinite number of solutions to our regression problem, and this doesn't work out.
+
+As you might be able to tell, this also causes problems if we have confounded variables in our data.
+
+---
+
+# Categorical independent variables
+
+.pull-left[
+```{r, echo = FALSE}
+sim2 <- sim2 %>% 
+  filter(x %in% c("a", "b", "c")) %>% 
+  mutate(
+    x = fct_recode(
+      factor(x),
+      "A/A" = "a", "A/C" = "c", "C/C" = "b") %>% 
+      fct_relevel("C/C", after = 2))
+```
+
+```{r}
+sim2
+
+sim2_mod <- lm(y ~ x, data = sim2)
+
+grid <- data_grid(sim2, x) %>% 
+  add_predictions(sim2_mod)
+```
+]
+
+.pull-right[
+```{r sim2_prediction}
+ggplot(sim2, aes(x, y)) +
+  geom_point() +
+  geom_point(aes(y = pred), data = grid,
+             size = 3, colour = "red")
+```
+]
+
+???
+
+The predictions are simply the means of the three groups of data that we have.
+This makes sense since the model is trying to minimise the residuals, and the mean in each group will do just that.
+
+```{r}
+predict(sim2_mod, )
+```
+
+???
+
+One important difference between this model and models using continuous dependent variables is that we cannot predict levels that we don't have in our model.
+For continous data, we can extrapolate, but this is not possible for a categorical variable.
+
+---
+
+# Categorical and continous independent variables
+
+.pull-left[
+```{r sim3}
+ggplot(sim3, aes(x1, y)) +
+  geom_point(aes(colour = x2))
+```
+]
+
+.pull-right[
+There are two ways we can make a model from this where we take both variables into account:
+
+```{r}
+sim3_mod1 <- lm(y ~ x1 + x2, data = sim3)
+sim3_mod2 <- lm(y ~ x1 * x2, data = sim3)
+```
+
+The first will consider `x1` and `x2` as completely independent, so the effect of `x1` on `y` is independent from the effect of `x2` on `y`.
+By using `*`, we also estimate the effect that the interaction between `x1` and `x2` has on `y`.
+]
+
+---
+
+# Categorical and continous independent variables
+
+.pull-left[
+To be able to visualise the models we can use couple of new functions in modelr.
+
+```{r}
+grid <- data_grid(sim3, x1, x2) %>% 
+  gather_predictions(sim3_mod1, sim3_mod2)
+```
+]
+
+.pull-right[
+```{r sim3_predictions}
+ggplot(sim3, aes(x1, y, colour = x2)) +
+  geom_point() +
+  geom_line(data = grid, aes(y = pred)) +
+  facet_grid(cols = vars(model))
+```
+]
+
+???
+
+`gather_predictions` will add the model name and its predictions to the grid data frame.
+
+We can see here that the model that uses `+`, i.e. the independent effects of `x1` and `x2` on `y` has a different intercept for each level of `x2`, but the same slope.
+When we use `*`, i.e. considering the interaction between the two, both the intercept and the slope are different.
+
+---
+
+
+# Categorical and continous independent variables
+
+.pull-left[
+Here are the residuals for these two models.
+
+.small[
+```{r sim3_resid}
+sim3 <- gather_residuals(sim3, sim3_mod1, sim3_mod2)
+ggplot(sim3, aes(x1, resid, colour = x2)) +
+  geom_point() +
+  facet_grid(rows = vars(model), cols = vars(x2))
+```
+]
+]
+
+.pull-right[
+```{r}
+rmse(sim3_mod1, sim3)
+rmse(sim3_mod2, sim3)
+```
+]
+
+???
+
+From this we can see that there is a pattern in the residuals for the first model, indicating that there is something that we are not accounting for.
+In the second model, however, these patterns are gone.
+
+You might think of this as a hand-wavy way of saying that the second model is better, and this is true.
+Precisely determining which model is better requires a lot of maths, and for all our intents and purposes this is enough.
+
+We could also calculate the error and see that it is actually lower for the second model.
+
+---
+
+# Multiple continuous independent variables
+
+.pull-left[
+```{r}
+sim4_mod1 <- lm(y ~ x1 + x2, data = sim4)
+sim4_mod2 <- lm(y ~ x1 * x2, data = sim4)
+
+grid <- sim4 %>% 
+  data_grid(
+    x1 = seq_range(x1, 5),
+    x2 = seq_range(x2, 5)
+  ) %>% 
+  gather_predictions(sim4_mod1, sim4_mod2)
+```
+]
+
+.pull-right[
+```{r sim4_pred}
+ggplot(grid, aes(x1, x2)) +
+  geom_tile(aes(fill = pred)) +
+  facet_grid(cols = vars(model))
+```
+]
+
+???
+
+`seq_range` will take the extreme points of the input data and create 5 points spread out across this interval.
+
+Here it might look like the two models are the same, but we are quite bad at comparing shades of colour visually, so let's try a different approach.
+
+---
+
+# Multiple continuous independent variables
+
+.pull-left[
+```{r sim4_pred_lines1}
+ggplot(grid, aes(x1, pred, colour = x2, group = x2)) + 
+  geom_line() +
+  facet_grid(cols = vars(model))
+```
+]
+
+.pull-right[
+```{r sim4_pred_lines2}
+ggplot(grid, aes(x2, pred, colour = x1, group = x1)) + 
+  geom_line() +
+  facet_grid(cols = vars(model))
+```
+]
+
+???
+
+Here we can imagine that we are looking at the surface from the previous slide from the side.
+Then we can see that the angle of the plane varies for the interaction model depending on `x1` and `x2`.
+
+As you see, already for two variables it becomes difficult to visualise these models.
+
+This is an example from R for Data Science, and in section 23.4.5 there is an exercise to look at the residuals of these two models, so I will leave that to you.
+
+---
+
+# Other types of model families
+
+Here we've only looked at regular linear models where the response has to be continuous.
+These can be extended in a multitude of ways.
+
+One example is **[generalised linear models](https://en.wikipedia.org/wiki/Generalized_linear_model)** (`stats::glm`) where, as the name implies, the model is generalised so that it can have a non-continuous response variable.
+
+Another example is **[robust linear models](https://en.wikipedia.org/wiki/Robust_regression)** (`MASS::rlm`) where the influence of points far away is lowered, resulting in models that are less sensitive to outliers.
+
+---
+
+# Take-home messages
+
+- Always check the assumptions for any test you want to do.
+- Correct results for multiple testing.
+- Don't use your data both for exploratory analysis and hypothesis confirmation.
+- See these types of analysis as a way of exploring the data and uncover relationships that can be investigated with new, more targeted, experiments.
 
 ---
 
@@ -382,3 +930,8 @@ class: title
 
 - [R for Data Science: Modelling](https://r4ds.had.co.nz/model-intro.html)
 - [An Introduction to Statistical Learning](https://www.statlearning.com/)
+- [Testing For Normality — Clearly Explained](https://www.youtube.com/watch?v=02I84i8Knas)
+
+???
+
+I especially think you should take a look at chapters 23 and 24 in R for Data Science, together with the exercises that you'll find there.
