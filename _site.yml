@@ -55,6 +55,8 @@ navbar:
             href: lectures/19_quality_control_and_visualisation_of_large_scale_data.html
           - text: Statistical testing
             href: lectures/20_statistical_testing.html
+          - text: "Advanced R: Functions"
+            href: lectures/21_advanced_r_functions.html
         - text: Week 5
     - text: Suggested reading
       href: suggested_reading.html

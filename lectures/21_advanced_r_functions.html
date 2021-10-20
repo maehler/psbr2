@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Advanced R: Functions</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Niklas Mähler" />
+    <meta name="date" content="2021-10-21" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/niklas.css" type="text/css" />
+    <link rel="stylesheet" href="css/niklas-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: left, middle, inverse, title-slide
+
+# Advanced R: Functions
+## Practical Skills for Biology Research II
+### Niklas Mähler
+### Umeå University
+### 2021-10-21
+
+---
+
+
+layout: true
+
+<div class="footer">
+<a href="https://github.com/maehler/psbr2/tree/main/lectures/21_advanced_r_functions.Rmd">
+<svg viewBox="0 0 496 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg">
+<path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"></path>
+</svg>
+</a>
+</div>
+
+---
+
+# What is a function?
+
+&gt; In computer programming, a subroutine is a sequence of program instructions that performs a specific task, packaged as a unit.
+&gt; This unit can then be used in programs wherever that particular task should be performed.
+
+.right[https://en.wikipedia.org/wiki/Subroutine]
+
+???
+
+We've used a lot of functions throughout the course, but let's take a closer look at how functions work.
+
+---
+
+# Defining a function
+
+We can define a function like this
+
+
+```r
+my_add &lt;- function(x, y) {
+  x + y
+}
+```
+
+This particular function is called `my_add` which takes two arguments: `x` and `y`.
+The last line of the function body will be the return value of the function.
+In this case in will return the sum of `x` and `y`.
+
+
+```r
+my_add(5, 7)
+```
+
+```
+## [1] 12
+```
+
+```r
+my_add(-3, 2)
+```
+
+```
+## [1] -1
+```
+
+```r
+my_add(1, NA)
+```
+
+```
+## [1] NA
+```
+
+---
+
+# A breakdown
+
+.left-column[
+## Fundamentals
+]
+
+.right-column[
+We can split a function into three parts
+
+1. Arguments
+2. Body
+3. Environment
+
+Furthermore, just as vectors are objects in R, functions are also objects.
+]
+
+---
+
+# A breakdown
+
+.left-column[
+## Fundamentals
+## Function components
+]
+
+.right-column[
+We can access function arguments using the `formals` function
+
+
+```r
+formals(my_add)
+```
+
+```
+## $x
+## 
+## 
+## $y
+```
+
+The function body can be accessed with the `body` function
+
+
+```r
+body(my_add)
+```
+
+```
+## {
+##     x + y
+## }
+```
+]
+
+---
+
+# A breakdown
+
+.left-column[
+## Fundamentals
+## Function components
+]
+
+.right-column[
+Finally, we can get the environment of the function with `environment`.
+
+
+```r
+environment(my_add)
+```
+
+```
+## &lt;environment: 0x7fa6264deda0&gt;
+```
+]
+
+---
+
+# A breakdown
+
+.left-column[
+## Fundamentals
+## Function components
+## Primitive functions
+]
+
+An exception when it comes to these function components are **primitive functions**.
+These are defined in the C programming language, and these functions have been compiled to machine code.
+
+
+```r
+sum
+```
+
+```
+## function (..., na.rm = FALSE)  .Primitive("sum")
+```
+
+```r
+`[`
+```
+
+```
+## .Primitive("[")
+```
+
+???
+
+The reason for having functions in C can either be that the function is very tightly integrated into the R language, and R is written in C.
+Another reason is for optimisation purposes.
+
+These functions only exist in the base package.
+While they generally have better performance, they are harder to write, so the R development team tries to avoid writing functions like this as far as possible.
+
+---
+
+# A breakdown
+
+.left-column[
+## Fundamentals
+## Function components
+## Primitive functions
+## First-class functions
+]
+
+.right-column[
+Functions are like any other object in R, and they are defined like any other object, unlike many other languages.
+
+.pull-left[
+R:
+
+```r
+my_add &lt;- function(x, y) {
+  x + y
+}
+```
+
+
+Python:
+
+```python
+def my_add(x, y):
+  return x + y
+```
+
+Javascript:
+
+```r
+function my_add(x, y) {
+  return(x + y);
+}
+```
+]
+
+.pull-right[
+C:
+
+```c
+int my_add(int x, int y) {
+  return(x + y);
+}
+```
+
+Rust:
+
+```rust
+fn my_add(x: i32, y: i32) -&gt; i32 {
+  x + y
+}
+```
+
+PHP:
+
+```php
+function my_add($x, $y) {
+  return $x + $y;
+}
+```
+]
+]
+
+---
+
+# A breakdown
+
+.left-column[
+## Fundamentals
+## Function components
+## Primitive functions
+## First-class functions
+]
+
+.right-column[
+While we normally want to name our functions, we have seen cases where it's not worth naming them.
+These function are called **anonymous functions**.
+
+
+```r
+mpg %&gt;%
+  group_by(manufacturer, model) %&gt;%
+  summarise(across(c(cyl, trans, class), function(.) length(unique(.))))
+```
+
+```
+## # A tibble: 38 × 5
+## # Groups:   manufacturer [15]
+##    manufacturer model                cyl trans class
+##    &lt;chr&gt;        &lt;chr&gt;              &lt;int&gt; &lt;int&gt; &lt;int&gt;
+##  1 audi         a4                     2     4     1
+##  2 audi         a4 quattro             2     4     1
+##  3 audi         a6 quattro             2     2     1
+##  4 chevrolet    c1500 suburban 2wd     1     1     1
+##  5 chevrolet    corvette               1     3     1
+##  6 chevrolet    k1500 tahoe 4wd        1     1     1
+##  7 chevrolet    malibu                 2     2     1
+##  8 dodge        caravan 2wd            2     3     1
+##  9 dodge        dakota pickup 4wd      2     4     1
+## 10 dodge        durango 4wd            2     2     1
+## # … with 28 more rows
+```
+]
+
+---
+
+# A breakdown
+
+.left-column[
+## Fundamentals
+## Function components
+## Primitive functions
+## First-class functions
+]
+
+.right-column[
+The purrr package has a short-hand way of declaring anonymous functions.
+
+
+```r
+mpg %&gt;%
+  group_by(manufacturer, model) %&gt;%
+  summarise(across(c(cyl, trans, class), ~ length(unique(.))))
+```
+
+.center[
+[![:scale 25%](https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/purrr.png)](https://purrr.tidyverse.org/)
+]
+]
+
+???
+
+purrr is a package with tools for functional programming in R.
+I will talk more about this package and functional programming later in the course.
+
+---
+
+# Function composition
+
+This is a topic we have treated quite a bit, but without really putting words on it.
+In base R we have two ways of combining functions in order to get them to perform a task for us.
+Let's say we define a couple of functions for calculating the standard deviation
+$$
+\sigma = \sqrt{\frac{\sum_{i=1}^N{(x_i - \overline{\mu})^2}}{N}}
+$$
+
+
+```r
+square &lt;- function(x) x^2
+deviation &lt;- function(x) x - mean(x)
+```
+
+---
+
+# Function composition
+
+.pull-left[
+
+
+```r
+x &lt;- runif(100)
+sqrt(mean(square(deviation(x))))
+```
+
+```
+## [1] 0.2992194
+```
+
+
+```r
+out &lt;- deviation(x)
+out &lt;- square(out)
+out &lt;- mean(out)
+out &lt;- sqrt(out)
+out
+```
+
+```
+## [1] 0.2992194
+```
+
+
+```r
+deviation(x) %&gt;% 
+  square() %&gt;% 
+  mean() %&gt;% 
+  sqrt()
+```
+
+```
+## [1] 0.2992194
+```
+]
+
+.pull-right[
+`$$\sigma = \sqrt{\frac{\sum_{i=1}^N{(x_i - \overline{\mu})^2}}{N}}$$`
+All these are equivalent, but they all have their strengths and weaknesses.
+
+The first one is concise, especially for shorter expressions, but we have to read it from the inside out.
+
+The second one is good if we want to make use of intermediate values, but bad if we are not interested in it.
+Also not the best if we are running code interactively since it will be hard knowing what state `out` is in.
+
+The last one reads well, and in the "right" order, but it is limited to a linear workflow on a single object.
+This is also the only one of these that requires an external package, and also for the reader to be familiar with the concept.
+]
+
+---
+
+# Lexical scoping
+
+What does this function return?
+
+
+```r
+x &lt;- 10
+foo &lt;- function() {
+  x &lt;- 20
+  x
+}
+```
+
+--
+
+
+```r
+foo()
+```
+
+```
+## [1] 20
+```
+
+--
+
+The reason for this is the way that R looks up values.
+For functions this is determined how the function is defined, not how it is called.
+This is called **lexical scoping**.
+
+???
+
+Next we will go through some rules for how this works.
+
+---
+
+# Lexical scoping
+
+.left-column[
+## Name masking
+]
+
+.right-column[
+Names inside a function mask names defined outside the function.
+
+
+```r
+x &lt;- 5
+y &lt;- 7
+my_add &lt;- function() {
+  x &lt;- 1
+  y &lt;- 2
+  x + y
+}
+```
+]
+
+???
+
+What do you think this function will return based on this information?
+
+--
+
+.right-column[
+
+```r
+my_add()
+```
+
+```
+## [1] 3
+```
+]
+
+---
+
+# Lexical scoping
+
+.left-column[
+## Name masking
+]
+
+.right-column[
+If a name is not defined inside the function, it looks one level further up.
+
+
+```r
+x &lt;- 5
+y &lt;- 7
+my_add &lt;- function() {
+  x &lt;- 1
+  x + y
+}
+```
+]
+
+--
+
+.right-column[
+
+```r
+my_add()
+```
+
+```
+## [1] 8
+```
+]
+
+???
+
+What will this return?
+
+--
+
+.right-column[
+
+```r
+y
+```
+
+```
+## [1] 7
+```
+]
+
+???
+
+And the value of `y` is unchanged.
+This `y` only exists in the function environment.
+
+---
+
+# Lexical scoping
+
+.left-column[
+## Name masking
+## Functions vs variables
+]
+
+.right-column[
+Since functions in R are objects, the same scoping rules apply to functions.
+
+
+```r
+foo &lt;- function(x) x + 100
+bar &lt;- function() {
+  foo &lt;- function(x) x + 1
+  foo(10)
+}
+```
+]
+
+--
+
+.right-column[
+
+```r
+bar()
+```
+
+```
+## [1] 11
+```
+]
+
+---
+
+# Lexical scoping
+
+.left-column[
+## Name masking
+## Functions vs variables
+]
+
+.right-column[
+If a function and a non-function have the same name, then if we try to use that name in a function call, R will ignore non-function objects.
+
+
+```r
+foo &lt;- function(x) x + 100
+bar &lt;- function() {
+  foo &lt;- 10
+  foo(foo)
+}
+```
+]
+
+.right-column[
+
+```r
+bar()
+```
+
+```
+## [1] 110
+```
+]
+
+--
+
+.right-column[
+<div class="note yellow">
+<p>
+<svg viewBox="0 0 576 512" style="position:relative;display:inline-block;top:.1em;height:2em;" xmlns="http://www.w3.org/2000/svg">
+<path d="M569.517 440.013C587.975 472.007 564.806 512 527.94 512H48.054c-36.937 0-59.999-40.055-41.577-71.987L246.423 23.985c18.467-32.009 64.72-31.951 83.154 0l239.94 416.028zM288 354c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z"></path>
+</svg>
+It goes without saying that using the same name for different things is confusing, at best.
+</p>
+</div>
+]
+
+---
+
+# Lexical scoping
+
+.left-column[
+## Name masking
+## Functions vs variables
+## A fresh start
+]
+
+.right-column[
+Whenever a function is called, a new environment is created for it.
+
+
+```r
+foo &lt;- function() {
+  if (!exists("z")) {
+    z &lt;- 1
+  } else {
+    z &lt;- z + 1
+  }
+  z
+}
+```
+]
+
+???
+
+What happens when we call this function the first time?
+
+--
+
+.right-column[
+
+```r
+foo()
+```
+
+```
+## [1] 1
+```
+]
+
+???
+
+What happens if we call it a second time?
+
+--
+
+.right-column[
+
+```r
+foo()
+```
+
+```
+## [1] 1
+```
+]
+
+---
+
+# Lexical scoping
+
+.left-column[
+## Name masking
+## Functions vs variables
+## A fresh start
+## Dynamical lookup
+]
+
+.right-column[
+R won't try to look for a value until the function is run.
+
+
+```r
+add_one &lt;- function() x + 1
+x &lt;- 15
+add_one()
+```
+
+```
+## [1] 16
+```
+
+```r
+x &lt;- 20
+add_one()
+```
+
+```
+## [1] 21
+```
+
+We can check what a function will try to access outside of it.
+
+
+```r
+codetools::findGlobals(add_one)
+```
+
+```
+## [1] "+" "x"
+```
+]
+
+???
+
+This can be very frustrating if we have typos in our code.
+We won't get an error message when we write the function, since it's determined when we run it.
+It might even be that we don't get errors when we run the function, depending on our environment.
+
+There are ways of checking things like this.
+
+Even though this might seem like an annoying feature, the reason why it's there also is what makes R simple in this sense: it uses this type of lexical scoping to find *everything*.
+It doesn't matter if it's trying to find the `mean` function, or the `+` operator or the variable you just defined.
+It all works the same.
+
+---
+
+# Lazy evaluation
+
+Another thing with how variables are used by functions is that they are evaluated lazily.
+This means that the value of the variable is not checked until it is used.
+
+
+```r
+foo &lt;- function(x) {
+  5
+}
+
+foo(stop("error"))
+```
+
+```
+## [1] 5
+```
+
+--
+
+
+```r
+foo &lt;- function(x, y = message("this is an expensive operation")) {
+  x + 5
+}
+
+foo(3)
+```
+
+```
+## [1] 8
+```
+
+???
+
+This means that we can set default arguments in functions that can be expensive to calculate, but they won't be evaluated unless they are actually used.
+
+---
+
+# Default arguments
+
+Not only can we do computation in our default arguments, but we can also access variables defined *inside* the function itself.
+
+.pull-left[
+
+```r
+foo &lt;- function(x, y = z + 5) {
+  z &lt;- x + 2
+  x + y
+}
+
+foo(5)
+```
+
+```
+## [1] 17
+```
+]
+
+.pull-right[
+
+```r
+foo &lt;- function(x = ls()) {
+  a &lt;- 5
+  c(x, a)
+}
+
+foo()
+```
+
+```
+## [1] "a" "x" "5"
+```
+
+
+```r
+foo(ls())
+```
+
+```
+## [1] "foo"
+```
+]
+
+---
+
+# dot-dot-dot
+
+You have likely seen the `...` argument for many functions that you have used.
+
+
+```r
+args(select)
+```
+
+```
+## function (.data, ...) 
+## NULL
+```
+
+What this does is to take any other, named, arguments.
+These are often used to pass arguments to other functions.
+
+.pull-left[
+
+```r
+foo &lt;- function(...) {
+  list(...)
+}
+
+foo(one = 1, two = 2)
+```
+
+```
+## $one
+## [1] 1
+## 
+## $two
+## [1] 2
+```
+]
+
+.pull-right[
+
+```r
+get_summary &lt;- function(x, fun = mean, ...) {
+  fun(x, ...)
+}
+
+get_summary(c(1:5, NA))
+```
+
+```
+## [1] NA
+```
+
+```r
+get_summary(c(1:5, NA), na.rm = TRUE)
+```
+
+```
+## [1] 3
+```
+]
+
+---
+
+# Exiting a function
+
+.left-column[
+## Return
+]
+
+.right-column[
+We have used return values up until now, but not really talked about them.
+These have all been **implicit returns**: the last expression that gets evaluated is returned.
+
+
+```r
+foo &lt;- function(x) {
+  x
+  x + 5
+}
+foo(2)
+```
+
+```
+## [1] 7
+```
+
+We can also do an **explicit return** by using the `return` function.
+
+
+```r
+foo &lt;- function(x) {
+  return(x)
+  x + 5
+}
+foo(2)
+```
+
+```
+## [1] 2
+```
+]
+
+---
+
+# Exiting a function
+
+.left-column[
+## Return
+## Error
+]
+
+.right-column[
+If for some reason we encounter something that we cannot recover from, we can issue an error.
+
+
+```r
+foo &lt;- function() {
+  stop("an error occured")
+  return(5)
+}
+foo()
+```
+
+```
+## Error in foo(): an error occured
+```
+]
+
+.right-column[
+
+```r
+foo &lt;- function(x) {
+  stopifnot(x &gt; 5)
+  x
+}
+foo(3)
+```
+
+```
+## Error in foo(3): x &gt; 5 is not TRUE
+```
+
+```r
+foo(6)
+```
+
+```
+## [1] 6
+```
+]
+
+---
+
+class: title
+
+# Let's write some functions!
+
+---
+
+# Suggested reading
+
+- [Advanced R: Functions](https://adv-r.hadley.nz/functions.html)
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="js/macros.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"navigation": {
+"scroll": false
+}
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

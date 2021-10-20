@@ -1,0 +1,742 @@
+---
+title: "Advanced R: Functions"
+subtitle: "Practical Skills for Biology Research II"
+author: "Niklas Mähler"
+institute: "Umeå University"
+date: "2021-10-21"
+editor_options:
+  chunk_output_type: console
+---
+
+layout: true
+
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
+source(here::here("scripts/setup.R"))
+setup_presentation("advanced_r_functions", filename = "21_advanced_r_functions.Rmd")
+```
+
+---
+
+# What is a function?
+
+> In computer programming, a subroutine is a sequence of program instructions that performs a specific task, packaged as a unit.
+> This unit can then be used in programs wherever that particular task should be performed.
+
+.right[https://en.wikipedia.org/wiki/Subroutine]
+
+???
+
+We've used a lot of functions throughout the course, but let's take a closer look at how functions work.
+
+---
+
+# Defining a function
+
+We can define a function like this
+
+```{r}
+my_add <- function(x, y) {
+  x + y
+}
+```
+
+This particular function is called `my_add` which takes two arguments: `x` and `y`.
+The last line of the function body will be the return value of the function.
+In this case in will return the sum of `x` and `y`.
+
+```{r}
+my_add(5, 7)
+my_add(-3, 2)
+my_add(1, NA)
+```
+
+---
+
+# A breakdown
+
+.left-column[
+## Fundamentals
+]
+
+.right-column[
+We can split a function into three parts
+
+1. Arguments
+2. Body
+3. Environment
+
+Furthermore, just as vectors are objects in R, functions are also objects.
+]
+
+---
+
+# A breakdown
+
+.left-column[
+## Fundamentals
+## Function components
+]
+
+.right-column[
+We can access function arguments using the `formals` function
+
+```{r}
+formals(my_add)
+```
+
+The function body can be accessed with the `body` function
+
+```{r}
+body(my_add)
+```
+]
+
+---
+
+# A breakdown
+
+.left-column[
+## Fundamentals
+## Function components
+]
+
+.right-column[
+Finally, we can get the environment of the function with `environment`.
+
+```{r}
+environment(my_add)
+```
+]
+
+---
+
+# A breakdown
+
+.left-column[
+## Fundamentals
+## Function components
+## Primitive functions
+]
+
+An exception when it comes to these function components are **primitive functions**.
+These are defined in the C programming language, and these functions have been compiled to machine code.
+
+```{r}
+sum
+`[`
+```
+
+???
+
+The reason for having functions in C can either be that the function is very tightly integrated into the R language, and R is written in C.
+Another reason is for optimisation purposes.
+
+These functions only exist in the base package.
+While they generally have better performance, they are harder to write, so the R development team tries to avoid writing functions like this as far as possible.
+
+---
+
+# A breakdown
+
+.left-column[
+## Fundamentals
+## Function components
+## Primitive functions
+## First-class functions
+]
+
+.right-column[
+Functions are like any other object in R, and they are defined like any other object, unlike many other languages.
+
+.pull-left[
+R:
+```{r, eval = FALSE}
+my_add <- function(x, y) {
+  x + y
+}
+```
+
+
+Python:
+```{python, eval = FALSE, python.reticulate = FALSE}
+def my_add(x, y):
+  return x + y
+```
+
+Javascript:
+```{r javascript, eval = FALSE}
+function my_add(x, y) {
+  return(x + y);
+}
+```
+]
+
+.pull-right[
+C:
+```{c, eval = FALSE}
+int my_add(int x, int y) {
+  return(x + y);
+}
+```
+
+Rust:
+```{rust, eval = FALSE}
+fn my_add(x: i32, y: i32) -> i32 {
+  x + y
+}
+```
+
+PHP:
+```{php, eval = FALSE}
+function my_add($x, $y) {
+  return $x + $y;
+}
+```
+]
+]
+
+---
+
+# A breakdown
+
+.left-column[
+## Fundamentals
+## Function components
+## Primitive functions
+## First-class functions
+]
+
+.right-column[
+While we normally want to name our functions, we have seen cases where it's not worth naming them.
+These function are called **anonymous functions**.
+
+```{r}
+mpg %>%
+  group_by(manufacturer, model) %>%
+  summarise(across(c(cyl, trans, class), function(.) length(unique(.))))
+```
+]
+
+---
+
+# A breakdown
+
+.left-column[
+## Fundamentals
+## Function components
+## Primitive functions
+## First-class functions
+]
+
+.right-column[
+The purrr package has a short-hand way of declaring anonymous functions.
+
+```{r, results = FALSE}
+mpg %>%
+  group_by(manufacturer, model) %>%
+  summarise(across(c(cyl, trans, class), ~ length(unique(.))))
+```
+
+.center[
+[![:scale 25%](https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/purrr.png)](https://purrr.tidyverse.org/)
+]
+]
+
+???
+
+purrr is a package with tools for functional programming in R.
+I will talk more about this package and functional programming later in the course.
+
+---
+
+# Function composition
+
+This is a topic we have treated quite a bit, but without really putting words on it.
+In base R we have two ways of combining functions in order to get them to perform a task for us.
+Let's say we define a couple of functions for calculating the standard deviation
+$$
+\sigma = \sqrt{\frac{\sum_{i=1}^N{(x_i - \overline{\mu})^2}}{N}}
+$$
+
+```{r}
+square <- function(x) x^2
+deviation <- function(x) x - mean(x)
+```
+
+---
+
+# Function composition
+
+.pull-left[
+
+```{r}
+x <- runif(100)
+sqrt(mean(square(deviation(x))))
+```
+
+```{r}
+out <- deviation(x)
+out <- square(out)
+out <- mean(out)
+out <- sqrt(out)
+out
+```
+
+```{r}
+deviation(x) %>% 
+  square() %>% 
+  mean() %>% 
+  sqrt()
+```
+]
+
+.pull-right[
+$$\sigma = \sqrt{\frac{\sum_{i=1}^N{(x_i - \overline{\mu})^2}}{N}}$$
+All these are equivalent, but they all have their strengths and weaknesses.
+
+The first one is concise, especially for shorter expressions, but we have to read it from the inside out.
+
+The second one is good if we want to make use of intermediate values, but bad if we are not interested in it.
+Also not the best if we are running code interactively since it will be hard knowing what state `out` is in.
+
+The last one reads well, and in the "right" order, but it is limited to a linear workflow on a single object.
+This is also the only one of these that requires an external package, and also for the reader to be familiar with the concept.
+]
+
+---
+
+# Lexical scoping
+
+What does this function return?
+
+```{r}
+x <- 10
+foo <- function() {
+  x <- 20
+  x
+}
+```
+
+--
+
+```{r}
+foo()
+```
+
+--
+
+The reason for this is the way that R looks up values.
+For functions this is determined how the function is defined, not how it is called.
+This is called **lexical scoping**.
+
+???
+
+Next we will go through some rules for how this works.
+
+---
+
+# Lexical scoping
+
+.left-column[
+## Name masking
+]
+
+.right-column[
+Names inside a function mask names defined outside the function.
+
+```{r}
+x <- 5
+y <- 7
+my_add <- function() {
+  x <- 1
+  y <- 2
+  x + y
+}
+```
+]
+
+???
+
+What do you think this function will return based on this information?
+
+--
+
+.right-column[
+```{r}
+my_add()
+```
+]
+
+---
+
+# Lexical scoping
+
+.left-column[
+## Name masking
+]
+
+.right-column[
+If a name is not defined inside the function, it looks one level further up.
+
+```{r}
+x <- 5
+y <- 7
+my_add <- function() {
+  x <- 1
+  x + y
+}
+```
+]
+
+--
+
+.right-column[
+```{r}
+my_add()
+```
+]
+
+???
+
+What will this return?
+
+--
+
+.right-column[
+```{r}
+y
+```
+]
+
+???
+
+And the value of `y` is unchanged.
+This `y` only exists in the function environment.
+
+---
+
+# Lexical scoping
+
+.left-column[
+## Name masking
+## Functions vs variables
+]
+
+.right-column[
+Since functions in R are objects, the same scoping rules apply to functions.
+
+```{r}
+foo <- function(x) x + 100
+bar <- function() {
+  foo <- function(x) x + 1
+  foo(10)
+}
+```
+]
+
+--
+
+.right-column[
+```{r}
+bar()
+```
+]
+
+---
+
+# Lexical scoping
+
+.left-column[
+## Name masking
+## Functions vs variables
+]
+
+.right-column[
+If a function and a non-function have the same name, then if we try to use that name in a function call, R will ignore non-function objects.
+
+```{r}
+foo <- function(x) x + 100
+bar <- function() {
+  foo <- 10
+  foo(foo)
+}
+```
+]
+
+.right-column[
+```{r}
+bar()
+```
+]
+
+--
+
+.right-column[
+`r note("It goes without saying that using the same name for different things is confusing, at best.", "warning")`
+]
+
+---
+
+# Lexical scoping
+
+.left-column[
+## Name masking
+## Functions vs variables
+## A fresh start
+]
+
+.right-column[
+Whenever a function is called, a new environment is created for it.
+
+```{r}
+foo <- function() {
+  if (!exists("z")) {
+    z <- 1
+  } else {
+    z <- z + 1
+  }
+  z
+}
+```
+]
+
+???
+
+What happens when we call this function the first time?
+
+--
+
+.right-column[
+```{r}
+foo()
+```
+]
+
+???
+
+What happens if we call it a second time?
+
+--
+
+.right-column[
+```{r}
+foo()
+```
+]
+
+---
+
+# Lexical scoping
+
+.left-column[
+## Name masking
+## Functions vs variables
+## A fresh start
+## Dynamical lookup
+]
+
+.right-column[
+R won't try to look for a value until the function is run.
+
+```{r}
+add_one <- function() x + 1
+x <- 15
+add_one()
+
+x <- 20
+add_one()
+```
+
+We can check what a function will try to access outside of it.
+
+```{r}
+codetools::findGlobals(add_one)
+```
+]
+
+???
+
+This can be very frustrating if we have typos in our code.
+We won't get an error message when we write the function, since it's determined when we run it.
+It might even be that we don't get errors when we run the function, depending on our environment.
+
+There are ways of checking things like this.
+
+Even though this might seem like an annoying feature, the reason why it's there also is what makes R simple in this sense: it uses this type of lexical scoping to find *everything*.
+It doesn't matter if it's trying to find the `mean` function, or the `+` operator or the variable you just defined.
+It all works the same.
+
+---
+
+# Lazy evaluation
+
+Another thing with how variables are used by functions is that they are evaluated lazily.
+This means that the value of the variable is not checked until it is used.
+
+```{r}
+foo <- function(x) {
+  5
+}
+
+foo(stop("error"))
+```
+
+--
+
+```{r}
+foo <- function(x, y = message("this is an expensive operation")) {
+  x + 5
+}
+
+foo(3)
+```
+
+???
+
+This means that we can set default arguments in functions that can be expensive to calculate, but they won't be evaluated unless they are actually used.
+
+---
+
+# Default arguments
+
+Not only can we do computation in our default arguments, but we can also access variables defined *inside* the function itself.
+
+.pull-left[
+```{r}
+foo <- function(x, y = z + 5) {
+  z <- x + 2
+  x + y
+}
+
+foo(5)
+```
+]
+
+.pull-right[
+```{r}
+foo <- function(x = ls()) {
+  a <- 5
+  c(x, a)
+}
+
+foo()
+```
+
+```{r, eval = FALSE}
+foo(ls())
+```
+
+```
+## [1] "foo"
+```
+]
+
+---
+
+# dot-dot-dot
+
+You have likely seen the `...` argument for many functions that you have used.
+
+```{r}
+args(select)
+```
+
+What this does is to take any other, named, arguments.
+These are often used to pass arguments to other functions.
+
+.pull-left[
+```{r}
+foo <- function(...) {
+  list(...)
+}
+
+foo(one = 1, two = 2)
+```
+]
+
+.pull-right[
+```{r}
+get_summary <- function(x, fun = mean, ...) {
+  fun(x, ...)
+}
+
+get_summary(c(1:5, NA))
+get_summary(c(1:5, NA), na.rm = TRUE)
+```
+]
+
+---
+
+# Exiting a function
+
+.left-column[
+## Return
+]
+
+.right-column[
+We have used return values up until now, but not really talked about them.
+These have all been **implicit returns**: the last expression that gets evaluated is returned.
+
+```{r}
+foo <- function(x) {
+  x
+  x + 5
+}
+foo(2)
+```
+
+We can also do an **explicit return** by using the `return` function.
+
+```{r}
+foo <- function(x) {
+  return(x)
+  x + 5
+}
+foo(2)
+```
+]
+
+---
+
+# Exiting a function
+
+.left-column[
+## Return
+## Error
+]
+
+.right-column[
+If for some reason we encounter something that we cannot recover from, we can issue an error.
+
+```{r, error = TRUE}
+foo <- function() {
+  stop("an error occured")
+  return(5)
+}
+foo()
+```
+]
+
+.right-column[
+```{r, error = TRUE}
+foo <- function(x) {
+  stopifnot(x > 5)
+  x
+}
+foo(3)
+foo(6)
+```
+]
+
+---
+
+class: title
+
+# Let's write some functions!
+
+---
+
+# Suggested reading
+
+- [Advanced R: Functions](https://adv-r.hadley.nz/functions.html)
+
