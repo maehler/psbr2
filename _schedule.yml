@@ -271,6 +271,7 @@ schedule:
     - start_time:
       end_time:
       topic: "Advanced R: Functions"
+      url: lectures/21_advanced_r_functions.html
       details: |
         - Writing your own functions
           - Get specification on inputs and outputs
