@@ -262,6 +262,7 @@ schedule:
     - start_time:
       end_time:
       topic: Statistical testing of course data
+      lecture: false
       details: |
         - qPCR?
         - Pairwise review of the outcome
