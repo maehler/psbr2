@@ -275,30 +275,32 @@ schedule:
       details: |
         - Writing your own functions
           - Get specification on inputs and outputs
-  - day:
     - start_time:
       end_time:
       topic: "Control flow"
       url: "lectures/22_control_flow.html"
-      room: B3-46-49 Solanum lycopersicum
       details: |
         - Choices
           - `if`, `switch`
         - Loops
           - `for`, `while`
-    - start_time:
-      end_time:
-      topic: Vectorisation
-      room: B3-46-49 Solanum lycopersicum
-      details: |
-        - Why are `for` loops often slow?
-        - Difference between `&`/`&&`, and `|`/`||`
   - day:
     - start_time:
       end_time:
-      topic: Writing your own functions
+      topic: Journal guidelines for authors
+      room: B3-46-49 Solanum lycopersicum
       details: |
-        - Worked examples from the two previous days
+        - What requirements do journals often have?
+        - How can we create figures in ggplot2 that conform to these guidelines?
+        - What do the guidelines tell us about data sharing? What about code sharing?
+  - day:
+    - start_time:
+      end_time:
+      topic: Vectorisation and functional programming
+      details: |
+        - Why are `for` loops often slow?
+        - Difference between `&`/`&&`, and `|`/`||`
+        - apply/lapply vs purrr
   - day:
     - start_time:
       end_time:
