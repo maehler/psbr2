@@ -162,15 +162,17 @@ iframe {
 
 /* Note box */
 .note {
+  display: inline-block;
+  min-width: 50%;
   position: relative;
   font-size: 1em;
   background-color: #CCCCCC;
-  padding: 1px 1.25em 1px 1.25em;
+  padding: 0 1.25em 1em 1.25em;
 }
 
 .note svg {
   float: left;
-  margin: 0 0.75em 0.2em 0;
+  margin-right: 0.75em;
 }
 
 .note.yellow { background-color: #FFF4CC; }

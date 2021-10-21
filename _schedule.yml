@@ -278,7 +278,8 @@ schedule:
   - day:
     - start_time:
       end_time:
-      topic: "Flow control"
+      topic: "Control flow"
+      url: "lectures/22_control_flow.html"
       room: B3-46-49 Solanum lycopersicum
       details: |
         - Choices

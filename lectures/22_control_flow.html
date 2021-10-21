@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Control flow</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Niklas Mähler" />
+    <meta name="date" content="2021-10-22" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/niklas.css" type="text/css" />
+    <link rel="stylesheet" href="css/niklas-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: left, middle, inverse, title-slide
+
+# Control flow
+## Practical Skills for Biology Research II
+### Niklas Mähler
+### Umeå University
+### 2021-10-22
+
+---
+
+
+layout: true
+
+<div class="footer">
+<a href="https://github.com/maehler/psbr2/tree/main/lectures/22_control_flow.Rmd">
+<svg viewBox="0 0 496 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg">
+<path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"></path>
+</svg>
+</a>
+</div>
+
+---
+
+# What we'll learn about
+
+- `if` statements
+- `switch` statements
+- `while` loops
+- `for` loops
+
+---
+
+# Choices and loops
+
+There are two ways we can control what parts of our code gets executed: choices and loops.
+
+Choices can be handled by `if` statements, calls to `switch()` or the `ifelse()` function. Based on the value of a variable, we can decide how to proceed in our code.
+
+Loops in R are `for` loops and `while` loops. They are useful whenever we have to repeat the same operation many times.
+
+---
+
+class: title
+
+# Choices
+
+---
+
+# `if`
+
+The `if` statement looks like this in R
+
+
+```r
+if (condition) true_action else false_action
+if (condition1) true_action1 else if (condition2) true_action2 else false_action
+```
+
+and we can read it like "if `condition` is true, then evaluate `true_action`, otherwise evaluate `false_action`.
+
+The evaluation branches of the `if` statement can also be written on multiple lines with the help of `{`.
+
+
+```r
+if (condition) {
+  true_action
+} else {
+  false_action
+}
+```
+
+---
+
+# Returns from `if`
+
+The if statement returns the last statement of whatever branch was evaluated, so we can use it for variable assignment.
+
+
+```r
+x &lt;- 0
+state &lt;- if (x &lt; 0) "negative" else "positive"
+state
+```
+
+```
+## [1] "positive"
+```
+
+This is convenient in functions.
+
+
+```r
+grade &lt;- function(score) {
+  if (score &lt; 50) {
+    "U"
+  } else if (score &lt; 80) {
+    "G"
+  } else {
+    "VG"
+  }
+}
+```
+
+???
+
+When we have multiple conditions like this, we have to think about what order we have them in.
+The first branch whose condition evaluates to `TRUE` will be executed.
+
+---
+
+# No `else` matters
+
+If we have an `if` statement with a single condition and no `else` statement, `NULL` will be returned.
+
+
+```r
+(if (FALSE) 5)
+```
+
+```
+## NULL
+```
+
+This can be helpful in certain functions where `NULL` values are ignored.
+
+
+```r
+greet &lt;- function(name, birthday = FALSE) {
+  str_c("Hello ", name,
+        if (birthday) ", and happy birthday!")
+}
+greet("Per")
+```
+
+```
+## [1] "Hello Per"
+```
+
+```r
+greet("Lisa", TRUE)
+```
+
+```
+## [1] "Hello Lisa, and happy birthday!"
+```
+
+---
+
+# Invalid inputs
+
+`if` statements only takes a single logical value as input.
+
+
+```r
+if ("x") 5
+```
+
+```
+## Error in if ("x") 5: argument is not interpretable as logical
+```
+
+```r
+if (logical(0)) 3
+```
+
+```
+## Error in if (logical(0)) 3: argument is of length zero
+```
+
+```r
+if (NA) 4
+```
+
+```
+## Error in if (NA) 4: missing value where TRUE/FALSE needed
+```
+
+---
+
+# Invalid inputs
+
+Logical vectors longer than 1 are accepted, but we get a warning.
+
+
+```r
+if (c(TRUE, FALSE)) 1
+```
+
+```
+## Warning in if (c(TRUE, FALSE)) 1: the condition has length &gt; 1 and only the
+## first element will be used
+```
+
+```
+## [1] 1
+```
+
+---
+
+# `if` for vectors
+
+If we have a vector of conditions we can use `ifelse()` instead of `if`.
+It is specified as
+
+
+```r
+ifelse(condition, yes, no)
+```
+
+where the arguments will be recycled to the same length.
+
+
+```r
+x &lt;- 1:10
+ifelse(x %% 5, letters, as.character(x))
+```
+
+```
+##  [1] "a"  "b"  "c"  "d"  "5"  "f"  "g"  "h"  "i"  "10"
+```
+
+
+```r
+x &lt;- 1:10
+ifelse (x %% 2 == 0, "even", "odd")
+```
+
+```
+##  [1] "odd"  "even" "odd"  "even" "odd"  "even" "odd"  "even" "odd"  "even"
+```
+
+<div class="note yellow">
+<p>
+<svg viewBox="0 0 576 512" style="position:relative;display:inline-block;top:.1em;height:2em;" xmlns="http://www.w3.org/2000/svg">
+<path d="M569.517 440.013C587.975 472.007 564.806 512 527.94 512H48.054c-36.937 0-59.999-40.055-41.577-71.987L246.423 23.985c18.467-32.009 64.72-31.951 83.154 0l239.94 416.028zM288 354c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z"></path>
+</svg>
+The &lt;code&gt;yes&lt;/code&gt; and &lt;code&gt;no&lt;/code&gt; vectors should be of the same type in order to avoid confusion
+</p>
+</div>
+
+---
+
+# `switch()`
+
+.pull-left[
+Instead of writing code like this
+
+```r
+recode_animal &lt;- function(x) {
+  if (x == "cow") {
+    1
+  } else if (x == "chicken") {
+    2
+  } else if (x == "sheep") {
+    3
+  } else if (x == "human") {
+    4
+  } else {
+    stop("invalid `x` value")
+  } 
+}
+recode_animal("human")
+```
+
+```
+## [1] 4
+```
+
+```r
+recode_animal("shark")
+```
+
+```
+## Error in recode_animal("shark"): invalid `x` value
+```
+]
+
+.pull-right[
+We can write it like this
+
+```r
+recode_animal &lt;- function(x) {
+  switch(x,
+         cow = 1,
+         chicken = 2,
+         sheep = 3,
+         human = 4,
+         stop("invalid `x` value")
+  )
+}
+recode_animal("human")
+```
+
+```
+## [1] 4
+```
+
+```r
+recode_animal("shark")
+```
+
+```
+## Error in recode_animal("shark"): invalid `x` value
+```
+]
+
+???
+
+It is recommended to always have the last case being an error.
+Otherwise it will return `NULL` silently, and this can cause headaches.
+
+Another thing is that while this would work for a numerical value of `x`, it is limited to whole numbers, and it might fail unexpectedly if they are not.
+Therefore it is recommended to only use this for character input.
+
+---
+
+class: title
+
+# Loops
+
+---
+
+# `for` loops
+
+A `for` loop can be used to iterate over the values of a vector.
+The basic form is
+
+
+```r
+for (item in vector) perform_action
+```
+
+and we can read it like "evaluate `perform_action` for each item in `vector`".
+`item` is in this case updated for each turn in the loop to reflect the current value in `vector`.
+Just like with `if` statements, we can have `perform_action` on multiple lines with `{`.
+
+
+```r
+for (i in 1:3) {
+  print(i)
+}
+```
+
+```
+## [1] 1
+## [1] 2
+## [1] 3
+```
+
+???
+
+When iterating over a vector of indices, it is common practice to have one-letter names, such as `i`, `j`, or `k`.
+
+---
+
+# Loop environment
+
+It's worth noting that the assignment of `item` in the loop happens in the current environment, so it will overwrite the variable if it already exists.
+
+
+```r
+item &lt;- "precious"
+for (item in c("fish", "taters", "nasty hobbitses")) {}
+item
+```
+
+```
+## [1] "nasty hobbitses"
+```
+
+The same is true for the loop body.
+
+---
+
+# Early termination
+
+There are two ways to terminate a `for` loop early: `next` and `break`.
+
+`next` will interrupt the current iteration and immediately continue with the next iteration.
+
+
+```r
+for (i in 1:5) {
+  if (i &lt;= 3) {
+    next
+  }
+  print(i)
+}
+```
+
+```
+## [1] 4
+## [1] 5
+```
+
+---
+
+# Early termination
+
+`break` will exit the loop entirely.
+
+
+```r
+for (i in 1:1000000) {
+  if (i &gt; 5) {
+    break
+  }
+  print(i)
+}
+```
+
+```
+## [1] 1
+## [1] 2
+## [1] 3
+## [1] 4
+## [1] 5
+```
+
+---
+
+# Pitfalls
+
+.left-column[
+## Preallocation
+]
+
+.right-column[
+If we are using the loop to generate a vector of results, it is recommended to define the vector beforehand, otherwise it will be very slow.
+
+
+```r
+x &lt;- list(c(1:10), rnorm(100), runif(100))
+means &lt;- double(length(x))
+for (i in 1:length(x)) {
+  means[i] &lt;- mean(x[[i]])
+}
+means
+```
+
+```
+## [1] 5.5000000 0.2451972 0.5151398
+```
+]
+
+---
+
+# Pitfalls
+
+.left-column[
+## Preallocation
+## `1:length(x)`
+]
+
+.right-column[
+Beware of looping over `1:length(x)`.
+If `x` has a length of 0, this will produce unexpected results.
+
+
+```r
+x &lt;- c()
+means &lt;- double(length(x))
+for (i in 1:length(x)) {
+  means[i] &lt;- mean(x[i])
+}
+1:length(x)
+```
+
+```
+## [1] 1 0
+```
+
+In this case it's better to use `seq_along`.
+
+
+```r
+means &lt;- double(length(x))
+for (i in seq_along(x)) {
+  means[i] &lt;- mean(x[i])
+}
+means
+```
+
+```
+## numeric(0)
+```
+]
+
+???
+
+With `seq_along` we see that the loop isn't run at all.
+
+---
+
+# `while` and `repeat`
+
+`while` loops takes a condition and keeps running the loop while the condition is `TRUE`.
+
+
+```r
+while (condition) action
+```
+
+`repeat` works similarly, but it doesn't take a condition.
+It simply loops until `break` is called.
+
+
+```r
+repeat(action)
+```
+
+Any `for` loop can be written as a `while` loop, and any `while` loop can be written as a `repeat`.
+
+There are however other solutions that we can use instead of looping that makes our code more readable, and we'll learn about these methods when talking about vectorisation and functional programming.
+
+???
+
+So, `while` is more flexible than `for` and `repeat` is more flexible than `while`.
+I would argue that you should always use a `for` loop whenever you can express an iteration as such, since it's more readable, and fewer cases where things can go wrong.
+
+---
+
+class: title
+
+# Let's improve our functions!
+
+---
+
+# Suggested reading
+
+
+- R for Data Science
+  - [19.4 Conditional Execution](https://r4ds.had.co.nz/functions.html?q=if%20statement#conditional-execution)
+  - [21 Iteration](https://r4ds.had.co.nz/iteration.html)
+- [Advanced R: Control Flow](https://adv-r.hadley.nz/control-flow.html)
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="js/macros.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"navigation": {
+"scroll": false
+}
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
