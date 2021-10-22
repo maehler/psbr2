@@ -59,13 +59,14 @@ print_df_5 <- function(x, ...) {
   print(x, n = 5, ...)
 }
 
-article_tile <- function(headline, lead, date, source, source_url) {
+article_tile <- function(headline, lead, date, source, source_url, style = "") {
   div(
     tags$time(date, datetime = date),
     h1(headline),
     p(lead, class = "lead"),
     p(a(source, href = source_url), class = "source"),
-    class = "article"
+    class = "article",
+    style = style
   )
 }
 

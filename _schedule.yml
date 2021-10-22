@@ -288,6 +288,7 @@ schedule:
     - start_time:
       end_time:
       topic: Journal guidelines for authors
+      url: lectures/23_journal_guidelines_for_authors.html
       room: B3-46-49 Solanum lycopersicum
       details: |
         - What requirements do journals often have?
