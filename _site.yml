@@ -59,6 +59,8 @@ navbar:
             href: lectures/21_advanced_r_functions.html
           - text: Control flow
             href: lectures/22_control_flow.html
+          - text: Journal guidelines for authors
+            href: lectures/23_journal_guidelines_for_authors.html
         - text: Week 5
     - text: Suggested reading
       href: suggested_reading.html
