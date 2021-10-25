@@ -298,6 +298,7 @@ schedule:
     - start_time:
       end_time:
       topic: Vectorisation and functional programming
+      url: lectures/24_vectorisation_and_functional_programming.html
       details: |
         - Why are `for` loops often slow?
         - Difference between `&`/`&&`, and `|`/`||`

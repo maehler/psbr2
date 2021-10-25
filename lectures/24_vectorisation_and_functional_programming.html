@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Vectorisation and functional programming</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Niklas Mähler" />
+    <meta name="date" content="2021-10-25" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/niklas.css" type="text/css" />
+    <link rel="stylesheet" href="css/niklas-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: left, middle, inverse, title-slide
+
+# Vectorisation and functional programming
+## Practical Skills for Biology Research II
+### Niklas Mähler
+### Umeå University
+### 2021-10-25
+
+---
+
+
+layout: true
+
+<div class="footer">
+<a href="https://github.com/maehler/psbr2/tree/main/lectures/24_vectorisation_and_functional_programming.Rmd">
+<svg viewBox="0 0 496 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg">
+<path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"></path>
+</svg>
+</a>
+</div>
+
+---
+
+# What we'll learn
+
+- The concept of vectorisation
+- How to identify situations when we can make use of vectorisation
+- The basics of functional programming
+- How to use the map functions in purrr
+
+---
+
+class: title
+
+# Vectorisation
+
+---
+
+# What is vectorisation?
+
+We have already used vectorisation quite a bit already, but we haven't put a name on it.
+It is whenever we act upon a whole vector at once instead of individual values in the vector.
+
+
+```r
+x &lt;- c(1, 2, 3, 10, 15, 75, 199, 12, 3, 65)
+mean(x)
+```
+
+```
+## [1] 38.5
+```
+
+Vectorisation is a **property of functions**.
+If a function is vectorised, it can act on a vector as a whole.
+Two important attributes of a vectorised function are:
+
+1. They make problems simpler by allowing us to think of a collection of values instead of individual values that we have to iterate over.
+2. They are much faster than the equivalent looping implementation.
+
+Oftentimes, it is a matter of finding the function that best fits the problem you are trying to solve.
+
+---
+
+# Looping vs vectorisation
+
+For matrices, there are a collection of vectorised functions for summarising columns and rows: `rowSums()`, `rowMeans()`, `colSums()`, `colMeans()`.
+
+
+```r
+x &lt;- matrix(rnorm(2000 * 100), ncol = 100)
+```
+
+.pull-left[
+
+```r
+rowsums_loop &lt;- function(x) {
+  sums &lt;- c()
+  for (i in seq_len(nrow(x))) {
+    sums &lt;- c(sums, sum(x[i, ]))
+  }
+  sums
+}
+```
+]
+
+.pull-right[
+
+```r
+rowsums_loop_prealloc &lt;- function(x) {
+  sums &lt;- double(nrow(x))
+  for (i in seq_len(nrow(x))) {
+    sums[i] &lt;- sum(x[i, ])
+  }
+  sums
+}
+```
+]
+
+
+```r
+all(
+  rowSums(x) == rowsums_loop(x),
+  rowSums(x) == rowsums_loop_prealloc(x)
+)
+```
+
+```
+## [1] TRUE
+```
+
+---
+
+# Looping vs vectorisation
+
+.pull-left[
+
+```r
+benchmark &lt;- bench::mark(
+  rowsums_loop(x),
+  rowsums_loop_prealloc(x),
+  rowSums(x),
+  min_time = 2
+)
+
+autoplot(benchmark, "ridge") +
+  labs(x = "Time", y = "Expression")
+```
+
+Not only is it easier to read the code that uses the built-in `rowSums()` function, it is also about 15 times faster than our looping implementation.
+]
+
+.pull-right[
+![](figures/vectorisation_and_functional_programming_rowsums_benchmark-1.png)
+]
+
+---
+
+# Other examples of vectorisation
+
+.left-column[
+## Indexing
+]
+
+.right-column[
+
+```r
+x &lt;- c(1, 2, 3, 10, 15, 75, 199, 12, 3, 65)
+x[x &lt; 10]
+```
+
+```
+## [1] 1 2 3 3
+```
+
+```r
+x[x &gt; 10] &lt;- NA
+x
+```
+
+```
+##  [1]  1  2  3 10 NA NA NA NA  3 NA
+```
+]
+
+---
+
+# Other examples of vectorisation
+
+.left-column[
+## Indexing
+## Linear algebra
+]
+
+.right-column[
+Linear algebra is a general example of vectorisation.
+If we can formulate a problem in the form of linear algebra, we are almost always guaranteed to have a fast solution.
+The reason for this being fast is that the computation is handled by external libraries like [BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms) that are highly optimised for this type of computation.
+
+One example of converting a problem into a linear algebra problem is that of the R package [Matrix eQTL](http://www.bios.unc.edu/research/genomic_software/Matrix_eQTL/).
+An eQTL is an association between a genetic variant (usually a SNP) and the expression of a gene.
+Instead of performing expensive linear regressions for each pair of SNP and gene, they boil the problem down to a matrix multiplication.
+
+$$
+g = \alpha + \beta s + \epsilon \rightarrow \sum_{i=0}^N s_i g_i = \langle s, g \rangle
+$$
+$$
+\mathbf{GS}^\intercal
+$$
+
+.right[[Shabalin 2012, Bioinformatics](https://doi.org/10.1093/bioinformatics/bts163)]
+]
+
+---
+
+# Writing our own vectorised functions
+
+If you are struggling with finding a vectorised solution to your problem, one alternative is to write your own.
+This requires some C++ skills, though.
+
+You can read more about this in [chapter 25 of Advanced R](https://adv-r.hadley.nz/rcpp.html#rcpp).
+
+---
+
+class: title
+
+# Functional programming
+
+---
+
+# Functions make your code simpler
+
+- The DRY principle: Don't Repeat Yourself.
+- The intention of the code becomes more clear.
+- If you have to change something in your code, you only have to change it in one place, and don't have to locate all the places where it was copy-pasted.
+
+---
+
+# R is to a large extent a functional language
+
+Every programming language has functions, so what makes a language functional?
+
+- Functions are **first-class**, i.e. they behave like any other object.
+- Functions are **pure**
+  - The output is dependent on the input, and nothing else. If you call a function with the same input, you should get the same output. This would exclude functions like `rnorm()` and `read_csv()`.
+  - There should be no side-effects, i.e. the function should not do anything but perform a calculation on the input to produce the output. This would exclude functions like `ggplot()` and `print()`.
+  
+R doesn't require you to write pure functions, so in that sense it is not purely a functional language. It will however allow you to write parts of your code in a functional manner.
+
+---
+
+# Imperative programming vs functional programming
+
+[Imperative programming](https://en.wikipedia.org/wiki/Imperative_programming) is a paradigm where states are used to change the state of a program.
+
+[Functional programming](https://en.wikipedia.org/wiki/Functional_programming), on the other hand, is centered around functions, and the composition of functions.
+
+???
+
+`for` and `while` loops are parts of imperative programming.
+They are straightforward in what they do, but they require quite a bit of code to set up, and they can be hard to read due to this.
+What the loop is trying to do is largely obscured by all the mechanics around the loop itself.
+
+---
+
+# The purrr package
+
+purrr is a core package in tidyverse, and it contains tools for functional programming
+
+.center[
+[![:scale 25%](https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/purrr.png)](https://purrr.tidyverse.org/)
+]
+
+---
+
+# The map functions
+
+For loops where we want to save some data from each iteration is very common pattern.
+Instead of writing loops explicitly, the map functions do exactly this, but in a more concise and readable way.
+
+.pull-left[
+
+```r
+x &lt;- list(1:100, rnorm(100), runif(100))
+```
+
+
+```r
+means &lt;- vector("list", length(x))
+for (i in seq_along(x)) {
+  means[[i]] &lt;- mean(x[[i]])
+}
+str(means)
+```
+
+```
+## List of 3
+##  $ : num 50.5
+##  $ : num -0.0277
+##  $ : num 0.506
+```
+]
+
+.pull-right[
+
+```r
+means &lt;- purrr::map(x, mean)
+str(means)
+```
+
+```
+## List of 3
+##  $ : num 50.5
+##  $ : num -0.0277
+##  $ : num 0.506
+```
+
+There are functions in base R that behave similarly to the map functions, mainly the `apply()` family of functions.
+The main reason I choose to through the `map()` functions instead is due to their more consistent behaviour and syntax.
+
+If you're interested, check out `?apply` and `?lapply`.
+]
+
+---
+
+# The map functions
+
+Depending on the output that you want, there are different map functions:
+
+- `map(.x, .f)` creates lists.
+- `map_lgl(.x, .f)` creates a logical vector.
+- `map_int(.x, .f)` creates an integer vector.
+- `map_dbl(.x, .f)` creates a double vector.
+- `map_chr(.x, .f)` creates a character vector.
+
+.pull-left[
+All of them take a sequence (vector or list) and applies a function to each element, and returns a new sequence (vector or list, depending on the function) that has the same length as the input.
+
+Functions that take a function as an argument are known as **functionals**.
+
+Check `?map` for details, and related functions.
+]
+
+.pull-right[
+![:scale 60%, Illustration of how map works](https://d33wubrfki0l68.cloudfront.net/f0494d020aa517ae7b1011cea4c4a9f21702df8b/2577b/diagrams/functionals/map.png)
+]
+
+???
+
+These are just some of the map functions that are available to us.
+
+---
+
+# Are loops slow?
+
+Sometimes you hear the argument that you should use `map()`-like functions in R due to `for` loops being slow. This is not really an argument.
+
+.pull-left[
+
+```r
+x &lt;- map(runif(1000, min = 0, max = 10),
+         ~ rnorm(10000, mean = .))
+str(x)
+```
+
+```
+## List of 1000
+##  $ : num [1:10000] 4.44 6.85 6.19 7.45 5.72 ...
+##  $ : num [1:10000] 7.49 10.37 8.86 8.87 9.11 ...
+##  $ : num [1:10000] 11.02 9.23 10.99 9.23 8.47 ...
+##  $ : num [1:10000] 5.18 4.3 2.78 3.76 3.65 ...
+##  $ : num [1:10000] 2.76 3.47 1.92 3.4 2.85 ...
+##  $ : num [1:10000] 8.82 10.34 11.42 8.23 11.92 ...
+##  $ : num [1:10000] 1.08 3.48 4.07 1.97 4.16 ...
+##  $ : num [1:10000] 6.03 6.04 7.35 6.81 7.84 ...
+##  $ : num [1:10000] 1.872 0.657 1.418 2.194 0.218 ...
+##  $ : num [1:10000] 6.04 6.58 3.6 5.99 5.47 ...
+##  $ : num [1:10000] 3.04 6.45 4.14 4.34 6.38 ...
+##  $ : num [1:10000] 3.08 1.12 3.68 2.61 3.98 ...
+##  $ : num [1:10000] 6.41 8 4.55 5.08 6.14 ...
+##  $ : num [1:10000] 7.72 8.13 8.6 7.07 9.05 ...
+##  $ : num [1:10000] 9.99 9.29 9.27 9.4 11.15 ...
+##  $ : num [1:10000] 3.41 5.58 5.43 3.69 2.32 ...
+##  $ : num [1:10000] 4.35 7.26 4.57 5.99 5.58 ...
+##  $ : num [1:10000] 7.03 7.05 7.53 5.67 7.08 ...
+##  $ : num [1:10000] 6.87 6.46 7.77 8.88 7.63 ...
+##  $ : num [1:10000] 4.55 1.5 2.74 2.08 2.63 ...
+##  $ : num [1:10000] 2.49 3 1.46 2.33 2.78 ...
+##  $ : num [1:10000] 2.2669 -0.0783 1.0498 1.5915 1.5894 ...
+##  $ : num [1:10000] 9.04 7.9 8.53 6.87 8.71 ...
+##  $ : num [1:10000] 0.366 -0.695 0.555 1.058 0.293 ...
+##  $ : num [1:10000] 5.5 5.54 5.62 6.37 5.34 ...
+##  $ : num [1:10000] 7.22 5.76 5.82 7.35 6.55 ...
+##  $ : num [1:10000] 3.26 1.64 2.71 3.06 3.26 ...
+##  $ : num [1:10000] 0.00782 1.67459 -0.09777 -0.05091 1.06086 ...
+##  $ : num [1:10000] 4.04 4.24 5.83 2.75 4.99 ...
+##  $ : num [1:10000] 8.23 6.49 6.43 7.53 8.66 ...
+##  $ : num [1:10000] 7.14 6.83 7.92 7.74 7.07 ...
+##  $ : num [1:10000] 4.44 4.62 4.91 3.75 4.78 ...
+##  $ : num [1:10000] 8.53 8.68 7.62 10.1 10.06 ...
+##  $ : num [1:10000] 2.3838 0.0567 1.9738 0.7968 -0.0171 ...
+##  $ : num [1:10000] 1.671 0.851 0.278 1.759 2.52 ...
+##  $ : num [1:10000] 1.54 1.98 1.93 2.82 3.13 ...
+##  $ : num [1:10000] 2.275 0.506 2.179 0.603 2.148 ...
+##  $ : num [1:10000] 0.734 -0.273 0.359 2.491 0.761 ...
+##  $ : num [1:10000] 3.52 4.91 5.1 3.52 3.82 ...
+##  $ : num [1:10000] 9.33 10.04 8.47 7.77 8.59 ...
+##  $ : num [1:10000] 6.89 6.17 5.77 9.3 6.82 ...
+##  $ : num [1:10000] 6.8 7.56 7.02 5.89 5.49 ...
+##  $ : num [1:10000] 1.43 2.43 3.33 2.86 2.18 ...
+##  $ : num [1:10000] 6.33 6.52 7.44 7.56 6.49 ...
+##  $ : num [1:10000] 4.33 5.93 7 7.08 4.76 ...
+##  $ : num [1:10000] 3.71 5.82 4.3 5.27 4.91 ...
+##  $ : num [1:10000] 9.82 8.37 6.93 9.13 6.64 ...
+##  $ : num [1:10000] 7.24 8.6 7.25 8.87 7.68 ...
+##  $ : num [1:10000] -1.797 -0.141 0.851 2.047 0.364 ...
+##  $ : num [1:10000] 2.89 5.43 3.52 5 2.69 ...
+##  $ : num [1:10000] 10.58 11.18 8.83 9.37 9.11 ...
+##  $ : num [1:10000] 0.424 1.296 3.369 1.177 1.897 ...
+##  $ : num [1:10000] -0.283 2.095 2.256 2.193 -0.866 ...
+##  $ : num [1:10000] 2.921 0.445 1.067 0.522 1.901 ...
+##  $ : num [1:10000] 3.61 4.43 2.95 5.26 3.89 ...
+##  $ : num [1:10000] 8.72 9.66 8.23 7.52 9.03 ...
+##  $ : num [1:10000] 6.47 8.63 5.59 6.53 7.27 ...
+##  $ : num [1:10000] 6.4 6.51 4.92 6.96 7.01 ...
+##  $ : num [1:10000] 9.88 10.41 7.47 9.47 11.55 ...
+##  $ : num [1:10000] 4.76 3.25 4.72 2.7 1.6 ...
+##  $ : num [1:10000] 4.12 1.69 2.26 4.08 3.53 ...
+##  $ : num [1:10000] 4.56 5.75 3.87 4.37 4.37 ...
+##  $ : num [1:10000] 0.106 0.756 1.62 2.442 1.099 ...
+##  $ : num [1:10000] 6.77 7.59 6.64 5.4 7.55 ...
+##  $ : num [1:10000] 2.9 2.27 2.66 4.09 3.97 ...
+##  $ : num [1:10000] 1.789 2.411 -1.396 0.312 -0.137 ...
+##  $ : num [1:10000] -0.708 0.598 -0.674 2.388 2.328 ...
+##  $ : num [1:10000] 0.787 1.792 -0.241 -1.483 2.1 ...
+##  $ : num [1:10000] 9.71 9.33 9.1 10.19 8.53 ...
+##  $ : num [1:10000] 1.415 -0.0775 1.4061 1.2216 0.1721 ...
+##  $ : num [1:10000] 8.47 8.85 10.09 10.36 9.18 ...
+##  $ : num [1:10000] 0.926 1.553 2.979 1.727 0.569 ...
+##  $ : num [1:10000] 7 6.3 5.1 6.31 4.24 ...
+##  $ : num [1:10000] 8.48 10.51 9.36 9.97 8.59 ...
+##  $ : num [1:10000] 9.89 9.83 8.09 9.35 9 ...
+##  $ : num [1:10000] 4.8 4.33 3.17 4.19 3.83 ...
+##  $ : num [1:10000] 9.87 6.52 9.32 9.12 8.55 ...
+##  $ : num [1:10000] 3.0937 2.1804 0.0579 -0.6314 1.5404 ...
+##  $ : num [1:10000] 3.42 2.67 1.77 2.05 1.9 ...
+##  $ : num [1:10000] 10.19 9.54 10.52 10.84 8.99 ...
+##  $ : num [1:10000] 4.93 6.18 6.31 4.12 5.54 ...
+##  $ : num [1:10000] 1.9 0.52 1.68 2.22 1.74 ...
+##  $ : num [1:10000] 6.84 5.8 6.24 7.08 6.72 ...
+##  $ : num [1:10000] 4.32 4.65 3.2 3.63 4.37 ...
+##  $ : num [1:10000] 1.7503 1.6186 1.0781 1.1706 -0.0816 ...
+##  $ : num [1:10000] 8.1 7.57 6.87 7.86 5.63 ...
+##  $ : num [1:10000] 1.18 2.17 2.2 1.75 1.38 ...
+##  $ : num [1:10000] 10.29 9.52 8.63 10.43 11.73 ...
+##  $ : num [1:10000] 2.09 2.23 2.59 3.29 2.68 ...
+##  $ : num [1:10000] 1.6367 0.3761 -0.0319 -0.212 1.7515 ...
+##  $ : num [1:10000] 8.04 7.2 9.11 8.48 9.15 ...
+##  $ : num [1:10000] 0.9614 3.236 0.3111 -1.3779 0.0172 ...
+##  $ : num [1:10000] 2.596 1.942 2.372 1.642 0.603 ...
+##  $ : num [1:10000] 7.16 5.9 6.07 5.87 6.89 ...
+##  $ : num [1:10000] 3.6 2.8 3.8 3.67 4.06 ...
+##  $ : num [1:10000] 6.96 6.43 6.64 6.18 6.76 ...
+##  $ : num [1:10000] 6.61 8.23 7.41 8.19 7.92 ...
+##  $ : num [1:10000] 1.225 1.941 1.679 0.656 1.113 ...
+##  $ : num [1:10000] 4.38 2.68 4.83 7.01 3.8 ...
+##   [list output truncated]
+```
+]
+
+.pull-right[
+
+```r
+mean_loop &lt;- function(x) {
+  means &lt;- c()
+  for (i in seq_along(x)) {
+    means &lt;- c(means, mean(x[[i]]))
+  }
+  means
+}
+
+mean_loop_prealloc &lt;- function(x) {
+  means &lt;- double(length(x))
+  for (i in seq_along(x)) {
+    means[i] &lt;- mean(x[[i]])
+  }
+  means
+}
+```
+]
+
+---
+
+# Are loops slow?
+
+.pull-left[
+
+```r
+bench::mark(
+  mean_loop(x),
+  mean_loop_prealloc(x),
+  map_dbl(x, mean),
+  min_time = Inf,
+  max_iterations = 1000,
+  memory = FALSE,
+  check = FALSE
+) %&gt;%
+  autoplot("ridge") + 
+  labs(x = "Time", y = "Expression")
+```
+
+The main reason to prefer a functional programming approach, such as the map functions are for readability purposes, and the fact that you reduce the amount of code you have to write.
+]
+
+.pull-right[
+![](figures/vectorisation_and_functional_programming_loop_map_benchmark-1.png)
+]
+
+---
+
+# Data frames are also lists
+
+Since data frames can be seen as lists with the restriction that each element must have the same length, we can also use the map functions directly on a data frame.
+
+
+```r
+head(iris)
+```
+
+```
+##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 1          5.1         3.5          1.4         0.2  setosa
+## 2          4.9         3.0          1.4         0.2  setosa
+## 3          4.7         3.2          1.3         0.2  setosa
+## 4          4.6         3.1          1.5         0.2  setosa
+## 5          5.0         3.6          1.4         0.2  setosa
+## 6          5.4         3.9          1.7         0.4  setosa
+```
+
+```r
+iris[, -5] %&gt;% 
+  map_dbl(mean)
+```
+
+```
+## Sepal.Length  Sepal.Width Petal.Length  Petal.Width 
+##     5.843333     3.057333     3.758000     1.199333
+```
+
+---
+
+# Some features of the map functions
+
+## `...` passes arguments to the functions
+
+
+```r
+x &lt;- list(c(1:25, NA, 1:74), rnorm(100), runif(100))
+map_dbl(x, mean, trim = 0.2, na.rm = TRUE)
+```
+
+```
+## [1] 28.9344262 -0.2266367  0.4597766
+```
+
+## Names are preserved
+
+
+```r
+z &lt;- list(x = 1:3, y = 4:5)
+map_int(z, length)
+```
+
+```
+## x y 
+## 3 2
+```
+
+---
+
+# Anonymous functions
+
+Imagine that we want to construct a linear model for different parts of our data.
+In this case, we don't want to bother with writing a separate function for this and giving it a name, so we use an **anonymous function**.
+
+
+```r
+models &lt;- mpg %&gt;% 
+  split(.$cyl) %&gt;% 
+  map(function(df) lm(hwy ~ displ, data = df))
+```
+
+--
+
+purrr has a shorthand way of writing this, using a one-sided formula.
+
+
+```r
+models &lt;- mpg %&gt;% 
+  split(.$cyl) %&gt;% 
+  map(~ lm(hwy ~ displ, data = .))
+```
+
+--
+
+If we want to extract some statistics from these models, we can utilise the map functions once again.
+
+.pull-left[
+
+```r
+models %&gt;% 
+  map(coefficients) %&gt;% 
+  map_dbl(~ .[2])
+```
+
+```
+##         4         5         6         8 
+## -8.294829        NA -3.976981  1.296390
+```
+]
+
+.pull-right[
+<div class="note yellow">
+<p>
+<svg viewBox="0 0 352 512" style="position:relative;display:inline-block;top:.1em;height:2em;" xmlns="http://www.w3.org/2000/svg">
+<path d="M176 80c-52.94 0-96 43.06-96 96 0 8.84 7.16 16 16 16s16-7.16 16-16c0-35.3 28.72-64 64-64 8.84 0 16-7.16 16-16s-7.16-16-16-16zM96.06 459.17c0 3.15.93 6.22 2.68 8.84l24.51 36.84c2.97 4.46 7.97 7.14 13.32 7.14h78.85c5.36 0 10.36-2.68 13.32-7.14l24.51-36.84c1.74-2.62 2.67-5.7 2.68-8.84l.05-43.18H96.02l.04 43.18zM176 0C73.72 0 0 82.97 0 176c0 44.37 16.45 84.85 43.56 115.78 16.64 18.99 42.74 58.8 52.42 92.16v.06h48v-.12c-.01-4.77-.72-9.51-2.15-14.07-5.59-17.81-22.82-64.77-62.17-109.67-20.54-23.43-31.52-53.15-31.61-84.14-.2-73.64 59.67-128 127.95-128 70.58 0 128 57.42 128 128 0 30.97-11.24 60.85-31.65 84.14-39.11 44.61-56.42 91.47-62.1 109.46a47.507 47.507 0 0 0-2.22 14.3v.1h48v-.05c9.68-33.37 35.78-73.18 52.42-92.16C335.55 260.85 352 220.37 352 176 352 78.8 273.2 0 176 0z"></path>
+</svg>
+Whenever digging out details from objects like these, the &lt;code&gt;str&lt;/code&gt; function can be of great help.
+</p>
+</div>
+]
+
+---
+
+# List columns
+
+Like we got the models on the previous slide, we converted the data frame into a list of data frames with `split()`.
+We can keep everything in a data frame with the help of list columns.
+
+
+```r
+mpg %&gt;% 
+  nest_by(cyl) %&gt;% 
+  summarise(model = list(lm(hwy ~ displ, data = data))) %&gt;% 
+  mutate(r2 = map_dbl(model, ~ summary(.)$r.squared))
+```
+
+```
+## # A tibble: 4 × 3
+## # Groups:   cyl [4]
+##     cyl model      r2
+##   &lt;int&gt; &lt;list&gt;  &lt;dbl&gt;
+## 1     4 &lt;lm&gt;   0.335 
+## 2     5 &lt;lm&gt;   0     
+## 3     6 &lt;lm&gt;   0.259 
+## 4     8 &lt;lm&gt;   0.0548
+```
+
+???
+
+`nest_by()` is closely related to `group_by()` that we have seen many times before,
+but instead of storing the grouping as metadata for the data frame, it is done explicitly by creating a single row for each group, and having all the data in a list column.
+
+Live demo.
+
+---
+
+# When things go wrong
+
+Normally, if the application of the function to one of the elements results in an error, the whole thing fails, and we get no information on which element failed.
+
+
+```r
+x &lt;- list(5, 4, "x")
+map(x, log10)
+```
+
+```
+## Error in .Primitive("log10")(x): non-numeric argument to mathematical function
+```
+
+In cases where we might expect errors to occur, we can wrap the function we want to use in `safely()`.
+This is a function that takes a function as an argument and gives back another function.
+In functional programming, this is known as a **function operator**.
+If dplyr functions can be seen like verbs, then functional operators can be seen as adverbs.
+
+
+```r
+safe_log10 &lt;- safely(log10)
+str(safe_log10("x"))
+```
+
+```
+## List of 2
+##  $ result: NULL
+##  $ error :List of 2
+##   ..$ message: chr "non-numeric argument to mathematical function"
+##   ..$ call   : language .Primitive("log10")(x)
+##   ..- attr(*, "class")= chr [1:3] "simpleError" "error" "condition"
+```
+
+???
+
+Instead of just return the result of the function, it returns a list with two items: `result` and `error`.
+If the function succeeds without error, the `result` element will contain the result, and `error` will be `NULL`.
+Conversely, if the function fails, the `result` will be `NULL` and the `error` will contain the error message.
+
+---
+
+# Mapping safely
+
+The `safely()` function fits very well into the map framework.
+For tips and tricks for how do deal with these results, check out [chapter 21.6 in R for Data Science](https://r4ds.had.co.nz/iteration.html#dealing-with-failure).
+
+
+```r
+x &lt;- list(5, 4, "x")
+map(x, safely(log10))
+```
+
+```
+## [[1]]
+## [[1]]$result
+## [1] 0.69897
+## 
+## [[1]]$error
+## NULL
+## 
+## 
+## [[2]]
+## [[2]]$result
+## [1] 0.60206
+## 
+## [[2]]$error
+## NULL
+## 
+## 
+## [[3]]
+## [[3]]$result
+## NULL
+## 
+## [[3]]$error
+## &lt;simpleError in .Primitive("log10")(x): non-numeric argument to mathematical function&gt;
+```
+
+---
+
+# Mapping possibly
+
+Another adverb we can use is `possibly()`. This creates a function that returns the value if the function succeeds, or a default value if it fails.
+
+
+```r
+possibly_log10 &lt;- possibly(log10, NA)
+possibly_log10("x")
+```
+
+```
+## [1] NA
+```
+
+
+```r
+x &lt;- list(5, 4, "x")
+map_dbl(x, possibly(log10, NA))
+```
+
+```
+## [1] 0.69897 0.60206      NA
+```
+
+---
+
+# Multiple arguments
+
+Not seldom do we need multiple variables for the function that we want to use.
+For example, consider the `rnorm()` function:
+
+
+```r
+args(rnorm)
+```
+
+```
+## function (n, mean = 0, sd = 1) 
+## NULL
+```
+
+
+```r
+mu &lt;- list(5, 10, -3)
+map(mu, rnorm, n = 5)
+```
+
+```
+## [[1]]
+## [1] 7.487679 3.792137 5.598352 6.634556 6.375574
+## 
+## [[2]]
+## [1]  9.175766  7.994759  9.686009 10.056176 10.002051
+## 
+## [[3]]
+## [1] -4.248428 -3.091122 -2.235330 -2.916567 -3.309718
+```
+
+???
+
+In this example we only pass in the mean value of the distribution we want to sample from.
+What if we also want to set the standard deviation?
+
+---
+
+# Multiple arguments
+
+
+```r
+mu &lt;- list(5, 10, -3)
+sigma &lt;- list(1, 5, 10)
+str(map2(mu, sigma, rnorm, n = 5))
+```
+
+```
+## List of 3
+##  $ : num [1:5] 6.73 4.28 4.59 5.16 3.79
+##  $ : num [1:5] 18.93 6.28 10.34 16.3 11.31
+##  $ : num [1:5] 2.2 21.43 6.27 -11.83 1.03
+```
+
+![:scale 50%, Illustration of how map2 works.](https://d33wubrfki0l68.cloudfront.net/68a21c4a103426c3b311c9dcfad8fe379d4892f1/55c9d/diagrams/lists-map2.png)
+
+---
+
+# Multiple arguments
+
+In `map()`, the current element can be referred to with `.`, as we have seen.
+In `map2()`, this would be ambiguous, so we can instead refer to them as `.x` and `.y`.
+
+
+```r
+mu &lt;- list(5, 10, -3)
+sigma &lt;- list(1, 5, 10)
+str(map2(mu, sigma, ~ rnorm(5, mean = .x, sd = .y)))
+```
+
+```
+## List of 3
+##  $ : num [1:5] 5.14 4.92 4.44 4.43 4.57
+##  $ : num [1:5] 18.13 17.44 15.63 8.04 7.52
+##  $ : num [1:5] -16.34 -8.46 -16.39 -14.79 -17.49
+```
+
+--
+
+We can also refer to them according with their indices with `..1` and `..2`.
+
+
+```r
+mu &lt;- list(5, 10, -3)
+sigma &lt;- list(1, 5, 10)
+str(map2(mu, sigma, ~ rnorm(5, mean = ..1, sd = ..2)))
+```
+
+```
+## List of 3
+##  $ : num [1:5] 5.47 3.33 6.29 4.86 4.35
+##  $ : num [1:5] -2.45 17.14 -1.49 13.14 11.93
+##  $ : num [1:5] 2.69 17.95 -7.49 6.27 7.16
+```
+
+---
+
+# Even more arguments
+
+Let's also modify the number of values that we sample from our distribution.
+You could imagine a `map3()` function, but this does not exists.
+Instead we have a more general function called `pmap()`, for parallel map.
+It takes a list of elements as input and maps them in parallel.
+
+
+```r
+x &lt;- list(
+  c(1, 3, 5),
+  c(5, 10, -3),
+  c(1, 5, 10)
+)
+x %&gt;% 
+  pmap(rnorm) %&gt;% 
+  str()
+```
+
+```
+## List of 3
+##  $ : num 3.67
+##  $ : num [1:3] 4.3 13.6 11.2
+##  $ : num [1:5] 0.164 8.263 -8.324 12.137 -9.216
+```
+
+???
+
+In the previous examples we always generated 5 random numbers for each element.
+What if we want to get different numbers of values for each element.
+
+Here we need the elements in the correct order
+
+---
+
+# Even more arguments
+
+If the list is named, the names are used to assign the values to the arguments of the function.
+
+
+```r
+x &lt;- list(
+  sd = c(1, 5, 10),
+  mean = c(5, 10, -3),
+  n = c(1, 3, 5)
+)
+x %&gt;% 
+  pmap(rnorm) %&gt;% 
+  str()
+```
+
+```
+## List of 3
+##  $ : num 6.48
+##  $ : num [1:3] 2.1 14.3 15.2
+##  $ : num [1:5] 12.51 -11.48 13.33 9.25 -5.89
+```
+
+---
+
+# Even more arguments
+
+Just as for `map()`, we can also refer to the variables using their index in the list.
+
+
+```r
+x &lt;- list(
+  sd = c(1, 5, 10),
+  mean = c(5, 10, -3),
+  n = c(1, 3, 5)
+)
+x %&gt;% 
+  pmap(~ rnorm(n = ..3, mean = ..2, sd = ..1)) %&gt;% 
+  str()
+```
+
+```
+## List of 3
+##  $ : num 5.41
+##  $ : num [1:3] 7.32 15.8 4.13
+##  $ : num [1:5] 3.26 7.82 23.49 -16.87 10.07
+```
+
+---
+
+# Finding the optimal solution for *your* problem
+
+## Issue
+
+You have a problem.
+You need to search for a solution to this problem.
+But you don't know what the problem is called, so it becomes really hard to search for.
+
+## "Solution"
+
+Read a lot.
+With reading, your vocabulary will expand, and you become better and better at expressing yourself.
+This is true for any field of study, not just data science or programming.
+
+---
+
+# Take-home messages
+
+- Try to use vectorised solutions, these will be faster than anything else you can write in R.
+- Use functional programming principles in order to write more concise and more readable code.
+- Don't let anyone discourage you from using loops in R, they are generally not slower than other iteration methods.
+- Use preallocation if you write loops.
+
+---
+
+# Suggested reading
+
+## Vectorisation
+
+- [R for Data Science: 20.4.3 Scalars and recycling rules](https://r4ds.had.co.nz/vectors.html#scalars-and-recycling-rules)
+- [Advanced R: 24.5 Vectorise](https://adv-r.hadley.nz/perf-improve.html#vectorise)
+
+## Functional programming
+
+- [R for Data Science: Iteration](https://r4ds.had.co.nz/iteration.html)
+- [Advanced R: Functional Programming](https://adv-r.hadley.nz/fp.html)
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="js/macros.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"navigation": {
+"scroll": false
+}
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

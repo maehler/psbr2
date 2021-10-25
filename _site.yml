@@ -62,6 +62,9 @@ navbar:
           - text: Journal guidelines for authors
             href: lectures/23_journal_guidelines_for_authors.html
         - text: Week 5
+          menu:
+          - text: Vectorisation and functional programming
+            href: lectures/24_vectorisation_and_functional_programming.html
     - text: Suggested reading
       href: suggested_reading.html
 
