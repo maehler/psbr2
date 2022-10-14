@@ -23,7 +23,7 @@
 .title {
 }
 
-  .title h1 {
+  .remark-slide-content:not(.title-slide).title h1 {
     color: #333;
     margin-top: 25%;
     border-bottom: 1px solid firebrick;
